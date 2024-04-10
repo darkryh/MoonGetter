@@ -1,0 +1,63 @@
+package com.ead.lib.moongetter.server_sites
+
+import android.content.Context
+import com.ead.lib.moongetter.core.system.extensions.await
+import com.ead.lib.moongetter.core.system.extensions.delete
+import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.File
+import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.PatternManager
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+
+class Fembed(context: Context, url : String) : Server(context,url) {
+
+    override suspend fun onExtract() {
+
+        var request: Request =  Request.Builder().url(url).build()
+
+        var response = OkHttpClient()
+            .newCall(request)
+            .await()
+
+        if (!response.isSuccessful) throw InvalidServerException("Fembed domain is down")
+
+        val host = response.request.url.host
+
+        val matchVideoId = PatternManager.singleMatch(
+            string = url,
+            regex = "([vf])([/=])(.+)([/&])?",
+            groupIndex = 3
+        ) ?: throw InvalidServerException("Fembed resource couldn't find it")
+
+        val videoId = matchVideoId
+            .delete("[&/]")
+
+        request = Request.Builder().url(getApiUrl(host = host, id = videoId))
+            .post(FormBody.Builder().build())
+            .build()
+
+        response = OkHttpClient().newCall(request).await()
+
+        if (!response.isSuccessful) throw InvalidServerException("Fembed resource couldn't find it or server down")
+
+        val body = response.body?.string().toString()
+        val source = JSONObject(body)
+        check(source.getBoolean("success")) {  "Request was not succeeded" }
+
+        val array = source.getJSONArray("data")
+
+        for (i in 0 until array.length()) {
+            val `object` = array.getJSONObject(i)
+            val name = `object`.getString("label")
+            url = `object`.getString("file")
+
+            add(File(name, url))
+        }
+    }
+
+    private fun getApiUrl(host : String, id : String) : String = "https://$host/api/source/$id"
+
+}
