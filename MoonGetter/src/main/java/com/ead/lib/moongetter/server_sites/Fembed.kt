@@ -1,6 +1,8 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
+import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.core.system.extensions.delete
 import com.ead.lib.moongetter.models.Server
@@ -14,6 +16,8 @@ import org.json.JSONObject
 
 class Fembed(context: Context, url : String) : Server(context,url) {
 
+    override val isDeprecated: Boolean get() = true
+
     override suspend fun onExtract() {
 
         var request: Request =  Request.Builder().url(url).build()
@@ -22,7 +26,7 @@ class Fembed(context: Context, url : String) : Server(context,url) {
             .newCall(request)
             .await()
 
-        if (!response.isSuccessful) throw InvalidServerException("Fembed domain is down")
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.FembedIdentifier))
 
         val host = response.request.url.host
 
@@ -30,7 +34,7 @@ class Fembed(context: Context, url : String) : Server(context,url) {
             string = url,
             regex = "([vf])([/=])(.+)([/&])?",
             groupIndex = 3
-        ) ?: throw InvalidServerException("Fembed resource couldn't find it")
+        ) ?: throw InvalidServerException(context.getString(R.string.server_regex_could_not_find_id,Properties.FembedIdentifier))
 
         val videoId = matchVideoId
             .delete("[&/]")
@@ -41,7 +45,7 @@ class Fembed(context: Context, url : String) : Server(context,url) {
 
         response = OkHttpClient().newCall(request).await()
 
-        if (!response.isSuccessful) throw InvalidServerException("Fembed resource couldn't find it or server down")
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.FembedIdentifier))
 
         val body = response.body?.string().toString()
         val source = JSONObject(body)

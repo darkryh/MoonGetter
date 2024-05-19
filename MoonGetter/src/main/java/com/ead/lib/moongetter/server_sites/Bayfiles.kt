@@ -1,6 +1,8 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
+import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.core.system.extensions.delete
 import com.ead.lib.moongetter.models.Server
@@ -18,13 +20,13 @@ class Bayfiles(context: Context, url : String) : Server(context,url) {
             .newCall(Request.Builder().url(url).build())
             .await()
 
+        if (response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.BayfilesIdentifier))
+
         val countMetaData: List<String> = PatternManager.multipleMatches(
             string =  response.body?.string().toString(),
             regex = "https?:\\/\\/(cdn-[0123456789][0123456789][0123456789]).(bayfiles\\.com\\/.+)",
             groupIndex = 0
-        )
-
-        if (countMetaData.isEmpty()) throw InvalidServerException("Bayfiles resource couldn't find it")
+        ).ifEmpty { throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,Properties.BayfilesIdentifier)) }
 
         if (countMetaData.size > 1)
 

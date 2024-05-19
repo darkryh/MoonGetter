@@ -1,11 +1,9 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
-import android.webkit.WebView
+import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
-import com.ead.lib.moongetter.core.system.extensions.evaluateJavaScript
-import com.ead.lib.moongetter.core.system.models.MoonWebView
-import com.ead.lib.moongetter.core.system.models.ServerWebClient
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
@@ -15,6 +13,7 @@ import okhttp3.Request
 class StreamSb(context: Context, url : String) : Server(context,url) {
 
     private val rawServers : MutableList<String> = mutableListOf()
+    override val isDeprecated: Boolean get() = true
 
     override suspend fun onExtract() {
 
@@ -29,9 +28,7 @@ class StreamSb(context: Context, url : String) : Server(context,url) {
         val totalData: List<String> = PatternManager.multipleMatches(
             string =  response.body?.string().toString(),
             regex =  "onclick=\"download_video(.*?)\""
-        )
-
-        if (totalData.isEmpty()) throw InvalidServerException("StreamSb resource couldn't find it")
+        ).ifEmpty { throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.StreamSbIdentifier)) }
 
         for (data in totalData) {
 
@@ -47,30 +44,9 @@ class StreamSb(context: Context, url : String) : Server(context,url) {
 
         url = rawServers.first()
 
-    }
-
-    private fun initWebView() = onUi {
-        /*_webView = MoonWebView(context)
-
-        _webView?.webViewClient = object : ServerWebClient(webView = _webView) {
-            override fun onPageLoaded(view: WebView?, url: String?) {
-                super.onPageLoaded(view, url)
-                view?.apply {
-
-                    when(timesLoaded) {
-                        1 -> { evaluateJavaScript(skipCaptcha()) }
-                        2 -> {
-                            evaluateJavascript(getDownloadScript()) { data ->
-                                this@StreamSb.url = data.removePrefix("\"").removeSuffix("\"")
-                                //_webView?.isLoading = false
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-        setupWebView()*/
+        //to fix captcha
+        skipCaptcha()
+        getDownloadScript()
     }
 
     private fun skipCaptcha() = "document.getElementsByClassName('g-recaptcha')[0].click();"

@@ -1,6 +1,7 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
+import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
@@ -18,7 +19,7 @@ class Onefichier(context: Context, url : String,val token : String?) : Server(co
 
         val request = Request.Builder()
             .url(Properties.api1FichierDownloadRequest)
-            .header("Authorization", "Bearer ${token?: throw InvalidServerException("1Fichier token hasn't provided")}")
+            .header("Authorization", "Bearer ${(token?: throw InvalidServerException(context.getString(R.string.server_token_has_not_provided,Properties.OneFichierIdentifier))).ifEmpty { throw InvalidServerException(context.getString(R.string.server_token_could_not_be_empty,Properties.OneFichierIdentifier)) }}")
             .header("Content-Type", "application/json")
             .post(getRequestBody())
             .build()
@@ -31,7 +32,7 @@ class Onefichier(context: Context, url : String,val token : String?) : Server(co
 
             val source = JSONObject(responseBody)
             val status = source.getString("status")
-            if (status != "OK") throw InvalidServerException("1Fichier resource couldn't find it")
+            if (status != "OK") throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.OneFichierIdentifier))
 
             url = source.getString("url")
             addDefault()
@@ -39,9 +40,10 @@ class Onefichier(context: Context, url : String,val token : String?) : Server(co
         }
         else {
             when(response.code) {
-                401 -> throw InvalidServerException("1Fichier token expired or incorrect")
-                in 500..503 -> throw InvalidServerException("1Fichier domain is Down")
-                else -> throw  InvalidServerException("Unexpected request error")
+                unauthorized -> throw InvalidServerException(context.getString(R.string.server_token_expired_or_invalid,Properties.OneFichierIdentifier))
+                in clientError -> throw InvalidServerException(context.getString(R.string.server_request_wrong_method,Properties.OneFichierIdentifier))
+                in serverError -> throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.OneFichierIdentifier))
+                else -> throw  InvalidServerException(context.getString(R.string.unknown_error))
             }
         }
     }

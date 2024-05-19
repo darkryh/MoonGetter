@@ -1,6 +1,8 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
+import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -16,11 +18,13 @@ class Senvid(context: Context, url : String) : Server(context,url) {
             .newCall(Request.Builder().url(url).build())
             .await()
 
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.SendvidIdentifier))
+
         url = PatternManager
             .singleMatch(
                 string =  response.body?.string().toString(),
                 regex =  "<source src=\"(.*?)\""
-            ) ?: throw InvalidServerException("Senvid resource couldn't find it")
+            ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.SendvidIdentifier))
 
         addDefault()
     }

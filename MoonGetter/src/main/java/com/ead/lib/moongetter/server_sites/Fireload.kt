@@ -1,7 +1,10 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
+import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 
 class Fireload(context: Context,url : String) : Server(context,url) {
 
@@ -9,6 +12,13 @@ class Fireload(context: Context,url : String) : Server(context,url) {
         initializeBrowser()
 
         loadUrlAwait(url)
+
+        val titleState = evaluateJavascriptCode("document.title")
+            .removeSurrounding("\"")
+
+        if (titleState == "Error | Fireload")
+            throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.FireloadIdentifier))
+
         evaluateJavascriptCodeAndDownload(scriptLoader())
 
         url = downloadableDeferredResource().await() ?:"null"
@@ -24,7 +34,7 @@ class Fireload(context: Context,url : String) : Server(context,url) {
         setTimeout(function() {
             if (verifyCondition) {
             
-                verifyCondition = downloadButton.href === 'javascript:void(0)';
+                verifyCondition = downloadButton.href == 'javascript:void(0)';
                 
                 if (verifyCondition) {
                     verifier();
