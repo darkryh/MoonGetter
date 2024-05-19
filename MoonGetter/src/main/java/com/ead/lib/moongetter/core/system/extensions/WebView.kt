@@ -30,18 +30,6 @@ fun String.lineSeparator(): String {
     return this.delete("\\n") + System.lineSeparator()
 }
 
-fun WebView.evaluateJavaScript(script: String) {
-    evaluateJavascript(script, null)
-}
-
-
-suspend fun WebView.evaluateJavascriptSuspend(js: String): String = suspendCancellableCoroutine { continuation ->
-    Thread.onUi {
-        evaluateJavascript(js) { value ->
-            continuation.resume(value)
-        }
-    }
-}
 
 fun WebView.resetClient() {
     webViewClient = WebViewClient()
