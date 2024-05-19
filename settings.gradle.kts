@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "MoonGetter"
 include(":app")
 include(":MoonGetter")
+include(":Media3Player")
