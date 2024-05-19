@@ -11,16 +11,23 @@ fun WebView.getSourceCode(callback: (String) -> Unit) {
         """
             let html = document.documentElement.outerHTML;
             html = html.replace(/\\n/g, '\n');
+          
         """.trimIndent()
     ) { value ->
 
         val result = (value
-            ?.takeIf { it.isNotEmpty() } ?: "null")
+            .replace("\\u003C","<")
+            .lineSeparator()
+            .replace("\\\"","\"")
+            .takeIf { it.isNotEmpty() } ?: "null")
             .trim().removeSurrounding("\"")
 
         callback(result)
-
     }
+}
+
+fun String.lineSeparator(): String {
+    return this.delete("\\n") + System.lineSeparator()
 }
 
 fun WebView.evaluateJavaScript(script: String) {
