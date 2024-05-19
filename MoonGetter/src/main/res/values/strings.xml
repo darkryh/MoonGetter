@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_servers_found">Not servers found</string>
+    <string name="url_not_provided">URL not provided</string>
+    <string name="urls_not_provided">URLs not provided</string>
+    <string name="server_domain_is_down">%1$s domain is down</string>
+    <string name="server_request_wrong_method">%1$s request wrong method</string>
+    <string name="server_resource_could_not_find_it">%1$s resource couldn\'t find it</string>
+    <string name="server_requested_resource_was_taken_down">%1$s requested resource was taken down</string>
+    <string name="server_regex_could_not_find_id">%1$s server regex couldn\'t find id</string>
+    <string name="server_token_has_not_provided">%1$s server token hasn\'t provided</string>
+    <string name="server_token_expired_or_invalid">%1$s server token expired or invalid</string>
+    <string name="server_token_could_not_be_empty">%1$s server token couldn\'t be empty</string>
+    <string name="unknown_error">Unknown error</string>
+</resources>
