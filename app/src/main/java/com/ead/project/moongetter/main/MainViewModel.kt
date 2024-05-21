@@ -7,41 +7,85 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ead.lib.moongetter.MoonGetter
-import com.ead.lib.moongetter.models.File
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class MainViewModel : ViewModel() {
 
-    private val _messageResult : MutableState<List<File>> = mutableStateOf(emptyList())
-    val messageResult : State<List<File>> = _messageResult
+    private val _messageResult : MutableState<List<Video>> = mutableStateOf(emptyList())
+    val messageResult : State<List<Video>> = _messageResult
 
     private val _eventFlow : MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow : SharedFlow<UiEvent> = _eventFlow
 
-    fun onEvent(event: MainEvent) {
-        when(event) {
-            is MainEvent.OnNewResult -> {
-                viewModelScope.launch (Dispatchers.IO) {
+    private val _mediaUrlSelected : MutableState<String?> = mutableStateOf(null)
+    val mediaUrlSelected : State<String?> = _mediaUrlSelected
 
-                    try {
-                        val serverResult = MoonGetter
+    private val your1FichierToken = "Your 1fichier token"
+
+    fun onEvent(event: MainEvent) {
+        viewModelScope.launch (Dispatchers.IO) {
+            try {
+
+                when(event) {
+                    is MainEvent.OnNewResult -> {
+
+                        val serversResults = MoonGetter
                             .initialize(context = event.context)
-                            .connect(url = event.url)
-                            .set1FichierToken("gBCZMnGJuFEdfX6kPkITMSS1hw=ieE_i")
+                            .connect(url = event.url ?: return@launch)
+                            .set1FichierToken(your1FichierToken)
                             .get()
 
-                        _messageResult.value = serverResult.files
+                        _messageResult.value = serversResults?.videos ?: emptyList()
+                    }
 
-                    } catch (e : InvalidServerException) {
-                        _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
+                    is MainEvent.OnUntilFindNewResult -> {
+
+                        val serversResults = MoonGetter
+                            .initialize(context = event.context)
+                            .connect(urls = event.urls)
+                            .set1FichierToken(your1FichierToken)
+                            .getUntilFindResource()
+
+                        _messageResult.value = serversResults?.videos ?: emptyList()
+
+                    }
+
+                    is MainEvent.OnNewResults -> {
+
+                        val serversResults = MoonGetter
+                            .initialize(context = event.context)
+                            .connect(urls = event.urls)
+                            .set1FichierToken(your1FichierToken)
+                            .getList()
+
+                        _messageResult.value = serversResults
+                            .flatMap { it.videos }
+
+                    }
+
+                    is MainEvent.OnSelectedUrl -> {
+                        _mediaUrlSelected.value = event.url
                     }
                 }
+
+                if (messageResult.value.isNotEmpty() && event !is MainEvent.OnSelectedUrl) {
+                   _mediaUrlSelected.value = messageResult.value.first().url
+                }
+
+            } catch (e : InvalidServerException) {
+                _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
+            }
+            catch (e : IOException) {
+                _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
             }
         }
+
     }
 
     sealed class UiEvent {
