@@ -7,8 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ead.lib.moongetter.MoonGetter
+import com.ead.lib.moongetter.models.ServerIntegration
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.project.moongetter.domain.custom_servers.SenvidModified
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -39,6 +41,14 @@ class MainViewModel : ViewModel() {
                             .initialize(context = event.context)
                             .connect(url = event.url ?: return@launch)
                             .set1FichierToken(your1FichierToken)
+                            .setCustomServers(
+                                listOf(
+                                     ServerIntegration(
+                                        serverClass = SenvidModified::class.java,
+                                        pattern = """https://custom\.domain\.com/aqua/sv\?url=([^&]+)"""
+                                    )
+                                )
+                            )
                             .get()
 
                         _messageResult.value = serversResults?.videos ?: emptyList()
@@ -50,6 +60,14 @@ class MainViewModel : ViewModel() {
                             .initialize(context = event.context)
                             .connect(urls = event.urls)
                             .set1FichierToken(your1FichierToken)
+                            .setCustomServers(
+                                listOf(
+                                    ServerIntegration(
+                                        serverClass = SenvidModified::class.java,
+                                        pattern = """https://custom\.domain\.com/aqua/sv\?url=([^&]+)"""
+                                    )
+                                )
+                            )
                             .getUntilFindResource()
 
                         _messageResult.value = serversResults?.videos ?: emptyList()
@@ -62,6 +80,14 @@ class MainViewModel : ViewModel() {
                             .initialize(context = event.context)
                             .connect(urls = event.urls)
                             .set1FichierToken(your1FichierToken)
+                            .setCustomServers(
+                                listOf(
+                                    ServerIntegration(
+                                        serverClass = SenvidModified::class.java,
+                                        pattern = """https://custom\.domain\.com/aqua/sv\?url=([^&]+)"""
+                                    )
+                                )
+                            )
                             .getList()
 
                         _messageResult.value = serversResults
