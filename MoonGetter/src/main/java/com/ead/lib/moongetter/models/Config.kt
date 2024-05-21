@@ -99,15 +99,17 @@ open class Config(
          *
          * listOf(
          *
-         *      ServerIntegration(CustomServer1(), "regexPattern1"),
+         *      ServerIntegration(CustomServer1::class.java, "regexPattern1"),
          *
-         *      ServerIntegration(CustomServer2(), "regexPattern2"),
+         *      ServerIntegration(CustomServer2::class.java, "regexPattern2"),
          *
-         *      ServerIntegration(CustomServer3(), "regexPattern3")
+         *      ServerIntegration(CustomServer3::class.java, "regexPattern3")
          *
          *      )
          *
          * )
+         *
+         * provide the configuration to provide your own servers.
          */
         fun setCustomServers(servers : List<ServerIntegration>) = apply {
             this.servers = servers
@@ -131,7 +133,7 @@ open class Config(
         fun identifier() : String? =
             ServerFactory.identifier(
                 url = url,
-                serverIntegrations = emptyList()
+                serverIntegrations = servers
             )
 
 
@@ -150,7 +152,7 @@ open class Config(
         fun identifierList(): List<String> =
             ServerFactory.identifierList(
                 urls = urls,
-                serverIntegrations = emptyList()
+                serverIntegrations = servers
             )
 
 
