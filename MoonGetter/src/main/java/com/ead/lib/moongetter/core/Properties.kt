@@ -44,5 +44,4 @@ object Properties {
     const val Voe = "https?://(?:voe|markstyleall|shannonpersonalcost|cindyeyefinal)\\.com/(?:e|d)/\\w+"
     const val StreamWish = "https?://(?:embedwish|streamwish|cdnwish|jodwish|swhoi)\\.(?:com|to)/e/\\w+"
     const val Vidguard = "https:\\/\\/listeamed\\.net\\/e\\/[a-zA-Z0-9]+"
-
 }
