@@ -67,6 +67,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //okhttp
+    implementation(libs.okhttp)
+
     implementation(project(":MoonGetter"))
     implementation(project(":Media3Player"))
 }
