@@ -41,7 +41,10 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel : MainViewModel by viewModels()
 
+    private val customUrl = "https://custom.domain.com/aqua/sv?url=https://sendvid.com/k555oewr"
+
     private val exampleCollectedVideosFromInternet = listOf(
+        customUrl,
         "https://streamtape.com/e/0V8ALXqzvVsb1vg",
         "https://filelions.site/v/zr9pb8kv414c",
         "https://cindyeyefinal.com/e/al4hh7l8zxlz",
@@ -51,6 +54,7 @@ class MainActivity : ComponentActivity() {
         "https://ok.ru/videoembed/8136284178989",
         "https://drive.google.com/file/d/0BxSRINyeLorEMnBUbU5DVGJsZlU/view?usp=drive_link&resourcekey=0-sE0qdd6LU2v1XH7cI5suGw"
     )
+
 
 
 
@@ -98,7 +102,7 @@ class MainActivity : ComponentActivity() {
                         /*viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = exampleCollectedVideosFromInternet.first()
+                                url = customUrl
                             )
                         )*/
 
