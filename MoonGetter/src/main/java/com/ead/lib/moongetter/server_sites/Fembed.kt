@@ -6,7 +6,7 @@ import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.core.system.extensions.delete
 import com.ead.lib.moongetter.models.Server
-import com.ead.lib.moongetter.models.File
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.FormBody
@@ -58,7 +58,7 @@ class Fembed(context: Context, url : String) : Server(context,url) {
             val name = `object`.getString("label")
             url = `object`.getString("file")
 
-            add(File(name, url))
+            add(Video(name, url))
         }
     }
 

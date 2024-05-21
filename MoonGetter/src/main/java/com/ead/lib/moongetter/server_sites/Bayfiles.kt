@@ -6,7 +6,7 @@ import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.core.system.extensions.delete
 import com.ead.lib.moongetter.models.Server
-import com.ead.lib.moongetter.models.File
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
@@ -32,7 +32,7 @@ class Bayfiles(context: Context, url : String) : Server(context,url) {
 
             for (i in 0 until countMetaData.size / 2) {
                 url = fixDownloadLinks(countMetaData[i])
-                add(File(quality(i),url))
+                add(Video(quality(i),url))
             }
 
         else {
