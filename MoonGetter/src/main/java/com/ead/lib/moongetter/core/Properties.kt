@@ -1,7 +1,6 @@
 package com.ead.lib.moongetter.core
 
 object Properties {
-    const val Default = "Default"
 
     const val api1FichierDownloadRequest = "https://api.1fichier.com/v1/download/get_token.cgi"
 
