@@ -4,17 +4,19 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -28,18 +30,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ead.lib.moongetter.models.File
+import com.ead.lib.moongetter.models.Video
 import com.ead.project.moongetter.main.MainEvent
 import com.ead.project.moongetter.main.MainViewModel
 import com.ead.project.moongetter.presentation.theme.MoonGetterTheme
+import com.ead.test.media3player.Player
 import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
 
     private val viewModel : MainViewModel by viewModels()
 
+    private val exampleCollectedVideosFromInternet = listOf(
+        "https://streamtape.com/e/0V8ALXqzvVsb1vg",
+        "https://filelions.site/v/zr9pb8kv414c",
+        "https://cindyeyefinal.com/e/al4hh7l8zxlz",
+        "https://pixeldrain.com/u/VbW82s5W",
+        "https://www.mediafire.com/file/6gwdbflmrgxe3ta",
+        "https://1fichier.com/?vgtzab3jztco6vw13kgw",
+        "https://ok.ru/videoembed/8136284178989",
+        "https://drive.google.com/file/d/0BxSRINyeLorEMnBUbU5DVGJsZlU/view?usp=drive_link&resourcekey=0-sE0qdd6LU2v1XH7cI5suGw"
+    )
+
+
+
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             MoonGetterTheme {
                 // A surface container using the 'background' color from the theme
@@ -64,10 +82,33 @@ class MainActivity : ComponentActivity() {
                     }
 
                     LaunchedEffect(key1 = true) {
-                        viewModel.onEvent(
+                        /**
+                         * Example use case to find the first resource possible or null
+                         */
+                        /*viewModel.onEvent(
+                            event = MainEvent.OnUntilFindNewResult(
+                                context = this@MainActivity as Context,
+                                urls = exampleCollectedVideosFromInternet
+                            )
+                        )*/
+
+                        /**
+                         * Example use case to find resources from a specific url
+                         */
+                        /*viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://streamtape.com/e/vLOarxD7LzsD0J"
+                                url = exampleCollectedVideosFromInternet.first()
+                            )
+                        )*/
+
+                        /**
+                         * Example use case to find all possible resources from a list of urls
+                         */
+                        viewModel.onEvent(
+                            event = MainEvent.OnNewResults(
+                                context = this@MainActivity as Context,
+                                urls = exampleCollectedVideosFromInternet
                             )
                         )
                     }
@@ -78,12 +119,28 @@ class MainActivity : ComponentActivity() {
                         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                     ) { paddingValues ->
 
-                        MessageResult(
+                        LazyColumn(
                             modifier = Modifier
+                                .fillMaxSize()
                                 .padding(paddingValues)
-                                .fillMaxSize(),
-                            files = viewModel.messageResult.value
-                        )
+                        ) {
+                            stickyHeader {
+                                Player(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    url = viewModel.mediaUrlSelected.value
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                            }
+                            item {
+                                MessageResult(
+                                    videos = viewModel.messageResult.value,
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    event = viewModel::onEvent
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -92,9 +149,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MessageResult(files : List<File>, modifier: Modifier = Modifier) {
+fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (MainEvent) -> Unit) {
 
-    if (files.isEmpty()) {
+    if (videos.isEmpty()) {
         Text(
             text = "Loading Resource..."
         )
@@ -103,17 +160,24 @@ fun MessageResult(files : List<File>, modifier: Modifier = Modifier) {
 
     val context = LocalContext.current
 
-    LazyColumn(
+    Column(
         modifier = modifier
     ) {
-        item {
-            Spacer(
-                modifier = Modifier.height(32.dp)
-            )
-        }
-        items(files) { file ->
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+        Text(
+            text = "Click Any Option to Reproduce",
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        videos.forEach { file ->
             Text(
-                text = "title : " + file.title
+                text = if(file.quality != null) {
+                    "Quality : " + file.quality
+                } else {
+                    "Quality unknown"
+                }
             )
             Spacer(
                 modifier = Modifier.height(8.dp)
@@ -122,19 +186,24 @@ fun MessageResult(files : List<File>, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .clickable {
 
-                    val clipboard = context.getSystemService(ClipboardManager::class.java)
-                    val clip = ClipData.newPlainText("Text copied", file.url)
+                        /**
+                         * Copy url to the clipboard
+                         */
 
-                    clipboard.setPrimaryClip(clip)
-                    Toast.makeText(context, "Text copied to clipboard", Toast.LENGTH_SHORT).show()
-                },
+                        val clipboard = context.getSystemService(ClipboardManager::class.java)
+                        val clip = ClipData.newPlainText("Text copied", file.url)
+
+                        clipboard.setPrimaryClip(clip)
+                        event(MainEvent.OnSelectedUrl(file.url))
+                    },
                 text = "downloadUrl : " + file.url,
-                maxLines = 4
+                maxLines = 15
             )
             Spacer(
                 modifier = Modifier.height(8.dp)
             )
         }
+        Text(text = "developed by Darkryh")
     }
 }
 
@@ -142,6 +211,9 @@ fun MessageResult(files : List<File>, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     MoonGetterTheme {
-        MessageResult(emptyList())
+        MessageResult(
+            emptyList(),
+            event = {}
+        )
     }
 }
