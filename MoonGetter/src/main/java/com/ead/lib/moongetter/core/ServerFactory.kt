@@ -2,7 +2,6 @@ package com.ead.lib.moongetter.core
 
 import android.content.Context
 import com.ead.lib.moongetter.R
-import com.ead.lib.moongetter.models.IdentifierIntegration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.ServerIntegration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -39,71 +38,32 @@ object ServerFactory {
      */
     fun identifier(
         url: String,
-        serverIntegrations: List<IdentifierIntegration>
+        serverIntegrations: List<ServerIntegration>
     ) : String? {
-        val identifier = if (PatternManager.match(Properties.Anonfiles,url)) {
-            Properties.AnonfilesIdentifier
+        val identifier = serverIntegrations.singleOrNull {
+            PatternManager.match(it.pattern, url)
+        }?.serverClass?.simpleName ?: when {
+            PatternManager.match(Properties.Anonfiles, url) -> Properties.AnonfilesIdentifier
+            PatternManager.match(Properties.Bayfiles, url) -> Properties.BayfilesIdentifier
+            PatternManager.match(Properties.Fembed, url) -> Properties.FembedIdentifier
+            PatternManager.match(Properties.Filelions, url) -> Properties.FilelionsIdentifier
+            PatternManager.match(Properties.Filemoon, url) -> Properties.FilemoonIdentifier
+            PatternManager.match(Properties.Fireload, url) -> Properties.FireloadIdentifier
+            PatternManager.match(Properties.Gofile, url) -> Properties.GofileIdentifier
+            PatternManager.match(Properties.GoogleDrive, url) -> Properties.GoogleDriveIdentifier
+            PatternManager.match(Properties.Mediafire, url) -> Properties.MediafireIdentifier
+            PatternManager.match(Properties.Okru, url) -> Properties.OkruIdentifier
+            PatternManager.match(Properties.OneFichier, url) -> Properties.OneFichierIdentifier
+            PatternManager.match(Properties.PixelDrain, url) -> Properties.PixelDrainIdentifier
+            PatternManager.match(Properties.Sendvid, url) -> Properties.SendvidIdentifier
+            PatternManager.match(Properties.StreamSb, url) -> Properties.StreamSbIdentifier
+            PatternManager.match(Properties.Streamtape, url) -> Properties.StreamtapeIdentifier
+            PatternManager.match(Properties.StreamWish, url) -> Properties.StreamWishIdentifier
+            PatternManager.match(Properties.Voe, url) -> Properties.VoeIdentifier
+            PatternManager.match(Properties.Vidguard, url) -> Properties.VidguardIdentifier
+            else -> null
         }
-        else if (PatternManager.match(Properties.Bayfiles,url)) {
-            Properties.BayfilesIdentifier
-        }
-        else if (PatternManager.match(Properties.Fembed,url)) {
-            Properties.FembedIdentifier
-        }
-        else if (PatternManager.match(Properties.Filelions,url)) {
-            Properties.FilelionsIdentifier
-        }
-        else if (PatternManager.match(Properties.Filemoon,url)) {
-            Properties.FilemoonIdentifier
-        }
-        else if (PatternManager.match(Properties.Fireload,url)) {
-            Properties.FireloadIdentifier
-        }
-        else if (PatternManager.match(Properties.Gofile,url)) {
-            Properties.GofileIdentifier
-        }
-        else if (PatternManager.match(Properties.GoogleDrive,url)) {
-            Properties.GoogleDriveIdentifier
-        }
-        else if (PatternManager.match(Properties.Mediafire,url)) {
-            Properties.MediafireIdentifier
-        }
-        else if (PatternManager.match(Properties.Okru,url)) {
-            Properties.OkruIdentifier
-        }
-        else if (PatternManager.match(Properties.OneFichier,url)) {
-            Properties.OneFichierIdentifier
-        }
-        else if (PatternManager.match(Properties.PixelDrain,url)) {
-            Properties.PixelDrainIdentifier
-        }
-        else if (PatternManager.match(Properties.Sendvid,url)) {
-            Properties.SendvidIdentifier
-        }
-        else if (PatternManager.match(Properties.StreamSb,url)) {
-            Properties.StreamSbIdentifier
-        }
-        else if (PatternManager.match(Properties.Streamtape,url)) {
-            Properties.StreamtapeIdentifier
-        }
-        else if (PatternManager.match(Properties.StreamWish,url)) {
-            Properties.StreamWishIdentifier
-        }
-        else if (PatternManager.match(Properties.Voe,url)) {
-            Properties.VoeIdentifier
-        }
-        else if (PatternManager.match(Properties.Vidguard,url)) {
-            Properties.VidguardIdentifier
-        }
-        else {
-            serverIntegrations.forEach { serverIntegration ->
-                if (PatternManager.match(serverIntegration.pattern,url)) {
-                    return serverIntegration.identifier
-                }
-            }
 
-            null
-        }
 
         return identifier
     }
@@ -114,7 +74,7 @@ object ServerFactory {
      */
     fun identifierList(
         urls: List<String>,
-        serverIntegrations: List<IdentifierIntegration>
+        serverIntegrations: List<ServerIntegration>
     ) : List<String> {
         val identifiers : MutableList<String> = mutableListOf()
 
@@ -138,124 +98,88 @@ object ServerFactory {
         oneFichierToken : String?,
         serverIntegrations : List<ServerIntegration>
     ) : Server? {
-        val server = if (PatternManager.match(Properties.Anonfiles,url)) {
-            Anonfiles(
+
+        val server = serverIntegrations.getServerInstance(
+            context = context,
+            url = url,
+        ) ?:
+        when {
+            PatternManager.match(Properties.Anonfiles, url) -> Anonfiles(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Bayfiles,url)) {
-            Bayfiles(
+            PatternManager.match(Properties.Bayfiles, url) -> Bayfiles(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Fembed,url)) {
-            Fembed(
+            PatternManager.match(Properties.Fembed, url) -> Fembed(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Filelions,url)) {
-            Filelions(
+            PatternManager.match(Properties.Filelions, url) -> Filelions(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Filemoon,url)) {
-            Filemoon(
+            PatternManager.match(Properties.Filemoon, url) -> Filemoon(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Fireload,url)) {
-            Fireload(
+            PatternManager.match(Properties.Fireload, url) -> Fireload(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Gofile,url)) {
-            Gofile(
+            PatternManager.match(Properties.Gofile, url) -> Gofile(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.GoogleDrive,url)) {
-            GoogleDrive(
+            PatternManager.match(Properties.GoogleDrive, url) -> GoogleDrive(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Mediafire,url)) {
-            Mediafire(
+            PatternManager.match(Properties.Mediafire, url) -> Mediafire(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Okru,url)) {
-            Okru(
+            PatternManager.match(Properties.Okru, url) -> Okru(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.OneFichier,url)) {
-            Onefichier(
+            PatternManager.match(Properties.OneFichier, url) -> Onefichier(
                 context = context,
                 url = url,
                 token = oneFichierToken
             )
-        }
-        else if (PatternManager.match(Properties.PixelDrain,url)) {
-            PixelDrain(
+            PatternManager.match(Properties.PixelDrain, url) -> PixelDrain(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Sendvid,url)) {
-            Senvid(
+            PatternManager.match(Properties.Sendvid, url) -> Senvid(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.StreamSb,url)) {
-            StreamSb(
+            PatternManager.match(Properties.StreamSb, url) -> StreamSb(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Streamtape,url)) {
-            Streamtape(
+            PatternManager.match(Properties.Streamtape, url) -> Streamtape(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.StreamWish,url)) {
-            StreamWish(
+            PatternManager.match(Properties.StreamWish, url) -> StreamWish(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Voe,url)) {
-            Voe(
+            PatternManager.match(Properties.Voe, url) -> Voe(
                 context = context,
                 url = url
             )
-        }
-        else if (PatternManager.match(Properties.Vidguard,url)) {
-            Vidguard(
+            PatternManager.match(Properties.Vidguard, url) -> Vidguard(
                 context = context,
                 url = url
             )
+            else -> null
         }
-        else {
-            serverIntegrations.forEach { serverIntegration ->
-                if (PatternManager.match(serverIntegration.pattern,url)) {
-                    return serverIntegration.server
-                }
-            }
 
-            null
-        }
 
         if (server?.isDeprecated == false) server.onExtract()
 
