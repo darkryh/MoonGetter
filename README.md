@@ -42,12 +42,22 @@ dependencies {
 class MyViewModel : ViewModel() {
 
     fun getMediaStreams(context: Context, url: String) = viewModelScope.launch(Dispatchers.IO) {
+	try {
+
         val server: Server? = MoonGetter
             .initialize(context = context)
             .connect(url = url)
             .get()
 
         val streamsResult = server?.videos
+
+	}
+	catch (e : InvalidServerException) {
+                e.printStackTrace()
+        }
+        catch (e : IOException) {
+               e.printStackTrace()
+	}
     }
 }
 ```
