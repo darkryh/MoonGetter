@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin)
+    id("maven-publish")
 }
 
 android {
@@ -29,6 +30,20 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            afterEvaluate {
+                from(components["release"])
+            }
+
+            groupId = "com.ead.lib"
+            artifactId = "MoonGetter"
+            version = "0.0.1"
+        }
     }
 }
 
