@@ -99,22 +99,22 @@ class MainActivity : ComponentActivity() {
                         /**
                          * Example use case to find resources from a specific url
                          */
-                        /*viewModel.onEvent(
+                        viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = customUrl
+                                url = "https://listeamed.net/e/4bQVOjWP0X5wKmZ"
                             )
-                        )*/
+                        )
 
                         /**
                          * Example use case to find all possible resources from a list of urls
                          */
-                        viewModel.onEvent(
+                        /*viewModel.onEvent(
                             event = MainEvent.OnNewResults(
                                 context = this@MainActivity as Context,
                                 urls = exampleCollectedVideosFromInternet
                             )
-                        )
+                        )*/
                     }
 
                     Scaffold(
