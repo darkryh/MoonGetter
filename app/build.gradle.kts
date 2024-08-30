@@ -70,6 +70,7 @@ dependencies {
     //okhttp
     implementation(libs.okhttp)
 
+    //implementation("com.github.darkryh:MoonGetter:0.0.1-beta")
     implementation(project(":MoonGetter"))
     implementation(project(":Media3Player"))
 }
