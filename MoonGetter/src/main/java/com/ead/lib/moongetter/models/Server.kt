@@ -266,6 +266,19 @@ open class Server(
                 webView.apply {
                     webViewClient = object : MoonClient() {
 
+                        override fun onPageLoaded(view: WebView?, url: String?) {
+                            super.onPageLoaded(view, url)
+
+                            view?.evaluateJavascript(
+                                """
+                                  setTimeout(function() {
+                                    document.getElementsByClassName("jw-icon jw-icon-display jw-button-color jw-reset")[0].click();
+                                }, 500);  
+                                """.trimIndent()
+                            ) {
+
+                            }
+                        }
 
                         override fun shouldInterceptRequest(
                             view: WebView?,
