@@ -46,12 +46,12 @@ class MyViewModel : ViewModel() {
     fun getMediaStreams(context: Context, url: String) = viewModelScope.launch(Dispatchers.IO) {
         try {
             
-            val server: Server? = MoonGetter
+            val server: Server = MoonGetter
                 .initialize(context = context)
                 .connect(url = url)
                 .get()
             
-            val streamsResult = server?.videos
+            val streamsResult = server.videos
 
         }
         catch (e : InvalidServerException) { 
@@ -97,7 +97,7 @@ ViewModel() {
 
 	fun getMediaStreams(context : Context, url : String) = viewModelScope.launch(IO) {
 
-		val server : Server? = MoonGetter
+		val server : Server = MoonGetter
                             .initialize(context = context)
                             .connect(url = url)
                             .setCustomServers(
@@ -110,7 +110,7 @@ ViewModel() {
                             )
                             .get()
 				
-		val streamsResult = server?.videos
+		val streamsResult = server.videos
 	}
 }
 ```
