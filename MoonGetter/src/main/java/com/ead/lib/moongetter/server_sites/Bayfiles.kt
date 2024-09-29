@@ -14,6 +14,9 @@ import okhttp3.Request
 
 class Bayfiles(context: Context, url : String) : Server(context,url) {
 
+    override val isDeprecated: Boolean
+        get() = true
+
     override suspend fun onExtract() {
 
         val response = OkHttpClient()
