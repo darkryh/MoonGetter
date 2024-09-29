@@ -21,8 +21,7 @@ class Mediafire(context: Context, url : String) : Server(context,url) {
 
         url = PatternManager.singleMatch(
             string =  response.body?.string().toString(),
-            regex = "(?<=href=\")(https://download\\d+\\.mediafire\\.com/[\\w\\-]+/[\\w\\-]+/[\\w\\-\\.]+)",
-            groupIndex = 1
+            regex = "(?<=href=\")(https://download\\d+\\.mediafire\\.com/[\\w\\-]+/[\\w\\-]+/[\\w\\-\\.]+)"
         ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.MediafireIdentifier))
 
         addDefault()
