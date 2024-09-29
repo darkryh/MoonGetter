@@ -200,9 +200,6 @@ object ServerFactory {
 
         val serverResult = server ?: return null
 
-        if (serverResult.javaClass.annotations.any { it == Pending() }) {
-            print("The server ${serverResult.javaClass.simpleName} is pending")
-        }
 
         if (!serverResult.isDeprecated) server.onExtract()
 
