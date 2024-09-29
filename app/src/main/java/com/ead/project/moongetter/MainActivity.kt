@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
     private val customUrl = "https://custom.domain.com/aqua/sv?url=https://sendvid.com/k555oewr"
 
+    @Suppress("UNUSED")
     private val exampleCollectedVideosFromInternet = listOf(
         customUrl,
         "https://1cloudfile.com/L92p",
@@ -105,7 +106,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://gofile.io/d/mE2c4b"//"https://www.fireload.com/9e1af0bb77398a11/1tomochan.mp4",
+                                url = "https://1cloudfile.com/L92p",
                             )
                         )
 
