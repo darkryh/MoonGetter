@@ -28,23 +28,16 @@ class Fireload(context: Context,url : String) : Server(context,url) {
     }
 
     private fun scriptLoader() = """
-    var verifyCondition = true;
-
     function verifier() {
         setTimeout(function() {
-            if (verifyCondition) {
-            
-                verifyCondition = downloadButton.href == 'javascript:void(0)';
-                
-                if (verifyCondition) {
-                    verifier();
-                } else {
-                    downloadButton.click();
-                }
+            if (downloadButton.href === 'javascript:void(0)') {
+                verifier();
+            } else {
+                downloadButton.click();
             }
         }, 250);
     }
-
+    
     verifier();
     """.trimIndent()
 }
