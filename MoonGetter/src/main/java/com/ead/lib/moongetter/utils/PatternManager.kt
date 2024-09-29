@@ -1,12 +1,13 @@
 package com.ead.lib.moongetter.utils
 
+import android.util.Log
 import java.util.regex.Pattern
 
 
 object PatternManager {
 
-    fun singleMatch(string: String, regex : String, groupIndex : Int = 1): String? {
-        val pattern = Pattern.compile(regex, Pattern.MULTILINE)
+    fun singleMatch(string: String, regex : String, groupIndex : Int = 1, patternFlag : Int = Pattern.MULTILINE): String? {
+        val pattern = Pattern.compile(regex, patternFlag)
         val matcher = pattern.matcher(string)
         return if (matcher.find()) {
             matcher.group(groupIndex)
