@@ -19,31 +19,22 @@ class Gofile(context: Context, url : String) : Server(context,url) {
     }
 
     private fun scriptLoader() = """
-        let condition = true;
-    
-        function loopVerifier() {
-    
-            setTimeout(function() {
-    
-                if (condition) {
-    
-                    condition = document.getElementsByClassName('plyr__control plyr__control--overlaid')[0] == null;
-    
-                    if (condition) {
-    
-                        loopVerifier();
-    
-                    }
-                    else {
-    
-                        document.getElementsByClassName('plyr__control plyr__control--overlaid')[0].click();
-                        document.getElementsByClassName('me-1 contentLink')[0].click();
-    
-                    }
+    function loopVerifier() {
+        setTimeout(function() {
+            const overlaidButton = document.querySelector('.plyr__control.plyr__control--overlaid');
+            const contentLink = document.querySelector('.me-1.contentLink');
+            
+            if (!overlaidButton) {
+                loopVerifier();
+            } else {
+                overlaidButton.click();
+                if (contentLink) {
+                    contentLink.click();
                 }
-            }, 250);
-        }
-    
-        loopVerifier();
+            }
+        }, 250);
+    }
+
+    loopVerifier();
         """.trimIndent()
 }
