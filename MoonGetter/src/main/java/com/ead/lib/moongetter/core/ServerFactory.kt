@@ -12,9 +12,12 @@ import com.ead.lib.moongetter.server_sites.Filelions
 import com.ead.lib.moongetter.server_sites.Filemoon
 import com.ead.lib.moongetter.server_sites.Fireload
 import com.ead.lib.moongetter.server_sites.Gofile
+import com.ead.lib.moongetter.server_sites.GoodStream
 import com.ead.lib.moongetter.server_sites.GoogleDrive
+import com.ead.lib.moongetter.server_sites.Luluvdo
 import com.ead.lib.moongetter.server_sites.Mediafire
 import com.ead.lib.moongetter.server_sites.Okru
+import com.ead.lib.moongetter.server_sites.OneCloudFile
 import com.ead.lib.moongetter.server_sites.Onefichier
 import com.ead.lib.moongetter.server_sites.PixelDrain
 import com.ead.lib.moongetter.server_sites.Senvid
@@ -50,10 +53,13 @@ object ServerFactory {
             PatternManager.match(Properties.Filemoon, url) -> Properties.FilemoonIdentifier
             PatternManager.match(Properties.Fireload, url) -> Properties.FireloadIdentifier
             PatternManager.match(Properties.Gofile, url) -> Properties.GofileIdentifier
+            PatternManager.match(Properties.GoodStream, url) -> Properties.GoodStreamIdentifier
             PatternManager.match(Properties.GoogleDrive, url) -> Properties.GoogleDriveIdentifier
+            PatternManager.match(Properties.Luluvdo, url) -> Properties.LuluvdoIdentifier
             PatternManager.match(Properties.Mediafire, url) -> Properties.MediafireIdentifier
             PatternManager.match(Properties.Okru, url) -> Properties.OkruIdentifier
             PatternManager.match(Properties.OneFichier, url) -> Properties.OneFichierIdentifier
+            PatternManager.match(Properties.OneCloudFile, url) -> Properties.OneCloudFileIdentifier
             PatternManager.match(Properties.PixelDrain, url) -> Properties.PixelDrainIdentifier
             PatternManager.match(Properties.Sendvid, url) -> Properties.SendvidIdentifier
             PatternManager.match(Properties.StreamSb, url) -> Properties.StreamSbIdentifier
@@ -132,7 +138,15 @@ object ServerFactory {
                 context = context,
                 url = url
             )
+            PatternManager.match(Properties.GoodStream, url) -> GoodStream(
+                context = context,
+                url = url
+            )
             PatternManager.match(Properties.GoogleDrive, url) -> GoogleDrive(
+                context = context,
+                url = url
+            )
+            PatternManager.match(Properties.Luluvdo, url) -> Luluvdo(
                 context = context,
                 url = url
             )
@@ -148,6 +162,10 @@ object ServerFactory {
                 context = context,
                 url = url,
                 token = oneFichierToken
+            )
+            PatternManager.match(Properties.OneCloudFile, url) -> OneCloudFile(
+                context = context,
+                url = url
             )
             PatternManager.match(Properties.PixelDrain, url) -> PixelDrain(
                 context = context,
@@ -180,8 +198,13 @@ object ServerFactory {
             else -> null
         }
 
+        val serverResult = server ?: return null
 
-        if (server?.isDeprecated == false) server.onExtract()
+        if (serverResult.javaClass.annotations.any { it == Pending() }) {
+            print("The server ${serverResult.javaClass.simpleName} is pending")
+        }
+
+        if (!serverResult.isDeprecated) server.onExtract()
 
         return server
     }
