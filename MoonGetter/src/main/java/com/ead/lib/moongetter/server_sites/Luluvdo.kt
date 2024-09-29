@@ -2,7 +2,6 @@ package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
 import com.ead.lib.moongetter.R
-import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
@@ -13,7 +12,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.regex.Pattern
 
-@Pending
 class Luluvdo(context: Context, url : String) : Server(context,url) {
 
     private val scriptPattern = Pattern.compile("<script type=[\"']text/javascript[\"']>(.*?)</script>", Pattern.DOTALL)
