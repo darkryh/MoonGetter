@@ -45,9 +45,12 @@ class MainActivity : ComponentActivity() {
 
     private val exampleCollectedVideosFromInternet = listOf(
         customUrl,
+        "https://1cloudfile.com/L92p",
+        "https://goodstream.uno/video/embed/70edd37dfe6c3cce",
         "https://streamtape.com/e/0V8ALXqzvVsb1vg",
         "https://filelions.site/v/zr9pb8kv414c",
         "https://cindyeyefinal.com/e/al4hh7l8zxlz",
+        "https://voe.sx/e/bfydr4fmm7jp",
         "https://pixeldrain.com/u/VbW82s5W",
         "https://www.mediafire.com/file/6gwdbflmrgxe3ta",
         "https://1fichier.com/?vgtzab3jztco6vw13kgw",
@@ -102,7 +105,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://listeamed.net/e/4bQVOjWP0X5wKmZ"
+                                url = "https://gofile.io/d/mE2c4b"//"https://www.fireload.com/9e1af0bb77398a11/1tomochan.mp4",
                             )
                         )
 
