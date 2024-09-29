@@ -40,23 +40,24 @@ dependencies {
 } 
 ```  
 # Example of Use Case
-
 ```kotlin
 class MyViewModel : ViewModel() {
 
     fun getMediaStreams(context: Context, url: String) = viewModelScope.launch(Dispatchers.IO) {
         try {
-
+            
             val server: Server = MoonGetter
                 .initialize(context = context)
                 .connect(url = url)
                 .get()
+            
+            val streamsResult = server.videos
 
-            val streamsResult = server?.videos
-
-        } catch (e: InvalidServerException) {
+        }
+        catch (e : InvalidServerException) { 
             e.printStackTrace()
-        } catch (e: IOException) {
+        }
+        catch (e : IOException) {
             e.printStackTrace()
         }
     }
@@ -91,27 +92,26 @@ class CustomServer(context: Context, url: String) : Server(context, url) {
 
 ### Integrating your CustomServer into MoonGetter
 You have to provide a list of ServerIntegration type
-
 ```kotlin
 ViewModel() {
 
-    fun getMediaStreams(context: Context, url: String) = viewModelScope.launch(IO) {
+	fun getMediaStreams(context : Context, url : String) = viewModelScope.launch(IO) {
 
-        val server: Server = MoonGetter
-            .initialize(context = context)
-            .connect(url = url)
-            .setCustomServers(
-                listOf(
-                    ServerIntegration(
-                        serverClass = CustomServer::class.java,
-                        pattern = "Your regex pattern to identify when the server is called"
-                    )
-                )
-            )
-            .get()
-
-        val streamsResult = server?.videos
-    }
+		val server : Server = MoonGetter
+                            .initialize(context = context)
+                            .connect(url = url)
+                            .setCustomServers(
+                                listOf(
+                                     ServerIntegration(
+                                        serverClass = CustomServer::class.java,
+                                        pattern = "Your regex pattern to identify when the server is called"
+                                    )
+                                )
+                            )
+                            .get()
+				
+		val streamsResult = server.videos
+	}
 }
 ```
 # Parameters
