@@ -1,6 +1,5 @@
 package com.ead.lib.moongetter.utils
 
-import android.util.Log
 import java.util.regex.Pattern
 
 
