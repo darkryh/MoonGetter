@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ead.project.moongetter"
-        minSdk = 26
+        minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
