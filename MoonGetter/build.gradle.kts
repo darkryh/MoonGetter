@@ -62,4 +62,6 @@ dependencies {
 
     //apacheCommons
     implementation(libs.commons.text)
+
+    implementation(kotlin("reflect"))
 }
