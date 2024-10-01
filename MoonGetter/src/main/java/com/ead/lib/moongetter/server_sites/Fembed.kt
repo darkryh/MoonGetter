@@ -16,7 +16,7 @@ import org.json.JSONObject
 
 class Fembed(context: Context, url : String) : Server(context,url) {
 
-    override val isDeprecated: Boolean get() = true
+    override val isDeprecated: Boolean = true
 
     override suspend fun onExtract() {
 

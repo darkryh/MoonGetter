@@ -13,7 +13,7 @@ import okhttp3.Request
 class StreamSb(context: Context, url : String) : Server(context,url) {
 
     private val rawServers : MutableList<String> = mutableListOf()
-    override val isDeprecated: Boolean get() = true
+    override val isDeprecated: Boolean = true
 
     override suspend fun onExtract() {
 
