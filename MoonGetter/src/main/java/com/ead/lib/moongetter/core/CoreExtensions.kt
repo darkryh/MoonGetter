@@ -5,7 +5,7 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.ServerIntegration
 import com.ead.lib.moongetter.utils.PatternManager
 
-fun List<ServerIntegration>.getServerInstance(context: Context, url: String) : Server? {
+internal fun List<ServerIntegration>.getServerInstance(context: Context, url: String) : Server? {
     return singleOrNull { serverIntegration ->
         PatternManager.match(serverIntegration.pattern, url)
     }?.let { serverIntegration ->
