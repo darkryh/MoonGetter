@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.server_sites
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
+import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -13,6 +14,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
+@Unstable(reason = "Needs to provide a token to work")
 class Onefichier(context: Context, url : String,val token : String?) : Server(context,url) {
 
     override suspend fun onExtract() {
