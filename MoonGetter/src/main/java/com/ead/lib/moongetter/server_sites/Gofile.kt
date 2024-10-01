@@ -1,8 +1,12 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
+import com.ead.lib.moongetter.core.Pending
+import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.Server
 
+@Pending
+@Unstable(reason = "Needs to redirect  to habilitate download")
 class Gofile(context: Context, url : String) : Server(context,url) {
 
     override val isDeprecated: Boolean get() = true
