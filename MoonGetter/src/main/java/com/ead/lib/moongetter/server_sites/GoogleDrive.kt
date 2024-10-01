@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.server_sites
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
+import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -10,6 +11,7 @@ import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
+@Unstable(reason = "Needs to adapt code to multiple downloads link in Drive")
 class GoogleDrive(context: Context, url : String) : Server(context,url) {
 
     override var url: String = fixUrl(url)
