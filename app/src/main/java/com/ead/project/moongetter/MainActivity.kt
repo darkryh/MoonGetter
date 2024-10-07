@@ -3,6 +3,7 @@ package com.ead.project.moongetter
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -49,14 +50,14 @@ class MainActivity : ComponentActivity() {
         "https://1cloudfile.com/L92p",
         "https://goodstream.uno/video/embed/70edd37dfe6c3cce",
         "https://streamtape.com/e/0V8ALXqzvVsb1vg",
-        "https://filelions.site/v/zr9pb8kv414c",
+        "https://vidhidepro.com/v/41n252u058ws",
         "https://cindyeyefinal.com/e/al4hh7l8zxlz",
         "https://voe.sx/e/bfydr4fmm7jp",
         "https://pixeldrain.com/u/VbW82s5W",
         "https://www.mediafire.com/file/6gwdbflmrgxe3ta",
         "https://1fichier.com/?vgtzab3jztco6vw13kgw",
         "https://ok.ru/videoembed/8136284178989",
-        "https://drive.google.com/file/d/0BxSRINyeLorEMnBUbU5DVGJsZlU/view?usp=drive_link&resourcekey=0-sE0qdd6LU2v1XH7cI5suGw"
+        "https://drive.google.com/file/d/0B-bHILyvaZQQNXo5cWpXMjRhZ2M/view?usp=drive_link&resourcekey=0-e4kDmIKPCj24fnzZC0fX0A"
     )
 
 
@@ -106,7 +107,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://1cloudfile.com/L92p",
+                                url = "https://www.fireload.com/9e1af0bb77398a11/2tomochan.mp4",
                             )
                         )
 
@@ -198,7 +199,11 @@ fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (M
                          * Copy url to the clipboard
                          */
 
-                        val clipboard = context.getSystemService(ClipboardManager::class.java)
+                        val clipboard: ClipboardManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            context.getSystemService(ClipboardManager::class.java)
+                        } else {
+                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        }
                         val clip = ClipData.newPlainText("Text copied", file.url)
 
                         clipboard.setPrimaryClip(clip)

@@ -1,11 +1,14 @@
 package com.ead.lib.moongetter.models
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import androidx.annotation.RequiresApi
+import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.core.system.extensions.resetClient
 import com.ead.lib.moongetter.core.system.models.MoonClient
@@ -39,7 +42,14 @@ open class Server(
     /**
      * @return true if server has videos so it means the resource was found
      */
-    val isResourceFounded get() = videos.isNotEmpty()
+    internal val isResourceFounded get() = videos.isNotEmpty()
+
+
+
+    /**
+     * @return true if the server is pending
+     */
+    internal val isPending get() = this::class.annotations.any { it::class == Pending::class }
 
 
 
@@ -207,8 +217,6 @@ open class Server(
     }
 
 
-
-
     /**
      * Is the suspend function version of WebView.loadUrl
      */
@@ -221,6 +229,15 @@ open class Server(
                 webView.apply {
                     webViewClient = object : MoonClient() {
 
+                        override fun shouldOverrideUrlLoading(
+                            view: WebView?,
+                            request: WebResourceRequest?
+                        ): Boolean {
+                            continuation.resume(Unit)
+                            webView.downloadDeferred.complete(request?.url.toString())
+
+                            return super.shouldOverrideUrlLoading(view, request)
+                        }
 
                         override fun onPageLoaded(view: WebView?, url: String?) {
                             super.onPageLoaded(view, url)
@@ -228,6 +245,7 @@ open class Server(
                             resetClient()
                         }
 
+                        @RequiresApi(Build.VERSION_CODES.M)
                         override fun onReceivedError(
                             view: WebView?,
                             request: WebResourceRequest?,
@@ -235,7 +253,6 @@ open class Server(
                         ) {
                             super.onReceivedError(view, request, error)
                             if (error?.errorCode != -1 || error.errorCode != -2) return
-
                             continuation.cancel(Throwable("error code = ${error.errorCode}, error description =${error.description}"))
                         }
                     }
@@ -306,6 +323,7 @@ open class Server(
                             return super.shouldOverrideUrlLoading(view, request)
                         }
 
+                        @RequiresApi(Build.VERSION_CODES.M)
                         override fun onReceivedError(
                             view: WebView?,
                             request: WebResourceRequest?,
@@ -380,6 +398,8 @@ open class Server(
                         ): WebResourceResponse? {
                             val mUrl = request?.url.toString()
 
+                            Log.d("test", "shouldInterceptRequest: $mUrl")
+
                             if(verificationRegex.matches(mUrl) && !isResultFounded) {
                                 isResultFounded = true
                                 continuation.resume(mUrl)
@@ -393,6 +413,7 @@ open class Server(
                             return super.shouldInterceptRequest(view, request)
                         }
 
+                        @RequiresApi(Build.VERSION_CODES.M)
                         override fun onReceivedError(
                             view: WebView?,
                             request: WebResourceRequest?,

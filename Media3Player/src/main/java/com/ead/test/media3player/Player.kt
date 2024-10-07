@@ -19,7 +19,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
 
 @OptIn(UnstableApi::class)
@@ -32,11 +36,25 @@ fun Player(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    val mediaItem = MediaItem.fromUri(url?:return)
+    val dataSourceFactory =
+        DataSource.Factory {
+            val dataSource = DefaultHttpDataSource.Factory()
+            dataSource.setUserAgent("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19")
+            dataSource.createDataSource()
+        }
+
+    val mediaItem = MediaItem
+        .Builder()
+        .setUri(url?:return)
+        .build()
+
+    val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+        .createMediaSource(mediaItem)
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             setMediaItem(mediaItem)
+            setMediaSource(mediaSource)
             playWhenReady = true
             prepare()
         }

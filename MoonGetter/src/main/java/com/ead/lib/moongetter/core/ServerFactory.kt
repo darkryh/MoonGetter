@@ -8,7 +8,7 @@ import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.server_sites.Anonfiles
 import com.ead.lib.moongetter.server_sites.Bayfiles
 import com.ead.lib.moongetter.server_sites.Fembed
-import com.ead.lib.moongetter.server_sites.Filelions
+import com.ead.lib.moongetter.server_sites.Vihide
 import com.ead.lib.moongetter.server_sites.Filemoon
 import com.ead.lib.moongetter.server_sites.Fireload
 import com.ead.lib.moongetter.server_sites.Gofile
@@ -33,7 +33,7 @@ import java.io.IOException
  * Server factory object that handle the creation of servers
  * and the identification of the servers from a url
  */
-object ServerFactory {
+internal object ServerFactory {
 
     /**
      * Identify the server from a url
@@ -49,7 +49,7 @@ object ServerFactory {
             PatternManager.match(Properties.Anonfiles, url) -> Properties.AnonfilesIdentifier
             PatternManager.match(Properties.Bayfiles, url) -> Properties.BayfilesIdentifier
             PatternManager.match(Properties.Fembed, url) -> Properties.FembedIdentifier
-            PatternManager.match(Properties.Filelions, url) -> Properties.FilelionsIdentifier
+            PatternManager.match(Properties.Vihide, url) -> Properties.VihideIdentifier
             PatternManager.match(Properties.Filemoon, url) -> Properties.FilemoonIdentifier
             PatternManager.match(Properties.Fireload, url) -> Properties.FireloadIdentifier
             PatternManager.match(Properties.Gofile, url) -> Properties.GofileIdentifier
@@ -122,7 +122,7 @@ object ServerFactory {
                 context = context,
                 url = url
             )
-            PatternManager.match(Properties.Filelions, url) -> Filelions(
+            PatternManager.match(Properties.Vihide, url) -> Vihide(
                 context = context,
                 url = url
             )
@@ -200,6 +200,7 @@ object ServerFactory {
 
         val serverResult = server ?: return null
 
+        if (serverResult.isPending) return null
 
         if (!serverResult.isDeprecated) server.onExtract()
 
