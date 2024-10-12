@@ -22,7 +22,7 @@ class Bayfiles(context: Context, url : String) : Server(context,url) {
             .newCall(Request.Builder().url(url).build())
             .await()
 
-        if (response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.BayfilesIdentifier))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.BayfilesIdentifier))
 
         val countMetaData: List<String> = PatternManager.multipleMatches(
             string =  response.body?.string().toString(),
