@@ -1,9 +1,12 @@
 package com.ead.lib.moongetter.server_sites
 
 import android.content.Context
+import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Pending
+import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 
 @Pending
 @Unstable(reason = "Needs to redirect  to habilitate download")
@@ -16,7 +19,7 @@ class Gofile(context: Context, url : String) : Server(context,url) {
 
         loadUrlAwait(url)
         evaluateJavascriptCodeAndDownload(scriptLoader())
-        url = downloadableDeferredResource().await() ?:"null"
+        url = requestDeferredResource().await()?.url ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GofileIdentifier))
 
         releaseBrowser()
         addDefault()

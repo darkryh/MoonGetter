@@ -23,7 +23,7 @@ class Fireload(context: Context,url : String) : Server(context,url) {
 
         evaluateJavascriptCodeAndDownload(scriptLoader())
 
-        url = downloadableDeferredResource().await() ?:"null"
+        url = requestDeferredResource().await()?.url ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.FireloadIdentifier))
 
         releaseBrowser()
         addDefault()
@@ -39,7 +39,6 @@ class Fireload(context: Context,url : String) : Server(context,url) {
             }
         }, 250);
     }
-    
     verifier();
     """.trimIndent()
 }
