@@ -1,10 +1,6 @@
 package com.ead.lib.moongetter.core.system.extensions
 
 import android.webkit.WebView
-import android.webkit.WebViewClient
-import com.ead.lib.moongetter.utils.Thread
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 fun WebView.getSourceCode(callback: (String) -> Unit) {
     evaluateJavascript(
@@ -28,9 +24,4 @@ fun WebView.getSourceCode(callback: (String) -> Unit) {
 
 fun String.lineSeparator(): String {
     return this.delete("\\n") + System.lineSeparator()
-}
-
-
-fun WebView.resetClient() {
-    webViewClient = WebViewClient()
 }
