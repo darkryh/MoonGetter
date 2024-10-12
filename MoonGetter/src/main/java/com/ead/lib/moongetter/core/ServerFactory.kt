@@ -14,7 +14,7 @@ import com.ead.lib.moongetter.server_sites.Fireload
 import com.ead.lib.moongetter.server_sites.Gofile
 import com.ead.lib.moongetter.server_sites.GoodStream
 import com.ead.lib.moongetter.server_sites.GoogleDrive
-import com.ead.lib.moongetter.server_sites.Luluvdo
+import com.ead.lib.moongetter.server_sites.Lulustream
 import com.ead.lib.moongetter.server_sites.Mediafire
 import com.ead.lib.moongetter.server_sites.Okru
 import com.ead.lib.moongetter.server_sites.OneCloudFile
@@ -55,7 +55,7 @@ internal object ServerFactory {
             PatternManager.match(Properties.Gofile, url) -> Properties.GofileIdentifier
             PatternManager.match(Properties.GoodStream, url) -> Properties.GoodStreamIdentifier
             PatternManager.match(Properties.GoogleDrive, url) -> Properties.GoogleDriveIdentifier
-            PatternManager.match(Properties.Luluvdo, url) -> Properties.LuluvdoIdentifier
+            PatternManager.match(Properties.Lulustream, url) -> Properties.LulustreamIdentifier
             PatternManager.match(Properties.Mediafire, url) -> Properties.MediafireIdentifier
             PatternManager.match(Properties.Okru, url) -> Properties.OkruIdentifier
             PatternManager.match(Properties.OneFichier, url) -> Properties.OneFichierIdentifier
@@ -146,7 +146,7 @@ internal object ServerFactory {
                 context = context,
                 url = url
             )
-            PatternManager.match(Properties.Luluvdo, url) -> Luluvdo(
+            PatternManager.match(Properties.Lulustream, url) -> Lulustream(
                 context = context,
                 url = url
             )
