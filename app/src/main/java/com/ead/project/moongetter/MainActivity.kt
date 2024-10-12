@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
     @Suppress("UNUSED")
     private val exampleCollectedVideosFromInternet = listOf(
         customUrl,
+        "https://flaswish.com/e/dhfe39jcywcr",
         "https://1cloudfile.com/L92p",
         "https://goodstream.uno/video/embed/70edd37dfe6c3cce",
         "https://streamtape.com/e/0V8ALXqzvVsb1vg",
@@ -107,7 +108,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://www.fireload.com/9e1af0bb77398a11/2tomochan.mp4",
+                                url = "https://luluvdo.com/e/3ygpl2o690lw",
                             )
                         )
 
