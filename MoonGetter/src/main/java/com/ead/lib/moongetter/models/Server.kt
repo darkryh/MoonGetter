@@ -3,26 +3,27 @@ package com.ead.lib.moongetter.models
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import com.ead.lib.moongetter.core.Pending
-import com.ead.lib.moongetter.core.system.extensions.await
-import com.ead.lib.moongetter.core.system.extensions.resetClient
-import com.ead.lib.moongetter.core.system.models.MoonClient
+import com.ead.lib.moongetter.core.system.extensions.onNullableResponse
 import com.ead.lib.moongetter.core.system.models.MoonWebView
+import com.ead.lib.moongetter.models.download.Request
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.Response
 import okio.IOException
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 open class Server(
     /**
@@ -49,7 +50,7 @@ open class Server(
     /**
      * @return true if the server is pending
      */
-    internal val isPending get() = this::class.annotations.any { it::class == Pending::class }
+    internal val isPending = this::class.annotations.any { it::class == Pending::class }
 
 
 
@@ -78,6 +79,10 @@ open class Server(
     protected val clientError = 400..499
     protected val serverError = 500..599
 
+    private var loadedUrlListener: (String) -> Unit = {}
+    private var overrideUrlListener: (String) -> Unit = {}
+    private var networkInterceptorListener: (String) -> Unit = {}
+    private var errorListener: (Throwable) -> Unit = {}
 
 
     /**
@@ -158,14 +163,67 @@ open class Server(
      * and domStorageEnabled validation to validate depending of the server
      */
     protected suspend fun initializeBrowser(domStorageEnabled : Boolean = true)  {
+        if (_webView != null) return
+
         onUi {
             _webView = MoonWebView(context)
+            _webView?.webChromeClient = WebChromeClient()
             webView.settings.domStorageEnabled = domStorageEnabled
+            configBrowser()
         }
 
         delay(200)
     }
 
+    private fun configBrowser() {
+        onUi {
+            webView.webViewClient = object : WebViewClient() {
+                override fun onPageFinished(
+                    view: WebView?,
+                    url: String?
+                ) {
+                    url?.let { loadedUrlListener(it) }
+                    super.onPageFinished(view, url)
+
+                }
+
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): Boolean {
+                    request?.let { overrideUrlListener(it.url.toString()) }
+                    return super.shouldOverrideUrlLoading(view, request)
+                }
+
+                override fun shouldInterceptRequest(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): WebResourceResponse? {
+                    request?.let { networkInterceptorListener(it.url.toString()) }
+                    return super.shouldInterceptRequest(view, request)
+                }
+
+                @RequiresApi(Build.VERSION_CODES.M)
+                override fun onReceivedError(
+                    view: WebView?,
+                    request: WebResourceRequest?,
+                    error: WebResourceError?
+                ) {
+                    super.onReceivedError(view, request, error)
+                    error?.errorCode?.let {
+                        if (it == -1 || it == -2) {
+                            errorListener(
+                                Throwable(
+                                    "CODE_ERROR = ${error.errorCode}, " +
+                                            "CODE_DESCRIPTION =${error.description}"
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
 
@@ -175,13 +233,9 @@ open class Server(
     protected suspend fun evaluateJavascriptCode(script : String) : String  = suspendCancellableCoroutine { continuation ->
         onUi {
             webView.apply {
-                evaluateJavascript(script) {
-                    continuation.resume(it)
-                    resetClient()
-                }
-
+                evaluateJavascript(script) { continuation.resume(it) }
                 continuation.invokeOnCancellation {
-                    downloadDeferred.cancel()
+                    requestDeferred.cancel()
                     releaseBrowser()
                 }
             }
@@ -199,17 +253,14 @@ open class Server(
     protected suspend fun evaluateJavascriptCodeAndDownload(script : String) : Unit  = suspendCancellableCoroutine { continuation ->
         onUi {
             webView.apply {
-                onDownloadListener = { urlResource ->
-                    webView.downloadDeferred.complete(urlResource)
+                onDownloadListener = { request ->
+                    webView.requestDeferred.complete(request)
                 }
-
                 evaluateJavascript(script) {
                     continuation.resume(Unit)
-                    resetClient()
                 }
-
                 continuation.invokeOnCancellation {
-                    downloadDeferred.cancel()
+                    requestDeferred.cancel()
                     releaseBrowser()
                 }
             }
@@ -222,229 +273,95 @@ open class Server(
      */
     protected suspend fun loadUrlAwait(url: String) : Unit?  {
         if ( _webView == null) return null
+        var isLoadedOrExcepted = false
 
         return suspendCancellableCoroutine { continuation ->
-            onUi {
-
-                webView.apply {
-                    webViewClient = object : MoonClient() {
-
-                        override fun shouldOverrideUrlLoading(
-                            view: WebView?,
-                            request: WebResourceRequest?
-                        ): Boolean {
-                            continuation.resume(Unit)
-                            webView.downloadDeferred.complete(request?.url.toString())
-
-                            return super.shouldOverrideUrlLoading(view, request)
-                        }
-
-                        override fun onPageLoaded(view: WebView?, url: String?) {
-                            super.onPageLoaded(view, url)
-                            continuation.resume(Unit)
-                            resetClient()
-                        }
-
-                        @RequiresApi(Build.VERSION_CODES.M)
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: WebResourceError?
-                        ) {
-                            super.onReceivedError(view, request, error)
-                            if (error?.errorCode != -1 || error.errorCode != -2) return
-                            continuation.cancel(Throwable("error code = ${error.errorCode}, error description =${error.description}"))
-                        }
-                    }
-
-                    loadUrl(url)
+            loadedUrlListener = { url ->
+                if (!isLoadedOrExcepted) {
+                    isLoadedOrExcepted = true
+                    continuation.resume(Unit)
                 }
-
+            }
+            errorListener = { error ->
+                if (!isLoadedOrExcepted) {
+                    isLoadedOrExcepted = true
+                    continuation.resumeWithException(error)
+                }
+            }
+            onUi {
+                webView.loadUrl(url)
                 continuation.invokeOnCancellation {
-                    webView.downloadDeferred.cancel()
+                    webView.requestDeferred.cancel()
                     releaseBrowser()
                 }
             }
         }
     }
-
-
-
-    /** TO-DO
-     * Is the suspend function of loadingUrl but complementing by intercepting the request
-     * developing the searching of the download url
-     */
-    protected suspend fun getInterceptionUrlAndValidateLastInterception(url: String, regex: Regex) : String?  {
-        if (_webView == null) return null
-
-        return suspendCancellableCoroutine { continuation ->
-            onUi {
-                //var isResultFounded = false
-                webView.apply {
-                    webViewClient = object : MoonClient() {
-
-                        override fun onPageLoaded(view: WebView?, url: String?) {
-                            super.onPageLoaded(view, url)
-
-                            view?.evaluateJavascript(
-                                """
-                                  setTimeout(function() {
-                                    document.getElementsByClassName("jw-icon jw-icon-display jw-button-color jw-reset")[0].click();
-                                }, 500);  
-                                """.trimIndent()
-                            ) {
-
-                            }
-                        }
-
-                        override fun shouldInterceptRequest(
-                            view: WebView?,
-                            request: WebResourceRequest?
-                        ): WebResourceResponse? {
-                            val mUrl = request?.url.toString()
-
-                            Log.d("test", "shouldInterceptRequest: $mUrl , $regex")
-
-                            /*if(regex.matches(mUrl) && !isResultFounded) {
-                                isResultFounded = true
-                                continuation.resume(mUrl)
-                            }*/
-
-                            return super.shouldInterceptRequest(view, request)
-                        }
-
-                        override fun shouldOverrideUrlLoading(
-                            view: WebView?,
-                            request: WebResourceRequest?
-                        ): Boolean {
-                            val mUrl = request?.url.toString()
-
-                            Log.d("test", "shouldOverrideUrlLoading: $mUrl")
-                            return super.shouldOverrideUrlLoading(view, request)
-                        }
-
-                        @RequiresApi(Build.VERSION_CODES.M)
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: WebResourceError?
-                        ) {
-                            super.onReceivedError(view, request, error)
-                            if (error?.errorCode != -1 || error.errorCode != -2) return
-
-                            continuation.cancel(Throwable("error code = ${error.errorCode}, error description =${error.description}"))
-                        }
-                    }
-
-                    loadUrl(url)
-                }
-
-                continuation.invokeOnCancellation {
-                    webView.downloadDeferred.cancel()
-                    releaseBrowser()
-                }
-            }
-        }
-    }
-
 
     /**
      * Is the suspend function of loadingUrl but complementing by intercepting the request
      * developing the searching of the download url
      */
-    protected suspend fun getInterceptionUrl(url: String, verificationRegex: Regex, endingRegex: Regex) : String?  {
+    protected suspend fun getInterceptionUrl(url: String, verificationRegex: Regex, endingRegex: Regex,jsCode : String? = null) : String?  {
         if (_webView == null) return null
 
+        var isResultFounded = false
+
         return suspendCancellableCoroutine { continuation ->
-            onUi {
-                var isResultFounded = false
-                webView.apply {
-                    webViewClient = object : MoonClient() {
 
-                        override fun onPageLoaded(view: WebView?, url: String?) {
-                            super.onPageLoaded(view, url)
+            loadedUrlListener = { _ ->
 
-                            val response : Response? = runBlocking {
-                                return@runBlocking try {
-                                    OkHttpClient()
-                                        .newCall(
-                                            Request.Builder()
-                                                .url(url?: return@runBlocking null)
-                                                .build())
-                                        .await()
-                                } catch (e: IllegalArgumentException) {
-                                    e.printStackTrace()
-                                    null
-                                }
-                            }
-
-                            if(response == null) {
-                                isResultFounded = true
-                                continuation.resume(null)
-                                return
-                            }
-
-                            val code = response.code
-
-                            if((code == forbidden || code == notFound) && !isResultFounded) {
-                                isResultFounded = true
-                                continuation.resume(null)
-                            }
-                        }
-
-                        override fun shouldInterceptRequest(
-                            view: WebView?,
-                            request: WebResourceRequest?
-                        ): WebResourceResponse? {
-                            val mUrl = request?.url.toString()
-
-                            Log.d("test", "shouldInterceptRequest: $mUrl")
-
-                            if(verificationRegex.matches(mUrl) && !isResultFounded) {
-                                isResultFounded = true
-                                continuation.resume(mUrl)
-                            }
-
-                            if(endingRegex.matches(mUrl) && !isResultFounded) {
-                                isResultFounded = true
-                                continuation.resume(null)
-                            }
-
-                            return super.shouldInterceptRequest(view, request)
-                        }
-
-                        @RequiresApi(Build.VERSION_CODES.M)
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: WebResourceError?
-                        ) {
-                            super.onReceivedError(view, request, error)
-                            if (error?.errorCode != -1 || error.errorCode != -2) return
-
-                            continuation.cancel(Throwable("error code = ${error.errorCode}, error description =${error.description}"))
-                        }
-                    }
-
-                    loadUrl(url)
+                jsCode?.let { code ->
+                    webView.evaluateJavascript(code) {}
                 }
 
+                val response : Response? = runBlocking { OkHttpClient().onNullableResponse(url) }
+                when(response) {
+                    null -> {
+                        isResultFounded = true
+                        continuation.resume(null)
+                    }
+                    else -> {
+                        val code = response.code
+
+                        if ((code == forbidden || code == notFound) && !isResultFounded) {
+                            isResultFounded = true
+                            continuation.resume(null)
+                        }
+                    }
+                }
+            }
+
+            networkInterceptorListener = { url ->
+                Log.d("test", "shouldInterceptRequest: $url")
+
+                if(verificationRegex.matches(url) && !isResultFounded) {
+                    isResultFounded = true
+                    continuation.resume(url)
+                }
+
+                if(endingRegex.matches(url) && !isResultFounded) {
+                    isResultFounded = true
+                    continuation.resume(null)
+                }
+            }
+            errorListener = { error -> continuation.resumeWithException(error) }
+
+            onUi {
+                webView.loadUrl(url)
                 continuation.invokeOnCancellation {
-                    webView.downloadDeferred.cancel()
+                    webView.requestDeferred.cancel()
                     releaseBrowser()
                 }
             }
         }
     }
-
-
-
 
     /**
      * is the downloadableDeferredResource to get handle when is completed
      */
-    protected fun downloadableDeferredResource() : CompletableDeferred<String?> {
-        return webView.downloadDeferred
+    protected fun requestDeferredResource() : CompletableDeferred<Request?> {
+        return webView.requestDeferred
     }
 
 
@@ -453,6 +370,7 @@ open class Server(
      * Is release method from the WebView
      */
     protected open fun releaseBrowser() = onUi {
+        _webView?.loadUrl("about:blank")
         _webView?.destroy()
         _webView = null
     }
