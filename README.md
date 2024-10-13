@@ -21,7 +21,13 @@ MoonGetter is an Android library for handling stream extraction and downloads. I
 11. **Bayfiles**
 12. **Fembed**
 13. **StreamSb**
-14. **Filelions**
+14. **Vihide**
+15. **Filemoon**
+16. **Vidguard**
+17. **GoodStream**
+18. **Hexload**
+19. **1CloudFile**
+20. **YourUpload**
 
 ## Token Server
 
@@ -127,9 +133,9 @@ ViewModel() {
 - **getUntilFindResource()**: From the `urls` parameter, makes requests to find the first possible server and stops when one is found. If none is found, returns null.
 
 # In To-do
-- **Filemoon**
-- **Gofile**
-- **Vidguard**
 
-# Want to colaborate
+- **Gofile**
+- **LuluStream**
+
+# Want to collaborate
 f you want to help or collaborate, feel free to contact me on X account @Darkryh or just make a request.
