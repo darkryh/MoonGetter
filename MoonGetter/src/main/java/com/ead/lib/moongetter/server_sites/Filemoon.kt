@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 class Filemoon(context: Context,url: String) : ServerJwPlayer(context,url) {
+    override val identifier: String? = Properties.FilemoonIdentifier
     override val endingRegex: Regex = """https:\\/\\/mc\\.yandex\\.ru\\/clmap\\/.*""".toRegex()
 
     override suspend fun onExtract() {
