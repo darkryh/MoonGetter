@@ -1,6 +1,7 @@
 package com.ead.lib.moongetter.core
 
 import android.content.Context
+import android.util.Log
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.ServerIntegration
@@ -14,6 +15,7 @@ import com.ead.lib.moongetter.server_sites.Fireload
 import com.ead.lib.moongetter.server_sites.Gofile
 import com.ead.lib.moongetter.server_sites.GoodStream
 import com.ead.lib.moongetter.server_sites.GoogleDrive
+import com.ead.lib.moongetter.server_sites.Hexload
 import com.ead.lib.moongetter.server_sites.Lulustream
 import com.ead.lib.moongetter.server_sites.Mediafire
 import com.ead.lib.moongetter.server_sites.Okru
@@ -26,6 +28,7 @@ import com.ead.lib.moongetter.server_sites.StreamWish
 import com.ead.lib.moongetter.server_sites.Streamtape
 import com.ead.lib.moongetter.server_sites.Vidguard
 import com.ead.lib.moongetter.server_sites.Voe
+import com.ead.lib.moongetter.server_sites.YourUpload
 import com.ead.lib.moongetter.utils.PatternManager
 import java.io.IOException
 
@@ -55,6 +58,7 @@ internal object ServerFactory {
             PatternManager.match(Properties.Gofile, url) -> Properties.GofileIdentifier
             PatternManager.match(Properties.GoodStream, url) -> Properties.GoodStreamIdentifier
             PatternManager.match(Properties.GoogleDrive, url) -> Properties.GoogleDriveIdentifier
+            PatternManager.match(Properties.Hexload, url) -> Properties.HexloadIdentifier
             PatternManager.match(Properties.Lulustream, url) -> Properties.LulustreamIdentifier
             PatternManager.match(Properties.Mediafire, url) -> Properties.MediafireIdentifier
             PatternManager.match(Properties.Okru, url) -> Properties.OkruIdentifier
@@ -67,6 +71,7 @@ internal object ServerFactory {
             PatternManager.match(Properties.StreamWish, url) -> Properties.StreamWishIdentifier
             PatternManager.match(Properties.Voe, url) -> Properties.VoeIdentifier
             PatternManager.match(Properties.Vidguard, url) -> Properties.VidguardIdentifier
+            PatternManager.match(Properties.YourUpload, url) -> Properties.YourUploadIdentifier
             else -> null
         }
 
@@ -146,6 +151,10 @@ internal object ServerFactory {
                 context = context,
                 url = url
             )
+            PatternManager.match(Properties.Hexload, url) -> Hexload(
+                context = context,
+                url = url
+            )
             PatternManager.match(Properties.Lulustream, url) -> Lulustream(
                 context = context,
                 url = url
@@ -192,6 +201,10 @@ internal object ServerFactory {
                 url = url
             )
             PatternManager.match(Properties.Vidguard, url) -> Vidguard(
+                context = context,
+                url = url
+            )
+            PatternManager.match(Properties.YourUpload, url) -> YourUpload(
                 context = context,
                 url = url
             )
@@ -253,8 +266,14 @@ internal object ServerFactory {
                 if (server?.isResourceFounded == true) return server
 
             }
-            catch (e : InvalidServerException) { e.printStackTrace() }
-            catch (e : IOException) { e.printStackTrace() }
+            catch (e : InvalidServerException) {
+                e.printStackTrace()
+                Log.d("test", "createUntilFindResource: ${e.message}")
+            }
+            catch (e : IOException) {
+                e.printStackTrace()
+                Log.d("test", "createUntilFindResource: ${e.message}")
+            }
         }
 
         return null
