@@ -24,7 +24,7 @@ class Bayfiles(context: Context, url : String) : Server(context,url) {
 
         if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.BayfilesIdentifier))
 
-        val countMetaData: List<String> = PatternManager.multipleMatches(
+        val countMetaData: List<String> = PatternManager.findMultipleMatches(
             string =  response.body?.string().toString(),
             regex = "https?:\\/\\/(cdn-[0123456789][0123456789][0123456789]).(bayfiles\\.com\\/.+)",
             groupIndex = 0

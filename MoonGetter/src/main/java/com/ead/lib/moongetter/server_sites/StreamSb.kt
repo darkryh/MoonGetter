@@ -25,7 +25,7 @@ class StreamSb(context: Context, url : String) : Server(context,url) {
 
         val host = response.request.url.host
 
-        val totalData: List<String> = PatternManager.multipleMatches(
+        val totalData: List<String> = PatternManager.findMultipleMatches(
             string =  response.body?.string().toString(),
             regex =  "onclick=\"download_video(.*?)\""
         ).ifEmpty { throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.StreamSbIdentifier)) }
