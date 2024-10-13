@@ -2,10 +2,15 @@ package com.ead.lib.moongetter.models
 
 import android.content.Context
 import com.ead.lib.moongetter.R
-import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 
-open class ServerJwPlayer(context: Context, url: String) : Server(context,url) {
+open class ServerJwPlayer(context: Context, url: String) : ServerRobot(context,url) {
+
+    /**
+     * Identifier of the server in case of throw exception
+     */
+    protected open val identifier : String? = null
+
 
     /**
      * Regex to find the url of the video
@@ -13,13 +18,19 @@ open class ServerJwPlayer(context: Context, url: String) : Server(context,url) {
      */
     protected open val interceptionRegex = ".*master\\.m3u8.*".toRegex()
 
+
     /**
      * Regex to find the url of the video
      * in case the interception fails
      */
     protected open val endingRegex = """.*/randomStr$""".toRegex()
 
+
+    /**
+     * Default method to extract the url of the video for jwPlayers sites
+     */
     suspend fun onDefaultJwPlayer() {
+
 
         /**
          * Initialize the browser
@@ -33,7 +44,7 @@ open class ServerJwPlayer(context: Context, url: String) : Server(context,url) {
          * first load the jwPlayer by script
          * and then intercept the expected url
          */
-        url = getInterceptionUrl(url,interceptionRegex,endingRegex,scriptLoader()) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.StreamtapeIdentifier))
+        url = getInterceptionUrl(url,interceptionRegex,endingRegex,scriptLoader()) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,identifier.toString()))
 
 
         /**
@@ -48,7 +59,11 @@ open class ServerJwPlayer(context: Context, url: String) : Server(context,url) {
         addDefault()
     }
 
-    private fun scriptLoader() = """
+
+    /**
+     * loader script default for jwPlayer sites
+     */
+    protected open fun scriptLoader() : String? = """
         document.getElementsByClassName("jw-icon jw-icon-display jw-button-color jw-reset")[0].click();
     """.trimIndent()
 }
