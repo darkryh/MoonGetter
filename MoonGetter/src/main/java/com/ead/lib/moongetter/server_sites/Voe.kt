@@ -36,10 +36,12 @@ class Voe(context: Context, url : String) : Server(context,url) {
 
         if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.VoeIdentifier))
 
-        url = decoder( PatternManager.singleMatch(
-            string = response.body?.string().toString(),
-            regex = """'hls':\s*'([^']+)"""
-        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.VoeIdentifier)))
+        url = decoder(
+            PatternManager.singleMatch(
+                string = response.body?.string().toString(),
+                regex = """'hls':\s*'([^']+)"""
+            ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.VoeIdentifier))
+        )
 
         addDefault()
     }
