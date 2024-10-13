@@ -21,8 +21,7 @@ class GoodStream(context: Context, url : String) : Server(context,url) {
 
         url = PatternManager.singleMatch(
             string = response.body?.string().toString(),
-            regex = """file:\s*"(https?://[^\s"]+)"""",
-            groupIndex = 1
+            regex = """file:\s*"(https?://[^\s"]+)""""
         ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, Properties.GoodStreamIdentifier))
 
         addDefault()
