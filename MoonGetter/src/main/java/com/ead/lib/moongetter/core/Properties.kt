@@ -39,7 +39,7 @@ object Properties {
     const val Gofile = """https://gofile\.io/d/(\w+)"""
     const val GoodStream = """(https?://goodstream\.[^/]+/video/[^/]+)"""
     const val GoogleDrive = "https?:\\/\\/(www\\.)?drive\\.google\\.com\\/(?:file\\/d\\/|open\\?id=|uc\\?id=)([\\w-]+)"
-    const val Hexload = """https?://hexload\.com/embed-[^/]+\.html"""
+    const val Hexload = "https?://(?:hexload|hexupload)\\.(?:com|net)/embed-[^/]+\\.html"
     const val Lulustream = """https://luluvdo\.com/e/[^\s"]+"""
     const val Mediafire = """https?:\/\/(?:www\.)?mediafire\.com\/(?:file\/|\?.+)"""
     const val Okru = "https?:\\/\\/(www\\.)?ok\\.ru\\/videoembed\\/.+"
