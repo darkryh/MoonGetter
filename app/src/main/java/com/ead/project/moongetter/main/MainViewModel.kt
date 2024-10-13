@@ -101,13 +101,16 @@ class MainViewModel : ViewModel() {
                 }
 
                 if (messageResult.value.isNotEmpty() && event !is MainEvent.OnSelectedUrl) {
-                   _mediaUrlSelected.value = messageResult.value.first().url
+                   _mediaUrlSelected.value = messageResult.value.first().request.url
                 }
 
             } catch (e : InvalidServerException) {
                 _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
             }
             catch (e : IOException) {
+                _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
+            }
+            catch (e : RuntimeException) {
                 _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
             }
         }
