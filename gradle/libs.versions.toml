@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.1"
+agp = "8.7.0"
 activityCompose = "1.9.2"
 commonsText = "1.10.0"
 composeBom = "2024.09.02"
