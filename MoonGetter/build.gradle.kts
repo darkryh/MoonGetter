@@ -42,7 +42,7 @@ publishing {
 
             groupId = "com.ead.lib"
             artifactId = "MoonGetter"
-            version = "0.0.1"
+            version = "0.0.3"
         }
     }
 }
@@ -63,5 +63,6 @@ dependencies {
     //apacheCommons
     implementation(libs.commons.text)
 
+    //reflect annotations
     implementation(kotlin("reflect"))
 }
