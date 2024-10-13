@@ -47,17 +47,19 @@ class MainActivity : ComponentActivity() {
     @Suppress("UNUSED")
     private val exampleCollectedVideosFromInternet = listOf(
         customUrl,
+        "https://hexload.com/embed-0zxynhfodkmr.html",
         "https://flaswish.com/e/dhfe39jcywcr",
-        "https://1cloudfile.com/L92p",
+        //"https://1cloudfile.com/L92p",
         "https://goodstream.uno/video/embed/70edd37dfe6c3cce",
+        "https://filemoon.sx/e/cvnd9zqj2i9w",
+        "https://listeamed.net/e/Ro7kOVMVgkEZWBn",
         "https://streamtape.com/e/0V8ALXqzvVsb1vg",
         "https://vidhidepro.com/v/41n252u058ws",
-        "https://cindyeyefinal.com/e/al4hh7l8zxlz",
         "https://voe.sx/e/bfydr4fmm7jp",
         "https://pixeldrain.com/u/VbW82s5W",
         "https://www.mediafire.com/file/6gwdbflmrgxe3ta",
         "https://1fichier.com/?vgtzab3jztco6vw13kgw",
-        "https://ok.ru/videoembed/8136284178989",
+        "http://ok.ru/videoembed/1411667855965",
         "https://drive.google.com/file/d/0B-bHILyvaZQQNXo5cWpXMjRhZ2M/view?usp=drive_link&resourcekey=0-e4kDmIKPCj24fnzZC0fX0A"
     )
 
@@ -105,22 +107,22 @@ class MainActivity : ComponentActivity() {
                         /**
                          * Example use case to find resources from a specific url
                          */
-                        viewModel.onEvent(
+                        /*viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://luluvdo.com/e/3ygpl2o690lw",
+                                url = "https://streamtape.com/e/0V8ALXqzvVsb1vg",
                             )
-                        )
+                        )*/
 
                         /**
                          * Example use case to find all possible resources from a list of urls
                          */
-                        /*viewModel.onEvent(
+                        viewModel.onEvent(
                             event = MainEvent.OnNewResults(
                                 context = this@MainActivity as Context,
                                 urls = exampleCollectedVideosFromInternet
                             )
-                        )*/
+                        )
                     }
 
                     Scaffold(
@@ -205,12 +207,12 @@ fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (M
                         } else {
                             context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         }
-                        val clip = ClipData.newPlainText("Text copied", file.url)
+                        val clip = ClipData.newPlainText("Text copied", file.request.url)
 
                         clipboard.setPrimaryClip(clip)
-                        event(MainEvent.OnSelectedUrl(file.url))
+                        event(MainEvent.OnSelectedUrl(file.request.url))
                     },
-                text = "downloadUrl : " + file.url,
+                text = "downloadUrl : " + file.request.url,
                 maxLines = 15
             )
             Spacer(
