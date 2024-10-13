@@ -16,7 +16,6 @@ import okhttp3.Request
 class YourUpload(context: Context, url : String) : Server(context,url) {
 
     override suspend fun onExtract() {
-
         var response = OkHttpClient()
             .newCall(Request.Builder().url(url).build())
             .await()
