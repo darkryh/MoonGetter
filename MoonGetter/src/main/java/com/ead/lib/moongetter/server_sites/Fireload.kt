@@ -4,11 +4,11 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.Unstable
-import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.ServerRobot
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 
 @Unstable(reason = "Scripts await countdown timer to load url")
-class Fireload(context: Context,url : String) : Server(context,url) {
+class Fireload(context: Context,url : String) : ServerRobot(context,url) {
 
     override suspend fun onExtract() {
         initializeBrowser()
