@@ -27,6 +27,7 @@ class MoonWebView @JvmOverloads constructor(
                 Request(
                     url = url,
                     method = "GET",
+                    cookies = null,
                     headers = mapOf(
                         "User-Agent" to userAgent,
                         "Content-Disposition" to contentDisposition,
