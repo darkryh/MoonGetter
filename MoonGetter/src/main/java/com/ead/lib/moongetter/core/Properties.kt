@@ -15,6 +15,7 @@ object Properties {
     const val GofileIdentifier = "Gofile"
     const val GoodStreamIdentifier = "GoodStream"
     const val GoogleDriveIdentifier = "GoogleDrive"
+    const val HexloadIdentifier = "Hexload"
     const val LulustreamIdentifier = "Lulustream"
     const val MediafireIdentifier = "Mediafire"
     const val OkruIdentifier = "Okru"
@@ -27,7 +28,7 @@ object Properties {
     const val StreamWishIdentifier = "StreamWish"
     const val VoeIdentifier = "Voe"
     const val VidguardIdentifier = "Vidguard"
-
+    const val YourUploadIdentifier = "YourUpload"
 
     const val Anonfiles  = "https?:\\/\\/(www\\.)?(anonfile)\\.com\\/\\?.+"
     const val Bayfiles  = "https?:\\/\\/(www\\.)?(bayfiles)\\.com\\/\\?.+"
@@ -38,6 +39,7 @@ object Properties {
     const val Gofile = """https://gofile\.io/d/(\w+)"""
     const val GoodStream = """(https?://goodstream\.[^/]+/video/[^/]+)"""
     const val GoogleDrive = "https?:\\/\\/(www\\.)?drive\\.google\\.com\\/(?:file\\/d\\/|open\\?id=|uc\\?id=)([\\w-]+)"
+    const val Hexload = """https?://hexload\.com/embed-[^/]+\.html"""
     const val Lulustream = """https://luluvdo\.com/e/[^\s"]+"""
     const val Mediafire = """https?:\/\/(?:www\.)?mediafire\.com\/(?:file\/|\?.+)"""
     const val Okru = "https?:\\/\\/(www\\.)?ok\\.ru\\/videoembed\\/.+"
@@ -47,7 +49,8 @@ object Properties {
     const val Sendvid = "https?:\\/\\/sendvid\\.com\\/\\w+"
     const val StreamSb = "https?://(?:sblanh|lvturbo|sbface|sbbrisk|sbchill|sblongvu|sbanh|playersb|embedsb|sbspeed|tubesb|sbrity)\\.com/(?:e|d)/\\w+\\.html"
     const val Streamtape = "https?://(?:streamtape|gettapeads)\\.com/e/\\w+"
-    const val Voe = "https?://(?:voe|markstyleall|shannonpersonalcost|cindyeyefinal)\\.com/(?:e|d)/\\w+"
+    const val Voe = "https?://(?:voe|markstyleall|shannonpersonalcost|cindyeyefinal)\\.(?:com|sx)/(?:e|d)/\\w+"
     const val StreamWish = "https?://(?:(?:[\\w-]*wish[\\w-]*)|(?:swhoi))\\.(?:com|to)/e/\\w+"
     const val Vidguard = "https?://(?:listeamed|vembed)\\.(?:com|net)/(?:e|d)/\\S+"
+    const val YourUpload = """https?://.*yourupload\.com/embed/.*"""
 }
