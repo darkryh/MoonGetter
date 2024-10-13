@@ -15,6 +15,14 @@ import org.json.JSONObject
 class Hexload(context: Context,url: String) : Server(context,url) {
 
     override suspend fun onExtract() {
+
+        val domain = PatternManager.singleMatch(
+            string = url,
+            regex = """https?://([a-zA-Z0-9\-]+\.[a-z]{2,})/embed-[^/]+\.html"""
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.HexloadIdentifier))
+
+        url = url.replace(domain, "hexload.com")
+
         var response = OkHttpClient()
             .newCall(Request.Builder().url(url).build())
             .await()
