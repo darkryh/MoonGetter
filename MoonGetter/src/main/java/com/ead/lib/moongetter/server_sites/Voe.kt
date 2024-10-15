@@ -22,8 +22,7 @@ class Voe(context: Context, url : String) : Server(context,url) {
 
         url = PatternManager.singleMatch(
             string = response.body?.string().toString(),
-            regex = """window\.location\.href\s*=\s*'([^']+)""",
-            groupIndex = 1
+            regex = """window\.location\.href\s*=\s*'([^']+)"""
         ).toString()
 
         response = OkHttpClient()
