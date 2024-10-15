@@ -110,7 +110,7 @@ class MainActivity : ComponentActivity() {
                         /*viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://streamtape.com/e/0V8ALXqzvVsb1vg",
+                                url = "https://1fichier.com/?r7ibqt588y660b6idp36",
                             )
                         )*/
 
