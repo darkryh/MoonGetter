@@ -8,6 +8,7 @@ import com.ead.lib.moongetter.models.ServerIntegration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.server_sites.Anonfiles
 import com.ead.lib.moongetter.server_sites.Bayfiles
+import com.ead.lib.moongetter.server_sites.Facebook
 import com.ead.lib.moongetter.server_sites.Fembed
 import com.ead.lib.moongetter.server_sites.Vihide
 import com.ead.lib.moongetter.server_sites.Filemoon
@@ -18,6 +19,7 @@ import com.ead.lib.moongetter.server_sites.GoogleDrive
 import com.ead.lib.moongetter.server_sites.Hexload
 import com.ead.lib.moongetter.server_sites.Lulustream
 import com.ead.lib.moongetter.server_sites.Mediafire
+import com.ead.lib.moongetter.server_sites.Mixdrop
 import com.ead.lib.moongetter.server_sites.Okru
 import com.ead.lib.moongetter.server_sites.OneCloudFile
 import com.ead.lib.moongetter.server_sites.Onefichier
@@ -28,8 +30,10 @@ import com.ead.lib.moongetter.server_sites.StreamWish
 import com.ead.lib.moongetter.server_sites.Streamtape
 import com.ead.lib.moongetter.server_sites.Vidguard
 import com.ead.lib.moongetter.server_sites.Voe
+import com.ead.lib.moongetter.server_sites.XTwitter
 import com.ead.lib.moongetter.server_sites.YourUpload
 import com.ead.lib.moongetter.utils.PatternManager
+import com.ead.lib.moongetter.utils.Values.DEBUG_ERROR
 import java.io.IOException
 
 /**
@@ -51,8 +55,8 @@ internal object ServerFactory {
         }?.serverClass?.simpleName ?: when {
             PatternManager.match(Properties.Anonfiles, url) -> Properties.AnonfilesIdentifier
             PatternManager.match(Properties.Bayfiles, url) -> Properties.BayfilesIdentifier
+            PatternManager.match(Properties.Facebook, url) -> Properties.FacebookIdentifier
             PatternManager.match(Properties.Fembed, url) -> Properties.FembedIdentifier
-            PatternManager.match(Properties.Vihide, url) -> Properties.VihideIdentifier
             PatternManager.match(Properties.Filemoon, url) -> Properties.FilemoonIdentifier
             PatternManager.match(Properties.Fireload, url) -> Properties.FireloadIdentifier
             PatternManager.match(Properties.Gofile, url) -> Properties.GofileIdentifier
@@ -61,6 +65,7 @@ internal object ServerFactory {
             PatternManager.match(Properties.Hexload, url) -> Properties.HexloadIdentifier
             PatternManager.match(Properties.Lulustream, url) -> Properties.LulustreamIdentifier
             PatternManager.match(Properties.Mediafire, url) -> Properties.MediafireIdentifier
+            PatternManager.match(Properties.Mixdrop, url) -> Properties.MixdropIdentifier
             PatternManager.match(Properties.Okru, url) -> Properties.OkruIdentifier
             PatternManager.match(Properties.OneFichier, url) -> Properties.OneFichierIdentifier
             PatternManager.match(Properties.OneCloudFile, url) -> Properties.OneCloudFileIdentifier
@@ -71,7 +76,9 @@ internal object ServerFactory {
             PatternManager.match(Properties.StreamWish, url) -> Properties.StreamWishIdentifier
             PatternManager.match(Properties.Voe, url) -> Properties.VoeIdentifier
             PatternManager.match(Properties.Vidguard, url) -> Properties.VidguardIdentifier
+            PatternManager.match(Properties.Vihide, url) -> Properties.VihideIdentifier
             PatternManager.match(Properties.YourUpload, url) -> Properties.YourUploadIdentifier
+            PatternManager.match(Properties.XTwitter, url) -> Properties.XTwitterIdentifier
             else -> null
         }
 
@@ -123,11 +130,11 @@ internal object ServerFactory {
                 context = context,
                 url = url
             )
-            PatternManager.match(Properties.Fembed, url) -> Fembed(
+            PatternManager.match(Properties.Facebook, url) -> Facebook(
                 context = context,
                 url = url
             )
-            PatternManager.match(Properties.Vihide, url) -> Vihide(
+            PatternManager.match(Properties.Fembed, url) -> Fembed(
                 context = context,
                 url = url
             )
@@ -160,6 +167,10 @@ internal object ServerFactory {
                 url = url
             )
             PatternManager.match(Properties.Mediafire, url) -> Mediafire(
+                context = context,
+                url = url
+            )
+            PatternManager.match(Properties.Mixdrop, url) -> Mixdrop(
                 context = context,
                 url = url
             )
@@ -196,11 +207,15 @@ internal object ServerFactory {
                 context = context,
                 url = url
             )
-            PatternManager.match(Properties.Voe, url) -> Voe(
+            PatternManager.match(Properties.Vidguard, url) -> Vidguard(
                 context = context,
                 url = url
             )
-            PatternManager.match(Properties.Vidguard, url) -> Vidguard(
+            PatternManager.match(Properties.Vihide, url) -> Vihide(
+                context = context,
+                url = url
+            )
+            PatternManager.match(Properties.Voe, url) -> Voe(
                 context = context,
                 url = url
             )
@@ -208,8 +223,14 @@ internal object ServerFactory {
                 context = context,
                 url = url
             )
+            PatternManager.match(Properties.XTwitter, url) -> XTwitter(
+                context = context,
+                url = url
+            )
             else -> null
         }
+
+        Log.d("test","$server")
 
         val serverResult = server ?: return null
 
@@ -268,11 +289,15 @@ internal object ServerFactory {
             }
             catch (e : InvalidServerException) {
                 e.printStackTrace()
-                Log.d("test", "createUntilFindResource: ${e.message}")
+                Log.e(DEBUG_ERROR, "error: ${e.message}")
+            }
+            catch (e : RuntimeException) {
+                e.printStackTrace()
+                Log.d(DEBUG_ERROR, "error: ${e.message}")
             }
             catch (e : IOException) {
                 e.printStackTrace()
-                Log.d("test", "createUntilFindResource: ${e.message}")
+                Log.d(DEBUG_ERROR, "error: ${e.message}")
             }
         }
 
