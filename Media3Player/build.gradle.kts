@@ -59,7 +59,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.okhttp)
+
     implementation (libs.androidx.media3.exoplayer)
     implementation (libs.androidx.media3.ui)
     implementation (libs.androidx.media3.exoplayer.hls)
+    implementation(project(":MoonGetter"))
 }
