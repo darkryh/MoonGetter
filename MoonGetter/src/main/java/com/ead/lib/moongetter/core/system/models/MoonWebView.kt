@@ -19,6 +19,7 @@ class MoonWebView @JvmOverloads constructor(
 
     init {
         settings.apply {
+            userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
             javaScriptEnabled = true
         }
 
@@ -27,7 +28,6 @@ class MoonWebView @JvmOverloads constructor(
                 Request(
                     url = url,
                     method = "GET",
-                    cookies = null,
                     headers = mapOf(
                         "User-Agent" to userAgent,
                         "Content-Disposition" to contentDisposition,
