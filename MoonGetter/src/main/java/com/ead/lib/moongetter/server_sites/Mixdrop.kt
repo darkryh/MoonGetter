@@ -6,6 +6,7 @@ import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.JSUnpacker
 import com.ead.lib.moongetter.utils.PatternManager
@@ -17,7 +18,7 @@ class Mixdrop(context: Context, url: String) : Server(context, url) {
 
     override val isDeprecated: Boolean = true
 
-    override suspend fun onExtract() {
+    override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
             .newCall(
                 Request
@@ -32,18 +33,21 @@ class Mixdrop(context: Context, url: String) : Server(context, url) {
 
         val responseBody = response.body?.string().toString()
 
-        if (!JSUnpacker.detect(responseBody)) return
+        if (!JSUnpacker.detect(responseBody)) throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, Properties.MixdropIdentifier))
 
-        url = "https:" + PatternManager.singleMatch(
-            string = JSUnpacker.unpack(
-                PatternManager.singleMatch(
-                    string = responseBody.toString(),
-                    regex = "eval(.*)"
+        return listOf(
+            Video(
+                quality = DEFAULT,
+                url = "https:" + PatternManager.singleMatch(
+                    string = JSUnpacker.unpack(
+                        PatternManager.singleMatch(
+                            string = responseBody.toString(),
+                            regex = "eval(.*)"
+                        ).toString()
+                    ).toString(),
+                    regex = "wurl=?\"(.*?)\";"
                 ).toString()
-            ).toString(),
-            regex = "wurl=?\"(.*?)\";"
-        ).toString()
-
-        addDefault()
+            )
+        )
     }
 }

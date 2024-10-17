@@ -5,6 +5,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
@@ -15,8 +16,7 @@ class StreamSb(context: Context, url : String) : Server(context,url) {
     private val rawServers : MutableList<String> = mutableListOf()
     override val isDeprecated: Boolean = true
 
-    override suspend fun onExtract() {
-
+    override suspend fun onExtract(): List<Video> {
         url = fixUrl(url)
 
         val response = OkHttpClient()
@@ -47,6 +47,7 @@ class StreamSb(context: Context, url : String) : Server(context,url) {
         //to fix captcha
         skipCaptcha()
         getDownloadScript()
+        return emptyList()
     }
 
     private fun skipCaptcha() = "document.getElementsByClassName('g-recaptcha')[0].click();"

@@ -18,8 +18,7 @@ class Fembed(context: Context, url : String) : Server(context,url) {
 
     override val isDeprecated: Boolean = true
 
-    override suspend fun onExtract() {
-
+    override suspend fun onExtract(): List<Video> {
         var request: Request =  Request.Builder().url(url).build()
 
         var response = OkHttpClient()
@@ -53,12 +52,11 @@ class Fembed(context: Context, url : String) : Server(context,url) {
 
         val array = source.getJSONArray("data")
 
-        for (i in 0 until array.length()) {
-            val `object` = array.getJSONObject(i)
+        return (0 .. array.length()).map {
+            val `object` = array.getJSONObject(it)
             val name = `object`.getString("label")
             url = `object`.getString("file")
-
-            add(Video(name, url))
+            Video(name, url)
         }
     }
 

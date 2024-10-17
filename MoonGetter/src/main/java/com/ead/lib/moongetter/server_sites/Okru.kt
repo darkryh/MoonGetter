@@ -17,8 +17,7 @@ class Okru(context: Context, url : String) : Server(context,url) {
 
     override var url: String = url.replace("http://","https://")
 
-    override suspend fun onExtract() {
-
+    override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
             .newCall(
                 Request.Builder().url(url)
@@ -39,11 +38,10 @@ class Okru(context: Context, url : String) : Server(context,url) {
             .getString("metadata")
 
         val objectData = JSONObject(json).getJSONArray("videos")
-        var video: Video
 
-        for (pos in 0 until objectData.length()) {
+        return (0 .. objectData.length()-1).map { pos ->
             val url: String = objectData.getJSONObject(pos).getString("url")
-            video = when (objectData.getJSONObject(pos).getString("name")) {
+            when (objectData.getJSONObject(pos).getString("name")) {
                 "mobile" -> Video("144p", url)
                 "lowest" -> Video("240p", url)
                 "low"    -> Video("360p", url)
@@ -54,7 +52,6 @@ class Okru(context: Context, url : String) : Server(context,url) {
                 "ultra"  -> Video("4000p", url)
                 else     -> Video("Default", url)
             }
-            add(video)
         }
     }
 }

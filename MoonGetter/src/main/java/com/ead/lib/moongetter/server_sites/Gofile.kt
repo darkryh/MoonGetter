@@ -6,6 +6,7 @@ import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.ServerRobot
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 
 @Pending
@@ -14,7 +15,7 @@ class Gofile(context: Context, url : String) : ServerRobot(context,url) {
 
     override val isDeprecated: Boolean get() = true
 
-    override suspend fun onExtract() {
+    override suspend fun onExtract(): List<Video> {
         initializeBrowser()
 
         loadUrlAwait(url)
@@ -22,7 +23,13 @@ class Gofile(context: Context, url : String) : ServerRobot(context,url) {
         url = requestDeferredResource().await()?.url ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GofileIdentifier))
 
         releaseBrowser()
-        addDefault()
+
+        return listOf(
+            Video(
+                quality = DEFAULT,
+                url = url
+            )
+        )
     }
 
     private fun scriptLoader() = """

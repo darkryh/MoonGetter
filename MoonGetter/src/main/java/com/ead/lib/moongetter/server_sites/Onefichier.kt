@@ -6,6 +6,7 @@ import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
@@ -17,8 +18,7 @@ import org.json.JSONObject
 @Unstable(reason = "Needs to provide a token to work")
 class Onefichier(context: Context, url : String,val token : String?) : Server(context,url) {
 
-    override suspend fun onExtract() {
-
+    override suspend fun onExtract(): List<Video> {
         val request = Request.Builder()
             .url(Properties.api1FichierDownloadRequest)
             .header("Authorization", "Bearer ${(token?: throw InvalidServerException(context.getString(R.string.server_token_has_not_provided,Properties.OneFichierIdentifier))).ifEmpty { throw InvalidServerException(context.getString(R.string.server_token_could_not_be_empty,Properties.OneFichierIdentifier)) }}")
@@ -29,15 +29,19 @@ class Onefichier(context: Context, url : String,val token : String?) : Server(co
         val client = OkHttpClient()
         val response = client.newCall(request).await()
 
-        if (response.isSuccessful) {
-            val responseBody = response.body?.string()?:return
+        return if (response.isSuccessful) {
+            val responseBody = response.body?.string()?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,Properties.OneFichierIdentifier))
 
             val source = JSONObject(responseBody)
             val status = source.getString("status")
             if (status != "OK") throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.OneFichierIdentifier))
 
-            url = source.getString("url")
-            addDefault()
+            return listOf(
+                Video(
+                    quality = DEFAULT,
+                    url = source.getString("url")
+                )
+            )
 
         }
         else {

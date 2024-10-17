@@ -5,6 +5,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.FormBody
@@ -14,8 +15,7 @@ import org.json.JSONObject
 
 class Hexload(context: Context,url: String) : Server(context,url) {
 
-    override suspend fun onExtract() {
-
+    override suspend fun onExtract(): List<Video> {
         val domain = PatternManager.singleMatch(
             string = url,
             regex = """https?://([a-zA-Z0-9\-]+\.[a-z]{2,})/embed-[^/]+\.html"""
@@ -58,8 +58,12 @@ class Hexload(context: Context,url: String) : Server(context,url) {
         val responseBody = response.body?.string().toString()
 
         val jsonObject = JSONObject(responseBody)
-        url = jsonObject.getJSONObject("result").getString("url")
 
-        addDefault()
+        return listOf(
+            Video(
+                quality = DEFAULT,
+                url = jsonObject.getJSONObject("result").getString("url")
+            )
+        )
     }
 }

@@ -5,12 +5,13 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.ServerRobot
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 
 @Unstable("This server is not stable for waiting download process")
 class OneCloudFile(context: Context,url: String) : ServerRobot(context,url) {
 
-    override suspend fun onExtract() {
+    override suspend fun onExtract(): List<Video> {
         initializeBrowser()
 
         loadUrlAwait(url)
@@ -26,7 +27,13 @@ class OneCloudFile(context: Context,url: String) : ServerRobot(context,url) {
         url = requestDeferredResource().await()?.url ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.OneCloudFileIdentifier))
 
         releaseBrowser()
-        addDefault()
+
+        return listOf(
+            Video(
+                quality = DEFAULT,
+                url = url
+            )
+        )
     }
 
     private fun scriptLoader() = """

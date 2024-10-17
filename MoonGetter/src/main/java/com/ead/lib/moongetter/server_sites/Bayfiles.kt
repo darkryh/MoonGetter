@@ -16,8 +16,7 @@ class Bayfiles(context: Context, url : String) : Server(context,url) {
 
     override val isDeprecated: Boolean = true
 
-    override suspend fun onExtract() {
-
+    override suspend fun onExtract() : List<Video> {
         val response = OkHttpClient()
             .newCall(Request.Builder().url(url).build())
             .await()
@@ -30,18 +29,20 @@ class Bayfiles(context: Context, url : String) : Server(context,url) {
             groupIndex = 0
         ).ifEmpty { throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,Properties.BayfilesIdentifier)) }
 
-        if (countMetaData.size > 1)
-
-            for (i in 0 until countMetaData.size / 2) {
-                url = fixDownloadLinks(countMetaData[i])
-                add(Video(quality(i),url))
+        return if (countMetaData.size > 1) {
+            (0 ..countMetaData.size / 2).map {
+                Video(
+                    quality = quality(it),
+                    url = fixDownloadLinks(countMetaData[it])
+                )
             }
-
+        }
         else {
-
-            url = fixDownloadLinks(countMetaData[0])
-            addDefault()
-
+            listOf(
+                Video(
+                    quality = DEFAULT,
+                    url = fixDownloadLinks(countMetaData[0]))
+            )
         }
     }
 

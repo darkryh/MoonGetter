@@ -6,6 +6,7 @@ import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
@@ -16,15 +17,20 @@ class GoogleDrive(context: Context, url : String) : Server(context,url) {
 
     override var url: String = fixUrl(url)
 
-    override suspend fun onExtract() {
+    override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
             .newCall(Request.Builder().url(url).build())
             .await()
 
-        when (response.code) {
-            206 -> addDefault()
+        return when (response.code) {
+            206 -> listOf(
+                Video(
+                    quality = DEFAULT,
+                    url = url
+                )
+            )
             200 -> {
-                val body = response.body?.string() ?: return
+                val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down))
 
                 val id = PatternManager.singleMatch(
                     string = body,
@@ -46,15 +52,19 @@ class GoogleDrive(context: Context, url : String) : Server(context,url) {
                     regex = getRegexProperty("uuid")
                 )
 
-                url = generateDownloadUrl(
-                    id = id ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier)),
-                    export = export ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier)),
-                    confirm = confirm ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier)),
-                    uuid = uuid ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier))
+                listOf(
+                    Video(
+                        quality = DEFAULT,
+                        url = generateDownloadUrl(
+                            id = id ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier)),
+                            export = export ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier)),
+                            confirm = confirm ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier)),
+                            uuid = uuid ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,Properties.GoogleDriveIdentifier))
+                        )
+                    )
                 )
-
-                addDefault()
             }
+            else -> throw InvalidServerException(context.getString(R.string.server_domain_is_down,Properties.GoogleDriveIdentifier))
         }
     }
 

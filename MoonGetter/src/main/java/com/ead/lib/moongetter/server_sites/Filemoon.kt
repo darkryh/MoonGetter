@@ -5,6 +5,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Properties
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.ServerJwPlayer
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
@@ -14,7 +15,7 @@ class Filemoon(context: Context,url: String) : ServerJwPlayer(context,url) {
     override val identifier: String? = Properties.FilemoonIdentifier
     override val endingRegex: Regex = """https:\\/\\/mc\\.yandex\\.ru\\/clmap\\/.*""".toRegex()
 
-    override suspend fun onExtract() {
+    override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
             .newCall(Request.Builder().url(url).build())
             .await()
@@ -26,6 +27,6 @@ class Filemoon(context: Context,url: String) : ServerJwPlayer(context,url) {
             regex = """<iframe\s+[^>]*src=["'](https?://[^"']+)["'][^>]*>"""
         ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,Properties.FilemoonIdentifier))
 
-        onDefaultJwPlayer()
+        return onDefaultJwPlayer()
     }
 }
