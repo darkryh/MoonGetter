@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.ead.lib.moongetter.MoonGetter
 import com.ead.lib.moongetter.models.ServerIntegration
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.download.Request
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.project.moongetter.domain.custom_servers.SenvidModified
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +26,8 @@ class MainViewModel : ViewModel() {
     private val _eventFlow : MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow : SharedFlow<UiEvent> = _eventFlow
 
-    private val _mediaUrlSelected : MutableState<String?> = mutableStateOf(null)
-    val mediaUrlSelected : State<String?> = _mediaUrlSelected
+    private val _mediaUrlSelected : MutableState<Request?> = mutableStateOf(null)
+    val mediaUrlSelected : State<Request?> = _mediaUrlSelected
 
     private val your1FichierToken = "Your 1fichier token"
 
@@ -96,12 +97,12 @@ class MainViewModel : ViewModel() {
                     }
 
                     is MainEvent.OnSelectedUrl -> {
-                        _mediaUrlSelected.value = event.url
+                        _mediaUrlSelected.value = event.request
                     }
                 }
 
                 if (messageResult.value.isNotEmpty() && event !is MainEvent.OnSelectedUrl) {
-                   _mediaUrlSelected.value = messageResult.value.first().request.url
+                   _mediaUrlSelected.value = messageResult.value.first().request
                 }
 
             } catch (e : InvalidServerException) {
