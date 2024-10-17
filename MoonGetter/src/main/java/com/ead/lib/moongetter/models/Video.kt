@@ -10,7 +10,6 @@ data class Video(
         quality: String?,
         url: String,
         method: String = "GET",
-        cookies : Map<String, String> ?= null,
         headers : Map<String, String> ?= null
-    ) : this(quality, Request(url = url, method = method, cookies = cookies, headers = headers))
+    ) : this(quality, Request(url = url, method = method, headers = headers))
 }
