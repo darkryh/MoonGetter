@@ -70,6 +70,7 @@ internal object ServerFactory {
             PatternManager.match(Properties.Lulustream, url) -> Properties.LulustreamIdentifier
             PatternManager.match(Properties.Mediafire, url) -> Properties.MediafireIdentifier
             PatternManager.match(Properties.Mixdrop, url) -> Properties.MixdropIdentifier
+            PatternManager.match(Properties.Mp4upload, url) -> Properties.Mp4UploadIdentifier
             PatternManager.match(Properties.Okru, url) -> Properties.OkruIdentifier
             PatternManager.match(Properties.OneFichier, url) -> Properties.OneFichierIdentifier
             PatternManager.match(Properties.OneCloudFile, url) -> Properties.OneCloudFileIdentifier
