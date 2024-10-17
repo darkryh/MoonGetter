@@ -8,6 +8,7 @@ import com.ead.lib.moongetter.models.ServerIntegration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.server_sites.Anonfiles
 import com.ead.lib.moongetter.server_sites.Bayfiles
+import com.ead.lib.moongetter.server_sites.Doodstream
 import com.ead.lib.moongetter.server_sites.Facebook
 import com.ead.lib.moongetter.server_sites.Fembed
 import com.ead.lib.moongetter.server_sites.Vihide
@@ -20,6 +21,7 @@ import com.ead.lib.moongetter.server_sites.Hexload
 import com.ead.lib.moongetter.server_sites.Lulustream
 import com.ead.lib.moongetter.server_sites.Mediafire
 import com.ead.lib.moongetter.server_sites.Mixdrop
+import com.ead.lib.moongetter.server_sites.Mp4Upload
 import com.ead.lib.moongetter.server_sites.Okru
 import com.ead.lib.moongetter.server_sites.OneCloudFile
 import com.ead.lib.moongetter.server_sites.Onefichier
@@ -28,6 +30,7 @@ import com.ead.lib.moongetter.server_sites.Senvid
 import com.ead.lib.moongetter.server_sites.StreamSb
 import com.ead.lib.moongetter.server_sites.StreamWish
 import com.ead.lib.moongetter.server_sites.Streamtape
+import com.ead.lib.moongetter.server_sites.Uqload
 import com.ead.lib.moongetter.server_sites.Vidguard
 import com.ead.lib.moongetter.server_sites.Voe
 import com.ead.lib.moongetter.server_sites.XTwitter
@@ -55,6 +58,7 @@ internal object ServerFactory {
         }?.serverClass?.simpleName ?: when {
             PatternManager.match(Properties.Anonfiles, url) -> Properties.AnonfilesIdentifier
             PatternManager.match(Properties.Bayfiles, url) -> Properties.BayfilesIdentifier
+            PatternManager.match(Properties.DoodStream, url) -> Properties.DoodStreamIdentifier
             PatternManager.match(Properties.Facebook, url) -> Properties.FacebookIdentifier
             PatternManager.match(Properties.Fembed, url) -> Properties.FembedIdentifier
             PatternManager.match(Properties.Filemoon, url) -> Properties.FilemoonIdentifier
@@ -74,6 +78,7 @@ internal object ServerFactory {
             PatternManager.match(Properties.StreamSb, url) -> Properties.StreamSbIdentifier
             PatternManager.match(Properties.Streamtape, url) -> Properties.StreamtapeIdentifier
             PatternManager.match(Properties.StreamWish, url) -> Properties.StreamWishIdentifier
+            PatternManager.match(Properties.Uqload, url) -> Properties.UqloadIdentifier
             PatternManager.match(Properties.Voe, url) -> Properties.VoeIdentifier
             PatternManager.match(Properties.Vidguard, url) -> Properties.VidguardIdentifier
             PatternManager.match(Properties.Vihide, url) -> Properties.VihideIdentifier
@@ -117,7 +122,13 @@ internal object ServerFactory {
         serverIntegrations : List<ServerIntegration>
     ) : Server? {
 
-        val server = serverIntegrations.getServerInstance(
+        /**
+         * Identify the server from the url
+         * if servers integrations are applied
+         * search them in case of not found
+         * get server from the library
+         */
+        val serverResult = serverIntegrations.getServerInstance(
             context = context,
             url = url,
         ) ?:
@@ -127,6 +138,10 @@ internal object ServerFactory {
                 url = url
             )
             PatternManager.match(Properties.Bayfiles, url) -> Bayfiles(
+                context = context,
+                url = url
+            )
+            PatternManager.match(Properties.DoodStream, url) -> Doodstream(
                 context = context,
                 url = url
             )
@@ -174,6 +189,10 @@ internal object ServerFactory {
                 context = context,
                 url = url
             )
+            PatternManager.match(Properties.Mp4upload, url) -> Mp4Upload(
+                context = context,
+                url = url
+            )
             PatternManager.match(Properties.Okru, url) -> Okru(
                 context = context,
                 url = url
@@ -207,6 +226,10 @@ internal object ServerFactory {
                 context = context,
                 url = url
             )
+            PatternManager.match(Properties.Uqload, url) -> Uqload(
+                context = context,
+                url = url
+            )
             PatternManager.match(Properties.Vidguard, url) -> Vidguard(
                 context = context,
                 url = url
@@ -230,15 +253,39 @@ internal object ServerFactory {
             else -> null
         }
 
-        Log.d("test","$server")
+        /**
+         * If the server is nullable return
+         * and don't to extract process
+         */
+        val server = serverResult ?: return null
 
-        val serverResult = server ?: return null
 
-        if (serverResult.isPending) return null
+        /**
+         * If the server is pending return
+         * null
+         */
+        if (server.isPending) return null
 
-        if (!serverResult.isDeprecated) server.onExtract()
 
-        return server
+        /**
+         * If the server is deprecated return
+         * null
+         */
+        if (!server.isDeprecated) {
+
+
+            /**
+             * Extract the videos from the server
+             * and set them to the server
+             */
+            server.setVideos(server.onExtract())
+        }
+
+
+        /**
+         * Return the server
+         */
+        return serverResult
     }
 
     /**
@@ -293,11 +340,11 @@ internal object ServerFactory {
             }
             catch (e : RuntimeException) {
                 e.printStackTrace()
-                Log.d(DEBUG_ERROR, "error: ${e.message}")
+                Log.e(DEBUG_ERROR, "error: ${e.message}")
             }
             catch (e : IOException) {
                 e.printStackTrace()
-                Log.d(DEBUG_ERROR, "error: ${e.message}")
+                Log.e(DEBUG_ERROR, "error: ${e.message}")
             }
         }
 
