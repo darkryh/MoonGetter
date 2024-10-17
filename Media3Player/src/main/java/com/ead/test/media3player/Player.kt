@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -25,27 +26,37 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
+import com.ead.lib.moongetter.core.system.extensions.await
+import com.ead.lib.moongetter.models.download.Request
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import okhttp3.Headers
+import okhttp3.OkHttpClient
 
 @OptIn(UnstableApi::class)
 @Composable
 fun Player(
     modifier: Modifier = Modifier,
-    url : String?,
+    request: Request?,
 ) {
+
+    if (request == null) return
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    val dataSourceFactory =
-        DataSource.Factory {
-            val dataSource = DefaultHttpDataSource.Factory()
-            dataSource.setUserAgent("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19")
-            dataSource.createDataSource()
-        }
+    val dataSourceFactory = DataSource.Factory {
+        DefaultHttpDataSource.Factory().apply {
+            request.headers?.forEach { (key, value) ->
+                setDefaultRequestProperties(mapOf(key to value))
+            }
+        }.createDataSource()
+    }
 
     val mediaItem = MediaItem
         .Builder()
-        .setUri(url?:return)
+        .setUri(request.url)
         .build()
 
     val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
@@ -55,6 +66,30 @@ fun Player(
         ExoPlayer.Builder(context).build().apply {
             setMediaItem(mediaItem)
             setMediaSource(mediaSource)
+            addListener(
+                object : Player.Listener {
+
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        when (playbackState) {
+                            Player.STATE_READY -> {
+                                runBlocking { performPreRequest(request) }
+                            }
+                            Player.STATE_IDLE -> {
+
+                            }
+                            Player.STATE_BUFFERING -> {
+
+                            }
+                            Player.STATE_ENDED -> {
+
+                            }
+                            else ->{}
+                        }
+                    }
+
+
+                }
+            )
             playWhenReady = true
             prepare()
         }
@@ -73,11 +108,9 @@ fun Player(
         }
     }
 
-
     Column(modifier = modifier.background(Color.Black)) {
         AndroidView(
-            modifier = modifier
-                .aspectRatio(16 / 9f),
+            modifier = modifier.aspectRatio(16 / 9f),
             factory = {
                 PlayerView(context).apply {
                     player = exoPlayer
@@ -99,5 +132,29 @@ fun Player(
                 }
             }
         )
+    }
+}
+
+
+suspend fun performPreRequest(request: Request): String? {
+    return withContext(Dispatchers.IO) {
+        val client = OkHttpClient()
+
+        val request = okhttp3.Request.Builder()
+            .url("https://uqload.ws/dl?op=view&file_code=px8mfh4wqk43&hash=2166554-56-19-1729037363-0814795e7f7a0c5c29c50e075c8de846&embed=1&adb=0")
+            .headers(
+                Headers.Builder().also {
+                    request.headers?.forEach { (key, value) ->
+                        it.add(key, value)
+                    }
+                    it
+                }
+                    .build()
+            )
+            .build()
+
+        val response = client.newCall(request).await()
+
+        response.code.toString()
     }
 }
