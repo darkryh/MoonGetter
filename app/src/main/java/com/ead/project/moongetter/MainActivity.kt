@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
         customUrl,
         "https://hexload.com/embed-0zxynhfodkmr.html",
         "https://flaswish.com/e/dhfe39jcywcr",
-        //"https://1cloudfile.com/L92p",
+        "https://1cloudfile.com/L92p",
         "https://goodstream.uno/video/embed/70edd37dfe6c3cce",
         "https://filemoon.sx/e/cvnd9zqj2i9w",
         "https://listeamed.net/e/Ro7kOVMVgkEZWBn",
@@ -107,22 +107,22 @@ class MainActivity : ComponentActivity() {
                         /**
                          * Example use case to find resources from a specific url
                          */
-                        /*viewModel.onEvent(
+                        viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://1fichier.com/?r7ibqt588y660b6idp36",
+                                url = "https://dood.li/e/t3nu46ib2n6f",
                             )
-                        )*/
+                        )
 
                         /**
                          * Example use case to find all possible resources from a list of urls
                          */
-                        viewModel.onEvent(
+                        /*viewModel.onEvent(
                             event = MainEvent.OnNewResults(
                                 context = this@MainActivity as Context,
                                 urls = exampleCollectedVideosFromInternet
                             )
-                        )
+                        )*/
                     }
 
                     Scaffold(
@@ -140,7 +140,7 @@ class MainActivity : ComponentActivity() {
                                 Player(
                                     modifier = Modifier
                                         .fillMaxWidth(),
-                                    url = viewModel.mediaUrlSelected.value
+                                    request = viewModel.mediaUrlSelected.value
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
                             }
@@ -210,7 +210,7 @@ fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (M
                         val clip = ClipData.newPlainText("Text copied", file.request.url)
 
                         clipboard.setPrimaryClip(clip)
-                        event(MainEvent.OnSelectedUrl(file.request.url))
+                        event(MainEvent.OnSelectedUrl(file.request))
                     },
                 text = "downloadUrl : " + file.request.url,
                 maxLines = 15
