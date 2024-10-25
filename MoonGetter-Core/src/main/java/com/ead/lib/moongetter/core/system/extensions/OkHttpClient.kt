@@ -3,7 +3,7 @@ package com.ead.lib.moongetter.core.system.extensions
 import okhttp3.OkHttpClient
 import okhttp3.Response
 
-suspend fun OkHttpClient.onNullableResponse(url : String) : Response? {
+suspend fun OkHttpClient.onResponse(url : String) : Response? {
     return try {
         OkHttpClient()
             .newCall(
