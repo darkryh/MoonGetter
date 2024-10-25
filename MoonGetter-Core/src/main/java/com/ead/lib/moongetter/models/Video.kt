@@ -1,6 +1,6 @@
 package com.ead.lib.moongetter.models
 
-import com.ead.lib.moongetter.models.download.Request
+import com.ead.lib.moongetter.models.server.Request
 
 data class Video(
     val quality : String?,
