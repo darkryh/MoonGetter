@@ -1,3 +1,6 @@
+val javaStringVersion: String by project
+val javaVersion = JavaVersion.toVersion(javaStringVersion)
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin)
@@ -24,15 +27,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = javaStringVersion
     }
 }
 
 dependencies {
+    implementation(project(":MoonGetter-Core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ead.lib.moongetter.okru"
+    namespace = "com.ead.lib.moongetter.vihide"
     compileSdk = 34
 
     defaultConfig {
@@ -37,7 +37,6 @@ android {
 
 dependencies {
     implementation(project(":MoonGetter-Core"))
-    implementation(libs.commons.text)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

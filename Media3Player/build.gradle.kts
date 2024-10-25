@@ -1,3 +1,6 @@
+val javaStringVersion: String by project
+val javaVersion = JavaVersion.toVersion(javaStringVersion)
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin)
@@ -31,11 +34,11 @@ android {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = javaStringVersion
     }
 }
 
@@ -59,10 +62,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.okhttp)
-
     implementation (libs.androidx.media3.exoplayer)
     implementation (libs.androidx.media3.ui)
     implementation (libs.androidx.media3.exoplayer.hls)
-    implementation(project(":MoonGetter"))
+    implementation(project(":MoonGetter-Core"))
 }

@@ -1,3 +1,6 @@
+val javaStringVersion: String by project
+val javaVersion = JavaVersion.toVersion(javaStringVersion)
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin)
@@ -25,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = javaStringVersion
     }
 }
 
@@ -41,13 +44,14 @@ publishing {
             }
 
             groupId = "com.ead.lib"
-            artifactId = "MoonGetter"
-            version = "0.0.3"
+            artifactId = "moongetter-core"
+            version = "1.0.0-alpha"
         }
     }
 }
 
 dependencies {
+    api(libs.okhttp)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
@@ -57,15 +61,6 @@ dependencies {
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    //okhttp
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
-
-    //apacheCommons
-    implementation(libs.commons.text)
-
-    //reflect annotations
     implementation(kotlin("reflect"))
 
     implementation("dev.datlag.jsunpacker:jsunpacker:1.0.2") {

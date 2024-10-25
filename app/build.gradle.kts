@@ -1,3 +1,6 @@
+val javaStringVersion: String by project
+val javaVersion = JavaVersion.toVersion(javaStringVersion)
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin)
@@ -31,11 +34,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = javaStringVersion
     }
     buildFeatures {
         compose = true
@@ -64,11 +67,36 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(project(":MoonGetter-Core"))
 
-    //okhttp
-    implementation(libs.okhttp)
 
-    //implementation("com.github.darkryh:MoonGetter:0.0.1-beta")
-    implementation(project(":MoonGetter"))
     implementation(project(":Media3Player"))
+
+    /*implementation(files("../dependencies/okhttp-$okhttpCoreVersion.jar"))
+    implementation(files("../dependencies/okio-$okioCoreVersion.jar"))*/
+
+    implementation(project(":MoonGetter-Doodstream"))
+    implementation(project(":MoonGetter-Facebook"))
+    implementation(project(":MoonGetter-Filemoon"))
+    implementation(project(":MoonGetter-Fireload"))
+    implementation(project(":MoonGetter-Gofile"))
+    implementation(project(":MoonGetter-Goodstream"))
+    implementation(project(":MoonGetter-GoogleDrive"))
+    implementation(project(":MoonGetter-Hexload"))
+    implementation(project(":MoonGetter-Lulustream"))
+    implementation(project(":MoonGetter-Mediafire"))
+    implementation(project(":MoonGetter-Mixdrop"))
+    implementation(project(":MoonGetter-Mp4Upload"))
+    implementation(project(":MoonGetter-Okru"))
+    implementation(project(":MoonGetter-OneCloudFile"))
+    implementation(project(":MoonGetter-Pixeldrain"))
+    implementation(project(":MoonGetter-Senvid"))
+    implementation(project(":MoonGetter-Streamtape"))
+    implementation(project(":MoonGetter-Streamwish"))
+    implementation(project(":MoonGetter-Uqload"))
+    implementation(project(":MoonGetter-Vidguard"))
+    implementation(project(":MoonGetter-Vihide"))
+    implementation(project(":MoonGetter-Voe"))
+    implementation(project(":MoonGetter-XTwitter"))
+    implementation(project(":MoonGetter-YourUpload"))
 }
