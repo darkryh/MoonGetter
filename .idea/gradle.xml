@@ -11,7 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Media3Player" />
-            <option value="$PROJECT_DIR$/MoonGetter" />
+            <option value="$PROJECT_DIR$/MoonGetter-Core" />
             <option value="$PROJECT_DIR$/MoonGetter-Doodstream" />
             <option value="$PROJECT_DIR$/MoonGetter-Facebook" />
             <option value="$PROJECT_DIR$/MoonGetter-Filemoon" />
@@ -32,6 +32,7 @@
             <option value="$PROJECT_DIR$/MoonGetter-Streamwish" />
             <option value="$PROJECT_DIR$/MoonGetter-Uqload" />
             <option value="$PROJECT_DIR$/MoonGetter-Vidguard" />
+            <option value="$PROJECT_DIR$/MoonGetter-Vihide" />
             <option value="$PROJECT_DIR$/MoonGetter-Voe" />
             <option value="$PROJECT_DIR$/MoonGetter-XTwitter" />
             <option value="$PROJECT_DIR$/MoonGetter-YourUpload" />
