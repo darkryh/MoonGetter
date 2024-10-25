@@ -5,7 +5,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
-import com.ead.lib.moongetter.models.download.Request
+import com.ead.lib.moongetter.models.server.Request
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
@@ -16,7 +16,7 @@ class GoodStream(
     headers : HashMap<String,String>
 ) : Server(context,url,headers) {
 
-    override val isDeprecated: Boolean = false
+    override val isDeprecated: Boolean = true
 
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
