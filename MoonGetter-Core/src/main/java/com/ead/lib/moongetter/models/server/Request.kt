@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.models.download
+package com.ead.lib.moongetter.models.server
 
 data class Request(
     val url: String,
