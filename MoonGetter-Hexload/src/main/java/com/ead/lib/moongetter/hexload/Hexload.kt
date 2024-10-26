@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.hexload
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -14,8 +15,9 @@ import org.json.JSONObject
 class Hexload(
     context: Context,
     url: String,
-    headers : HashMap<String,String>
-) : Server(context,url,headers) {
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : Server(context,url,headers,configurationData) {
 
     override suspend fun onExtract(): List<Video> {
         val domain = PatternManager.singleMatch(
@@ -26,6 +28,7 @@ class Hexload(
         url = url.replace(domain, "hexload.com")
 
         var response = OkHttpClient()
+            .configBuilder()
             .newCall(GET())
             .await()
 
@@ -35,6 +38,7 @@ class Hexload(
         val dataContent = dataPattern.find((response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))))?.groupValues?.get(1)
 
         response = OkHttpClient()
+            .configBuilder()
             .newCall(
                 POST(
                     url = url,
