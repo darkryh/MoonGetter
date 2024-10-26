@@ -9,10 +9,11 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
-import com.ead.lib.moongetter.core.system.extensions.onNullableResponse
+import com.ead.lib.moongetter.core.system.extensions.onResponse
 import com.ead.lib.moongetter.core.system.models.MoonWebView
-import com.ead.lib.moongetter.models.download.Request
+import com.ead.lib.moongetter.utils.HttpUtil
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -24,7 +25,12 @@ import kotlin.coroutines.resumeWithException
 /**
  * Server robot class for sites that needs simulates browser operations
  */
-open class ServerRobot(context: Context, url : String) : Server(context,url) {
+open class ServerRobot(
+    context: Context,
+    url : String,
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : Server(context,url,headers,configurationData) {
 
 
     /**
@@ -42,6 +48,8 @@ open class ServerRobot(context: Context, url : String) : Server(context,url) {
     private var networkInterceptorListener: (String) -> Unit = {}
     private var errorListener: (Throwable) -> Unit = {}
 
+    private var timeoutListener: (Unit) -> Unit = {}
+
     /**
      * Initialize web view with a delay to ensure the web view is ready
      * and domStorageEnabled validation to validate depending of the server
@@ -50,7 +58,7 @@ open class ServerRobot(context: Context, url : String) : Server(context,url) {
         if (_webView != null) return
 
         onUi {
-            _webView = MoonWebView(context)
+            _webView = MoonWebView(context, headers = headers)
             _webView?.webChromeClient = WebChromeClient()
             webView.settings.domStorageEnabled = domStorageEnabled
             configBrowser()
@@ -195,12 +203,14 @@ open class ServerRobot(context: Context, url : String) : Server(context,url) {
         return suspendCancellableCoroutine { continuation ->
 
             loadedUrlListener = { _ ->
+                timeoutListener(Unit)
 
                 jsCode?.let { code ->
                     webView.evaluateJavascript(code) {}
                 }
 
-                val response : Response? = runBlocking { OkHttpClient().onNullableResponse(url) }
+                val response : Response? = runBlocking { OkHttpClient().onResponse(url) }
+
                 when(response) {
                     null -> {
                         isResultFounded = true
@@ -209,7 +219,7 @@ open class ServerRobot(context: Context, url : String) : Server(context,url) {
                     else -> {
                         val code = response.code
 
-                        if ((code == forbidden || code == notFound) && !isResultFounded) {
+                        if ((code == FORBIDDEN || code == NOT_FOUND) && !isResultFounded) {
                             isResultFounded = true
                             continuation.resume(null)
                         }
@@ -228,6 +238,17 @@ open class ServerRobot(context: Context, url : String) : Server(context,url) {
                     continuation.resume(null)
                 }
             }
+
+            timeoutListener = {
+                runBlocking(Dispatchers.IO) {
+                    delay(configData.timeout)
+                    if (!isResultFounded) {
+                        isResultFounded = true
+                        continuation.resume(null)
+                    }
+                }
+            }
+
             errorListener = { error -> continuation.resumeWithException(error) }
 
             onUi {
@@ -253,7 +274,7 @@ open class ServerRobot(context: Context, url : String) : Server(context,url) {
      * Is release method from the WebView
      */
     protected open fun releaseBrowser() = onUi {
-        _webView?.loadUrl("about:blank")
+        _webView?.loadUrl(HttpUtil.BLANK_BROWSER)
         _webView?.destroy()
         _webView = null
     }
