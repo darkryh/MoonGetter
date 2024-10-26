@@ -1,13 +1,15 @@
 package com.ead.lib.moongetter.core
 
 import android.content.Context
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.utils.PatternManager
 
 internal fun Array<Server.Factory>.onFactory(
     context: Context,
     url: String,
-    headers: HashMap<String, String>
+    headers: HashMap<String, String>,
+    configData: Configuration.Data
 ): Server? {
     return singleOrNull { expectedServerFactory ->
         PatternManager
@@ -20,9 +22,10 @@ internal fun Array<Server.Factory>.onFactory(
             val constructor = `class`.getDeclaredConstructor(
                 Context::class.java,
                 String::class.java,
-                HashMap::class.java
+                HashMap::class.java,
+                Configuration.Data::class.java
             )
-            constructor.newInstance(context, url, headers)
+            constructor.newInstance(context, url, headers, configData)
         }
     }
 }
