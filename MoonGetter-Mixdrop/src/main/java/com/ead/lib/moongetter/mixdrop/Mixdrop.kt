@@ -2,6 +2,7 @@ package com.ead.lib.moongetter.mixdrop
 
 import android.content.Context
 import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -12,8 +13,9 @@ import okhttp3.OkHttpClient
 class Mixdrop(
     context: Context,
     url: String,
-    headers : HashMap<String,String>
-) : Server(context,url,headers) {
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : Server(context,url,headers,configurationData) {
 
     override val headers: HashMap<String, String> = headers.also {
         it["Referer"] = DEFAULT_REFERER
@@ -22,6 +24,7 @@ class Mixdrop(
 
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
+            .configBuilder()
             .newCall(GET())
             .execute()
 

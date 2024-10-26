@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.doodstream
 import android.content.Context
 import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.Unstable
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 
 @Pending
@@ -10,10 +11,12 @@ import com.ead.lib.moongetter.models.Server
 class Doodstream(
     context: Context,
     url: String,
-    headers : HashMap<String,String>
-) : Server(context,url,headers) {
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : Server(context,url,headers,configurationData) {
+    override val isDeprecated: Boolean = true
 
-   /* private var urlTemp: String? = null
+    /* private var urlTemp: String? = null
     private var rawToken: String? = null
     private var host : String? = null
 

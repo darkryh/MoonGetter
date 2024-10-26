@@ -4,6 +4,7 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.Unstable
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.ServerRobot
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -13,8 +14,9 @@ import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 class Gofile(
     context: Context,
     url : String,
-    headers : HashMap<String,String>
-) : ServerRobot(context,url,headers) {
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : ServerRobot(context,url,headers,configurationData) {
 
     override val isDeprecated: Boolean = true
 
