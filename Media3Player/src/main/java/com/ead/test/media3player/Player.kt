@@ -26,13 +26,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
-import com.ead.lib.moongetter.core.system.extensions.await
-import com.ead.lib.moongetter.models.download.Request
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import okhttp3.Headers
-import okhttp3.OkHttpClient
+import com.ead.lib.moongetter.models.Request
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -72,7 +66,6 @@ fun Player(
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         when (playbackState) {
                             Player.STATE_READY -> {
-                                runBlocking { performPreRequest(request) }
                             }
                             Player.STATE_IDLE -> {
 
@@ -136,6 +129,7 @@ fun Player(
 }
 
 
+/*
 suspend fun performPreRequest(request: Request): String? {
     return withContext(Dispatchers.IO) {
         val client = OkHttpClient()
@@ -157,4 +151,4 @@ suspend fun performPreRequest(request: Request): String? {
 
         response.code.toString()
     }
-}
+}*/
