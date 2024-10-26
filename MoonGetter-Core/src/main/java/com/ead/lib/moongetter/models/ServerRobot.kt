@@ -202,8 +202,10 @@ open class ServerRobot(
 
         return suspendCancellableCoroutine { continuation ->
 
+            timeoutListener(Unit)
+
             loadedUrlListener = { _ ->
-                timeoutListener(Unit)
+
 
                 jsCode?.let { code ->
                     webView.evaluateJavascript(code) {}
