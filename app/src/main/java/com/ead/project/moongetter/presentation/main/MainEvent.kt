@@ -1,7 +1,7 @@
-package com.ead.project.moongetter.main
+package com.ead.project.moongetter.presentation.main
 
 import android.content.Context
-import com.ead.lib.moongetter.models.download.Request
+import com.ead.lib.moongetter.models.Request
 
 sealed class MainEvent {
      class OnNewResult(val context: Context,val url : String?=null) : MainEvent()
