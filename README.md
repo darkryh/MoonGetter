@@ -27,14 +27,8 @@ MoonGetter is an Android library for handling stream extraction and downloads. I
 17. **YourUpload**
 18. **Facebook**
 19. **XTwitter**
-20. **Gofile** todo
-21. **LuluStream** todo
-
-## Token Server
-
-These servers require token authentication to work:
-
-1. **1Fichier**
+20. **Gofile** in todo
+21. **LuluStream** in todo
 
 ## Installation - Gradle
 ```groovy  
