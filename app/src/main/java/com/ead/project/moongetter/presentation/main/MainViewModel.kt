@@ -36,6 +36,7 @@ import com.ead.lib.moongetter.vihide.factory.VihideFactory
 import com.ead.lib.moongetter.voe.factory.VoeFactory
 import com.ead.lib.moongetter.xtwitter.factory.XTwitterFactory
 import com.ead.lib.moongetter.yourupload.factory.YourUploadFactory
+import com.ead.project.moongetter.domain.custom_servers.factory.SenvidModifiedFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -56,6 +57,13 @@ class MainViewModel : ViewModel() {
     private val engine : Engine = Engine.Builder()
         .onCore(
             engines = arrayOf(
+                /**
+                 * CustomServerFactory
+                 */
+                SenvidModifiedFactory,
+                /**
+                 * DefaultServerFactory
+                 */
                 DoodstreamFactory,
                 FacebookFactory,
                 FilemoonFactory,
@@ -98,7 +106,7 @@ class MainViewModel : ViewModel() {
                                     "User-Agent" to "Mozilla/5.0"
                                 )
                             )
-                            .setTimeout(0)
+                            .setTimeout(12000)
                             .setEngine(engine)
                             .get(event.url ?: return@launch)
 
