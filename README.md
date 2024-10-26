@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {  
-    implementation("com.github.darkryh:moongetter-core:$version")
+    implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
     
     // implement you wanted extractor server
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
