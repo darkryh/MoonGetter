@@ -4,12 +4,12 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 
-open class ServerJwPlayer(context: Context, url: String) : ServerRobot(context,url) {
-
-    /**
-     * Identifier of the server in case of throw exception
-     */
-    protected open val identifier : String? = null
+open class ServerJwPlayer(
+    context: Context,
+    url: String,
+    headers: HashMap<String,String>,
+    configurationData: Configuration.Data
+) : ServerRobot(context,url,headers,configurationData) {
 
 
     /**
@@ -29,7 +29,7 @@ open class ServerJwPlayer(context: Context, url: String) : ServerRobot(context,u
     /**
      * Default method to extract the url of the video for jwPlayers sites
      */
-    suspend fun onDefaultJwPlayer() {
+    suspend fun onDefaultJwPlayer() : List<Video> {
 
 
         /**
@@ -44,8 +44,12 @@ open class ServerJwPlayer(context: Context, url: String) : ServerRobot(context,u
          * first load the jwPlayer by script
          * and then intercept the expected url
          */
-        url = getInterceptionUrl(url,interceptionRegex,endingRegex,scriptLoader()) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,identifier.toString()))
-
+        url = getInterceptionUrl(
+            url = url,
+            verificationRegex = interceptionRegex,
+            endingRegex = endingRegex,
+            jsCode = scriptLoader()
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
 
         /**
          * Release the browser
@@ -56,7 +60,16 @@ open class ServerJwPlayer(context: Context, url: String) : ServerRobot(context,u
         /**
          * Add the default url
          */
-        addDefault()
+        return listOf(
+            Video(
+                quality = DEFAULT,
+                request = Request(
+                    url = url,
+                    method = "GET",
+                    headers = headers
+                )
+            )
+        )
     }
 
 
