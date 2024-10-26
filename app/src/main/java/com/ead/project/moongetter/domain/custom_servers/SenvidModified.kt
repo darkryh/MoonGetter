@@ -1,8 +1,14 @@
 package com.ead.project.moongetter.domain.custom_servers
 
 import android.content.Context
+import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.PatternManager
+import okhttp3.OkHttpClient
 
 class SenvidModified(
     context : Context,
@@ -11,14 +17,14 @@ class SenvidModified(
     configData: Configuration.Data
 ) : Server(context,url,headers,configData) {
 
-    /*private val urlRegex =  """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""".toRegex()
+    private val urlRegex =  """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""".toRegex()
 
     override var url: String = urlRegex.find(url)?.groupValues?.get(1) ?:
     throw InvalidServerException(context.getString(R.string.unknown_error))
 
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
-            .newCall(GETOk())
+            .newCall(GET())
             .await()
 
         if (!response.isSuccessful) throw InvalidServerException(context.getString(
@@ -33,8 +39,9 @@ class SenvidModified(
                     regex =  "<source src=\"(.*?)\""
                 ) ?: throw InvalidServerException(context.getString(
                     R.string.server_requested_resource_was_taken_down,
-                    name))
+                    name)
+                )
             )
         )
-    }*/
+    }
 }
