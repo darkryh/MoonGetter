@@ -1,12 +1,12 @@
 package com.ead.lib.moongetter
 
 import android.content.Context
-import com.ead.lib.moongetter.models.Request
+import com.ead.lib.moongetter.models.builder.Engine
 import org.junit.Before
 
 class MoonGetterTest {
 
-    private lateinit var moonGetterRequest : Request.Builder
+    private lateinit var moonGetterEngine : Engine.Builder
     private lateinit var context: Context
 
     @Before
