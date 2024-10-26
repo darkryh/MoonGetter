@@ -3,9 +3,10 @@ package com.ead.lib.moongetter.goodstream
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
-import com.ead.lib.moongetter.models.server.Request
+import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
@@ -13,13 +14,15 @@ import okhttp3.OkHttpClient
 class GoodStream(
     context: Context,
     url : String,
-    headers : HashMap<String,String>
-) : Server(context,url,headers) {
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : Server(context,url,headers,configurationData) {
 
     override val isDeprecated: Boolean = true
 
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
+            .configBuilder()
             .newCall(GET())
             .await()
 
