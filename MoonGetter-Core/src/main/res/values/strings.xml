@@ -10,4 +10,5 @@
     <string name="server_response_went_wrong">%1$s response went wrong</string>
     <string name="server_regex_could_not_find_id">%1$s server regex couldn\'t find id</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="engines_not_provided">Engines not provided</string>
 </resources>
