@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED")
+
 package com.ead.project.moongetter
 
 import android.content.ClipData
@@ -32,8 +34,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ead.lib.moongetter.models.Video
-import com.ead.project.moongetter.main.MainEvent
-import com.ead.project.moongetter.main.MainViewModel
+import com.ead.project.moongetter.presentation.main.MainEvent
+import com.ead.project.moongetter.presentation.main.MainViewModel
 import com.ead.project.moongetter.presentation.theme.MoonGetterTheme
 import com.ead.test.media3player.Player
 import kotlinx.coroutines.flow.collectLatest
@@ -44,13 +46,15 @@ class MainActivity : ComponentActivity() {
 
     private val customUrl = "https://custom.domain.com/aqua/sv?url=https://sendvid.com/k555oewr"
 
-    @Suppress("UNUSED")
     private val exampleCollectedVideosFromInternet = listOf(
         customUrl,
-        "https://hexload.com/embed-0zxynhfodkmr.html",
+        "https://x.com/_BestVideos/status/1795579616243184035",
+        "https://www.facebook.com/lassomusica/videos/el-video-mas-lindo-que-veras-hoy%EF%B8%8F/488188289893329/",
+        "https://sendvid.com/k555oewr",
+        "https://hexload.com/embed-4jq8u2fwodsm.html",
         "https://flaswish.com/e/dhfe39jcywcr",
         "https://1cloudfile.com/L92p",
-        "https://goodstream.uno/video/embed/70edd37dfe6c3cce",
+        //"https://goodstream.one/video/embed/0g936frff64s",
         "https://filemoon.sx/e/cvnd9zqj2i9w",
         "https://listeamed.net/e/Ro7kOVMVgkEZWBn",
         "https://streamtape.com/e/0V8ALXqzvVsb1vg",
@@ -58,17 +62,15 @@ class MainActivity : ComponentActivity() {
         "https://voe.sx/e/bfydr4fmm7jp",
         "https://pixeldrain.com/u/VbW82s5W",
         "https://www.mediafire.com/file/6gwdbflmrgxe3ta",
-        "https://1fichier.com/?vgtzab3jztco6vw13kgw",
         "http://ok.ru/videoembed/1411667855965",
         "https://drive.google.com/file/d/0B-bHILyvaZQQNXo5cWpXMjRhZ2M/view?usp=drive_link&resourcekey=0-e4kDmIKPCj24fnzZC0fX0A"
     )
 
 
-
-
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             MoonGetterTheme {
@@ -110,7 +112,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://dood.li/e/t3nu46ib2n6f",
+                                url = "https://flaswish.com/e/dhfe39jcywcr"
                             )
                         )
 
@@ -210,10 +212,10 @@ fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (M
                         val clip = ClipData.newPlainText("Text copied", file.request.url)
 
                         clipboard.setPrimaryClip(clip)
-                        event(MainEvent.OnSelectedUrl(file.request))
+                        event(MainEvent.OnSelectedUrl(request = file.request))
                     },
                 text = "downloadUrl : " + file.request.url,
-                maxLines = 15
+                maxLines = 4
             )
             Spacer(
                 modifier = Modifier.height(8.dp)
