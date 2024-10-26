@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.filemoon
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.ServerJwPlayer
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -13,14 +14,16 @@ import okhttp3.OkHttpClient
 class Filemoon(
     context: Context,
     url: String,
-    headers : HashMap<String,String>
-) : ServerJwPlayer(context,url,headers) {
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : ServerJwPlayer(context,url,headers,configurationData) {
 
     override val headers: HashMap<String, String> = headers.also { it.remove("User-Agent") }
     override val endingRegex: Regex = """https:\\/\\/mc\\.yandex\\.ru\\/clmap\\/.*""".toRegex()
 
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
+            .configBuilder()
             .newCall(GET())
             .await()
 
