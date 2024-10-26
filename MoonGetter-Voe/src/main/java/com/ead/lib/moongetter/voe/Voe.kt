@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.voe
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
+import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -13,11 +14,13 @@ import okhttp3.OkHttpClient
 class Voe(
     context: Context,
     url : String,
-    headers : HashMap<String,String>
-) : Server(context,url,headers) {
+    headers : HashMap<String,String>,
+    configurationData: Configuration.Data
+) : Server(context,url,headers,configurationData) {
 
     override suspend fun onExtract(): List<Video> {
         var response = OkHttpClient()
+            .configBuilder()
             .newCall(GET())
             .await()
 
@@ -29,6 +32,7 @@ class Voe(
         ).toString()
 
         response = OkHttpClient()
+            .configBuilder()
             .newCall(GET())
             .await()
 
