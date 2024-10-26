@@ -72,7 +72,7 @@ class MyViewModel : ViewModel() {
                 )
                 .setTimeout(8000)
                 .setEngine(engine)
-                .get(event.url)
+                .get(url)
             
             val streamsResult = server.videos
 
@@ -155,7 +155,7 @@ class MyViewModel : ViewModel() {
             val server : Server? = MoonGetter
                 .initialize(context = event.context)
                 .setEngine(engine)
-                .get(event.url)
+                .get(url)
 
             val streamsResult = server.videos
 
