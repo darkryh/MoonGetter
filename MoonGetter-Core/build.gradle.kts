@@ -1,3 +1,4 @@
+val moonGetterVersion: String by project
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
 
@@ -45,7 +46,7 @@ publishing {
 
             groupId = "com.ead.lib"
             artifactId = "moongetter-core"
-            version = "1.0.0-alpha"
+            version = moonGetterVersion
         }
     }
 }

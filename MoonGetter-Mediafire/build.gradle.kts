@@ -1,9 +1,11 @@
+val moonGetterVersion: String by project
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin)
+    id("maven-publish")
 }
 
 android {
@@ -32,6 +34,20 @@ android {
     }
     kotlinOptions {
         jvmTarget = javaStringVersion
+    }
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            afterEvaluate {
+                from(components["release"])
+            }
+
+            groupId = "com.ead.lib"
+            artifactId = "moongetter-mediafire"
+            version = moonGetterVersion
+        }
     }
 }
 

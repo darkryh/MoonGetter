@@ -67,13 +67,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(project(":MoonGetter-Core"))
-
 
     implementation(project(":Media3Player"))
 
-    /*implementation(files("../dependencies/okhttp-$okhttpCoreVersion.jar"))
-    implementation(files("../dependencies/okio-$okioCoreVersion.jar"))*/
+    implementation(project(":MoonGetter-Core"))
 
     implementation(project(":MoonGetter-Doodstream"))
     implementation(project(":MoonGetter-Facebook"))
