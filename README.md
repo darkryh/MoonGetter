@@ -40,9 +40,9 @@ dependencies {
     implementation("com.github.darkryh:moongetter-core:$version")
     
     // implement you wanted extractor server
-    implementation("com.github.darkryh:moongetter-filemoon:$version")
-    implementation("com.github.darkryh:moongetter-streamtape:$version")
-    implementation("com.github.darkryh:moongetter-streamwish:$version")
+    implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
+    implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
+    implementation("com.github.darkryh.MoonGetter:moongetter-streamwish:$version")
 } 
 ```  
 # Example of Use Case
