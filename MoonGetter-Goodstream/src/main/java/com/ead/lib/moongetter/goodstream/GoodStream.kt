@@ -38,7 +38,7 @@ class GoodStream(
                     ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name)),
                     method = "GET",
                     headers = mapOf(
-                        "User-Agent" to headers["User-Agent"].toString(),
+                        "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0",
                         "Referer" to "https://goodstream.one",
                         "Origin" to "https://goodstream.one"
                     )
