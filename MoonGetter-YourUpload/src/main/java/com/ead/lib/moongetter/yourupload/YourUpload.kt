@@ -11,6 +11,7 @@ import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
+import okhttp3.Request
 
 @Unstable("server request take too long to respond")
 class YourUpload(
@@ -20,7 +21,22 @@ class YourUpload(
     configurationData: Configuration.Data
 ) : Server(context,url,headers,configurationData) {
 
+    override val isDeprecated: Boolean = true
+
+    override val headers: HashMap<String, String> = headers.also { it.remove("User-Agent") }
+
     override suspend fun onExtract(): List<Video> {
+        var response = OkHttpClient()
+            .newCall(Request.Builder().url(url).build())
+            .await()
+
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+
+        val urlRequest = PatternManager.singleMatch(
+            string =  response.body?.string().toString(),
+            regex = """file:\s*'([^']*)'""",
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+
         val client = OkHttpClient().newBuilder()
             .connectionSpecs(
                 listOf(
@@ -37,33 +53,25 @@ class YourUpload(
             .followRedirects(false)
             .build()
 
-        var response = client
-            .newCall(GET())
-            .await()
+        val request = Request.Builder()
+            .addHeader("Referer",url)
+            .url(urlRequest)
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
-
-        val urlRequest = PatternManager.singleMatch(
-            string =  response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name)),
-            regex = """file:\s*'([^']*)'""",
-        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
-
-        response = client.newCall(
-            GET(
-                url = urlRequest,
-                headers = hashMapOf(
-                    "Referer" to url
-                )
-            )
-        ).await()
+        response = client.newCall(request.build()).await()
 
         if (!response.isRedirect) throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+
+        url = response.header("Location") ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+
 
         return listOf(
             Video(
                 quality = DEFAULT,
-                url = response.header("Location") ?: throw InvalidServerException(context.getString(
-                    R.string.server_resource_could_not_find_it, name))
+                url = url.trim(),
+                headers = hashMapOf(
+                    "Range" to "bytes=0-",
+                    "Referer" to "https://www.yourupload.com/"
+                )
             )
         )
     }
