@@ -2,7 +2,6 @@ package com.ead.lib.moongetter.models.builder
 
 import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.utils.UserAgent
 
 class Config(
     builder : Builder
@@ -12,12 +11,6 @@ class Config(
      * The context of the application.
      */
     @get:JvmName("context") val context: Context? = builder.context
-
-
-    /**
-     * The headers of the server to connect to.
-     */
-    @get:JvmName("headers") val headers: HashMap<String, String> = builder.headers
 
 
     /**
@@ -40,14 +33,6 @@ class Config(
 
 
         /**
-         * Internal variable to store the headers of the server to connect to.
-         */
-        internal var headers : HashMap<String, String> = hashMapOf(
-            "User-Agent" to UserAgent.value
-        )
-
-
-        /**
          * Internal variable to store the timeout of the server to connect to.
          */
         internal var configData : Configuration.Data = Configuration.Data()
@@ -57,14 +42,6 @@ class Config(
          * Internal variable to store the factory of the server to apply the configurations.
          */
         internal var factory : Factory.Builder = Factory.Builder()
-
-
-        /**
-         * Setter to provide own headers.
-         */
-        fun setHeaders(headers : Map<String, String>) = apply {
-            this.headers = HashMap(headers)
-        }
 
 
         /**
@@ -85,12 +62,6 @@ class Config(
              * Injects the context of the application.
              */
             factory.context = this.context
-
-
-            /**
-             * Injects the headers of the server to connect to.
-             */
-            factory.headers = this.headers
 
 
             /**
@@ -116,7 +87,6 @@ class Config(
             this.context = config.context
             this.configData = config.configData
             this.factory = config.factory
-            this.headers = config.headers
         }
     }
 }

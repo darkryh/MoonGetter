@@ -68,6 +68,14 @@ class Factory(
 
 
         /**
+         * Setter to provide own headers.
+         */
+        fun setHeaders(headers : Map<String, String>) = apply {
+            this.headers = HashMap(headers)
+        }
+
+
+        /**
          * Returns a unique identifier name for the given URL and server integrations.
          * This identifier can be used to identify the server in logs and other debugging information.
          *
