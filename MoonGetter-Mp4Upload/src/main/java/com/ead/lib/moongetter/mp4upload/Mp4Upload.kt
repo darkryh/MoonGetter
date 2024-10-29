@@ -31,18 +31,14 @@ class Mp4Upload(
 
         if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
 
-        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
-
-        url = PatternManager.singleMatch(
-            string = body,
-            regex = """src:\s*"([^"]+\.mp4)""""
-        )?.takeIf { it.startsWith("http") } ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
-
         return listOf(
             Video(
                 quality = DEFAULT,
                 request = Request(
-                    url = url,
+                    url = PatternManager.singleMatch(
+                        string = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name)),
+                        regex = """src:\s*"([^"]+\.mp4)""""
+                    )?.takeIf { it.startsWith("http") } ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name)),
                     method = "GET",
                     headers = headers
                 )
