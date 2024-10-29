@@ -72,6 +72,7 @@ dependencies {
 
     implementation(project(":MoonGetter-Core"))
 
+    implementation(project(":MoonGetter-Abyss"))
     implementation(project(":MoonGetter-Doodstream"))
     implementation(project(":MoonGetter-Facebook"))
     implementation(project(":MoonGetter-Filemoon"))
