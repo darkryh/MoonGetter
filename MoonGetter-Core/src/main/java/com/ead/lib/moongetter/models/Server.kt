@@ -140,7 +140,8 @@ open class Server(
      */
     protected fun GET(
         url : String? = null,
-        headers : HashMap<String,String>? = null
+        headers : HashMap<String,String>? = null,
+        useHeaders : Boolean = true
     ) : Request {
 
 
@@ -173,6 +174,7 @@ open class Server(
                 /**
                  * Do the combining operation
                  */
+                if (!useHeaders) return@let builder
                 builder.headers(
                     Headers
                         .Builder()
@@ -284,6 +286,7 @@ open class Server(
      * MoonGetter
      */
     interface Factory {
+
 
 
         /**
