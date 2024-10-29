@@ -31,17 +31,14 @@ class Uqload(
 
         if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
 
-        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
-
         return listOf(
             Video(
                 quality = DEFAULT,
                 request = Request(
                     url = PatternManager.singleMatch(
-                        string = body,
+                        string = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name)),
                         regex = """sources:\s*\[\s*"(https?://[^"]+)"\s*\]"""
-                    )?.takeIf { it.startsWith("http") } ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
-                    ,
+                    )?.takeIf { it.startsWith("http") } ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name)),
                     method = "GET",
                     headers = headers
                 )
