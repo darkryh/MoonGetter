@@ -19,7 +19,6 @@ class Mp4Upload(
 ) : ServerUCR(context,url,headers,configurationData) {
 
     override val headers: HashMap<String, String> = headers.also {
-        it["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
         it["Referer"] = url
         it["Origin"] = url
     }
