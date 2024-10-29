@@ -18,6 +18,7 @@ rootProject.name = "MoonGetter"
 include(":app")
 include(":Media3Player")
 include(":MoonGetter-Core")
+include(":MoonGetter-Abyss")
 include(":MoonGetter-Doodstream")
 include(":MoonGetter-Facebook")
 include(":MoonGetter-Filemoon")
