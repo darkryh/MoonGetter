@@ -1,4 +1,5 @@
 @file:Suppress("UNUSED")
+@file:OptIn(ExperimentalFoundationApi::class)
 
 package com.ead.project.moongetter
 
@@ -46,6 +47,11 @@ class MainActivity : ComponentActivity() {
 
     private val customUrl = "https://custom.domain.com/aqua/sv?url=https://sendvid.com/k555oewr"
 
+    private val specialVideos = listOf(
+        "https://www.mp4upload.com/embed-a1oxgwvtpj04.html",
+        "https://uqload.net/embed-px8mfh4wqk43.html"
+    )
+
     private val exampleCollectedVideosFromInternet = listOf(
         customUrl,
         "https://x.com/_BestVideos/status/1795579616243184035",
@@ -67,10 +73,8 @@ class MainActivity : ComponentActivity() {
     )
 
 
-    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
         setContent {
             MoonGetterTheme {
@@ -112,7 +116,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://flaswish.com/e/dhfe39jcywcr"
+                                url = "https://uqload.net/embed-px8mfh4wqk43.html"
                             )
                         )
 
@@ -142,7 +146,8 @@ class MainActivity : ComponentActivity() {
                                 Player(
                                     modifier = Modifier
                                         .fillMaxWidth(),
-                                    request = viewModel.mediaUrlSelected.value
+                                    request = viewModel.mediaUrlSelected.value,
+                                    context = this@MainActivity
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
                             }
@@ -212,10 +217,11 @@ fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (M
                         val clip = ClipData.newPlainText("Text copied", file.request.url)
 
                         clipboard.setPrimaryClip(clip)
+
                         event(MainEvent.OnSelectedUrl(request = file.request))
                     },
                 text = "downloadUrl : " + file.request.url,
-                maxLines = 4
+                maxLines = 16
             )
             Spacer(
                 modifier = Modifier.height(8.dp)

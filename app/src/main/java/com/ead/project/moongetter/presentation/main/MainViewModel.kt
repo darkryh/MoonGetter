@@ -1,5 +1,6 @@
 package com.ead.project.moongetter.presentation.main
 
+import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -7,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ead.lib.moongetter.MoonGetter
+import com.ead.lib.moongetter.abyss.factory.AbyssFactory
 import com.ead.lib.moongetter.doodstream.factory.DoodstreamFactory
 import com.ead.lib.moongetter.facebook.factory.FacebookFactory
 import com.ead.lib.moongetter.filemoon.factory.FilemoonFactory
@@ -64,6 +66,7 @@ class MainViewModel : ViewModel() {
                 /**
                  * DefaultServerFactory
                  */
+                AbyssFactory,
                 DoodstreamFactory,
                 FacebookFactory,
                 FilemoonFactory,
@@ -95,19 +98,21 @@ class MainViewModel : ViewModel() {
     fun onEvent(event: MainEvent) {
         viewModelScope.launch (Dispatchers.IO) {
             try {
-
                 when(event) {
+                    is MainEvent.OnSelectedUrl -> {
+                        _mediaUrlSelected.value = event.request
+                    }
                     is MainEvent.OnNewResult -> {
 
                         val serversResults : Server? = MoonGetter
                             .initialize(context = event.context)
-                            .setHeaders(
-                                mapOf(
-                                    "User-Agent" to "Mozilla/5.0"
-                                )
-                            )
                             .setTimeout(12000)
                             .setEngine(engine)
+                            .setHeaders(
+                                 mapOf(
+                                     "User-Agent" to "Mozilla/5.0"
+                                 )
+                             )
                             .get(event.url ?: return@launch)
 
                         _messageResult.value = serversResults?.videos ?: emptyList()
@@ -117,13 +122,13 @@ class MainViewModel : ViewModel() {
 
                         val serversResults : Server? = MoonGetter
                             .initialize(context = event.context)
+                            .setTimeout(12000)
+                            .setEngine(engine)
                             .setHeaders(
                                 mapOf(
                                     "User-Agent" to "Mozilla/5.0"
                                 )
                             )
-                            .setTimeout(12000)
-                            .setEngine(engine)
                             .getUntilFindResource(event.urls)
 
                         _messageResult.value = serversResults?.videos ?: emptyList()
@@ -133,21 +138,17 @@ class MainViewModel : ViewModel() {
 
                         val serversResults : List<Server> = MoonGetter
                             .initialize(context = event.context)
+                            .setTimeout(12000)
+                            .setEngine(engine)
                             .setHeaders(
                                 mapOf(
                                     "User-Agent" to "Mozilla/5.0"
                                 )
                             )
-                            .setTimeout(12000)
-                            .setEngine(engine)
                             .get(event.urls)
 
                         _messageResult.value = serversResults
                             .flatMap { it.videos }
-                    }
-
-                    is MainEvent.OnSelectedUrl -> {
-                        _mediaUrlSelected.value = event.request
                     }
                 }
 
@@ -156,12 +157,15 @@ class MainViewModel : ViewModel() {
                 }
 
             } catch (e : InvalidServerException) {
+                Log.d("MOON_ERROR", e.message ?: "unknown error")
                 _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
             }
             catch (e : IOException) {
+                Log.d("MOON_ERROR", e.message ?: "unknown error")
                 _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
             }
             catch (e : RuntimeException) {
+                Log.d("MOON_ERROR", e.message ?: "unknown error")
                 _eventFlow.emit(UiEvent.ShowSnackBar(message = e.message ?: "unknown error"))
             }
         }
