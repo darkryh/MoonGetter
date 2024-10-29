@@ -17,6 +17,8 @@ class Mediafire(
     configurationData: Configuration.Data
 ) : Server(context,url,headers,configurationData) {
 
+    override val headers: HashMap<String, String> = headers.also { it.remove("User-Agent") }
+
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
             .configBuilder()
