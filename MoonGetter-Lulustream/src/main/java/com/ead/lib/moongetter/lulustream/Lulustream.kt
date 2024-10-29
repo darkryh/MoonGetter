@@ -36,9 +36,9 @@ class Lulustream(
             .newCall(GET())
             .await()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(com.ead.lib.moongetter.R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
 
-        val body = response.body?.string() ?: throw InvalidServerException(context.getString(com.ead.lib.moongetter.R.string.server_response_went_wrong, name))
+        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
 
         return listOf(
             Video(
