@@ -29,18 +29,22 @@ open class Server(
     /**
      * @param @configurationData to apply configurations of the library
      */
-    protected open val configData : Configuration.Data,
-    /**
-     * @param @isDeprecated true if the server is deprecated
-     */
-    open val isDeprecated : Boolean = false,
+    protected open val configData : Configuration.Data
 ) {
+
 
 
     /**
      * @return the name of the server
      */
     protected val name : String = this::class.java.simpleName
+
+
+
+    /**
+     * @return the state of the server
+     */
+    open val isDeprecated : Boolean = false
 
 
 
