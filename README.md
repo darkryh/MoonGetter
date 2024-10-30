@@ -43,6 +43,7 @@ dependencies {
     implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
     
     // implement you wanted extractor server
+    implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamwish:$version")
@@ -55,6 +56,7 @@ class MyViewModel : ViewModel() {
     private val engine : Engine = Engine.Builder()
         .onCore(
             engines = arrayOf(
+                Mp4UploadFactory,
                 FilemoonFactory,
                 StreamtapeFactory,
                 StreamwishFactory,
@@ -68,13 +70,13 @@ class MyViewModel : ViewModel() {
 
             val server : Server? = MoonGetter
                 .initialize(context = event.context)
+                .setTimeout(8000)
+                .setEngine(engine)
                 .setHeaders(
                     mapOf(
                         "User-Agent" to "Mozilla/5.0"
                     )
                 )
-                .setTimeout(8000)
-                .setEngine(engine)
                 .get(url)
             
             val streamsResult = server.videos
