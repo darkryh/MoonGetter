@@ -22,6 +22,8 @@ class Abyss(
     configurationData: Configuration.Data
 ) : Server(context,url,headers,configurationData) {
 
+    override val isDeprecated: Boolean = true
+
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()
             .configBuilder()
