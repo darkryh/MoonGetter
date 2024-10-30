@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ fun Player(
     request: Request?,
     context: Context
 ) {
+
     if (request == null) return
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -62,13 +64,11 @@ fun Player(
     val mediaSourceFactory: MediaSource.Factory = DefaultMediaSourceFactory(context)
         .setDataSourceFactory(dataSourceFactory)
 
-
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            setMediaItem(mediaItem)
-            setMediaSource(mediaSourceFactory.createMediaSource(mediaItem))
             addListener(
                 object : Player.Listener {
+
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         when (playbackState) {
                             Player.STATE_READY -> Unit
@@ -85,9 +85,9 @@ fun Player(
         }
     }
 
-    /*LaunchedEffect(request) {
-        if (exoPlayer.playWhenReady) exoPlayer.setMediaItem(mediaItem)
-    }*/
+    LaunchedEffect(request) {
+        exoPlayer.setMediaSource(mediaSourceFactory.createMediaSource(mediaItem))
+    }
 
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
