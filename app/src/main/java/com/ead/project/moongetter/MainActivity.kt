@@ -48,7 +48,8 @@ class MainActivity : ComponentActivity() {
     private val customUrl = "https://custom.domain.com/aqua/sv?url=https://sendvid.com/k555oewr"
 
     private val specialVideos = listOf(
-        "https://www.mp4upload.com/embed-a1oxgwvtpj04.html",
+        "https://hexload.com/embed-4jq8u2fwodsm.html",
+        /*"https://www.mp4upload.com/embed-a1oxgwvtpj04.html",*/
         "https://uqload.net/embed-px8mfh4wqk43.html"
     )
 
@@ -113,22 +114,22 @@ class MainActivity : ComponentActivity() {
                         /**
                          * Example use case to find resources from a specific url
                          */
-                        viewModel.onEvent(
+                        /*viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
                                 url = "https://uqload.net/embed-px8mfh4wqk43.html"
                             )
-                        )
+                        )*/
 
                         /**
                          * Example use case to find all possible resources from a list of urls
                          */
-                        /*viewModel.onEvent(
+                        viewModel.onEvent(
                             event = MainEvent.OnNewResults(
                                 context = this@MainActivity as Context,
-                                urls = exampleCollectedVideosFromInternet
+                                urls = specialVideos
                             )
-                        )*/
+                        )
                     }
 
                     Scaffold(
@@ -217,11 +218,10 @@ fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (M
                         val clip = ClipData.newPlainText("Text copied", file.request.url)
 
                         clipboard.setPrimaryClip(clip)
-
                         event(MainEvent.OnSelectedUrl(request = file.request))
                     },
                 text = "downloadUrl : " + file.request.url,
-                maxLines = 16
+                maxLines = 4
             )
             Spacer(
                 modifier = Modifier.height(8.dp)
