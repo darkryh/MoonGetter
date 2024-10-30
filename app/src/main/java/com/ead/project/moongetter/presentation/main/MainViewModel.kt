@@ -98,10 +98,8 @@ class MainViewModel : ViewModel() {
     fun onEvent(event: MainEvent) {
         viewModelScope.launch (Dispatchers.IO) {
             try {
+
                 when(event) {
-                    is MainEvent.OnSelectedUrl -> {
-                        _mediaUrlSelected.value = event.request
-                    }
                     is MainEvent.OnNewResult -> {
 
                         val serversResults : Server? = MoonGetter
@@ -109,10 +107,10 @@ class MainViewModel : ViewModel() {
                             .setTimeout(12000)
                             .setEngine(engine)
                             .setHeaders(
-                                 mapOf(
-                                     "User-Agent" to "Mozilla/5.0"
-                                 )
-                             )
+                                mapOf(
+                                    "User-Agent" to "Mozilla/5.0"
+                                )
+                            )
                             .get(event.url ?: return@launch)
 
                         _messageResult.value = serversResults?.videos ?: emptyList()
@@ -150,10 +148,14 @@ class MainViewModel : ViewModel() {
                         _messageResult.value = serversResults
                             .flatMap { it.videos }
                     }
+
+                    is MainEvent.OnSelectedUrl -> {
+                        _mediaUrlSelected.value = event.request
+                    }
                 }
 
                 if (messageResult.value.isNotEmpty() && event !is MainEvent.OnSelectedUrl) {
-                   _mediaUrlSelected.value = messageResult.value.first().request
+                    _mediaUrlSelected.value = messageResult.value.first().request
                 }
 
             } catch (e : InvalidServerException) {
