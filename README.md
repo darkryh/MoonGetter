@@ -17,21 +17,24 @@ MoonGetter is an Android library for handling stream extraction and downloads. I
 7. **StreamWish**
 8. **Voe**
 9. **Senvid**
-10. **Fembed**
-11. **Vihide**
-12. **Filemoon**
-13. **Vidguard**
-14. **GoodStream** in todo
-15. **Hexload**
-16. **1CloudFile**
-17. **YourUpload**
-18. **Facebook**
-19. **XTwitter**
-20. **Gofile** in todo
-21. **LuluStream** in todo
-22. **Abyss** in todo
-23. **Mp4Upload**
-24. **Uqload**
+10. **Vihide**
+11. **Filemoon**
+12. **Vidguard**
+13. **Hexload**
+14. **1CloudFile**
+15. **YourUpload**
+16. **Facebook**
+17. **XTwitter**
+18. **LuluStream**
+19. **Mp4Upload**
+20. **Uqload**
+21. **Mixdrop**
+22. **Doodstream**
+
+## TO-DO Servers
+1. **GoodStream** in todo
+2. **Gofile** in todo
+3. **Abyss** in todo
 
 ## Installation - Gradle
 ```groovy  
@@ -41,6 +44,9 @@ repositories {
 
 dependencies {  
     implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
+    // this servers apply to servers that use web-view, needs to add core too
+    // the following servers are Fireload,1CloudFile(OneCloudFile),Vidguard,GoFile(to-do)
+    implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
     
     // implement you wanted extractor server
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
@@ -103,11 +109,12 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 
 class CustomServer(
-    context : Context,
-    url :String,
+    context: Context,
+    url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configData: Configuration.Data
-) : Server(context,url,headers,configData) {
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
     private val urlRegex = "Regex example this is not really necesary".toRegex()
 
