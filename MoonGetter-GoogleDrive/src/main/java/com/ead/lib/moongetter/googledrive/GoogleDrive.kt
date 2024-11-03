@@ -1,3 +1,5 @@
+@file:Suppress("RestrictedApi")
+
 package com.ead.lib.moongetter.googledrive
 
 import android.content.Context
@@ -8,19 +10,21 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
+import com.ead.lib.moongetter.utils.Values.targetUrl
 import okhttp3.OkHttpClient
 
-class GoogleDrive (
+class GoogleDrive(
     context: Context,
     url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : Server(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
-    override var url: String = fixUrl(url)
+    override var url: String = targetUrl ?: "https://drive.usercontent.google.com/download?id=${getFileId(url)}&export=download"
 
     override suspend fun onExtract(): List<Video> {
-        val response = OkHttpClient()
+        val response = client
             .configBuilder()
             .newCall(GET())
             .await()
@@ -79,7 +83,6 @@ class GoogleDrive (
     ) : String {
         return "https://drive.usercontent.google.com/download?id=$id&export=$export&authuser=0&confirm=$confirm&uuid=$uuid"
     }
-    private fun fixUrl(url : String) = "https://drive.usercontent.google.com/download?id=${getFileId(url)}&export=download"
 
     private fun getFileId(string: String) : String {
         return PatternManager.singleMatch(
