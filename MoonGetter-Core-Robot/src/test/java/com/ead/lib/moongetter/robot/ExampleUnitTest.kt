@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.senvid
+package com.ead.lib.moongetter.robot
 
 import org.junit.Test
 
