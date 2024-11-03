@@ -1,140 +1,82 @@
 package com.ead.lib.moongetter.doodstream
 
 import android.content.Context
-import com.ead.lib.moongetter.core.Pending
-import com.ead.lib.moongetter.core.Unstable
+import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.PatternManager
+import okhttp3.Headers
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
 
-@Pending
-@Unstable("TODO")
 class Doodstream(
     context: Context,
-    url: String,
+    url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : Server(context,url,headers,configurationData) {
-    override val isDeprecated: Boolean = true
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
-    /* private var urlTemp: String? = null
-    private var rawToken: String? = null
-    private var host : String? = null
+    private val hostTarget = url.toHttpUrl().host
 
-    override suspend fun onExtract() : List<Video> {
-        try {
+    override suspend fun onExtract(): List<Video> {
 
-            val previousHost = URL(url).host
+        var response = client
+            .newCall(GET())
+            .await()
 
-            var request: Request =  Request.Builder().url(url).build()
+        var body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
 
-            var response = OkHttpClient()
-                .newCall(request)
-                .execute()
+        val host = response.request.url.host
 
-            var responseBody = response.body?.string().toString()
+        val referer = this@Doodstream.url.replace(hostTarget, host)
 
+        val keysCode = PatternManager.singleMatch(
+            string = body,
+            regex =  "dsplayer\\.hotkeys[^']+'([^']+).+?function"
+        ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
 
-            host = response.request.url.host
-            url = url.replace(previousHost,host?:return emptyList())
+        val token = PatternManager.singleMatch(
+            string = body,
+            regex = "makePlay.+?return[^?]+([^\"]+)"
+        ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
 
-            val keysCode = PatternManager.singleMatch(
-                responseBody,
-                "dsplayer\\.hotkeys[^']+'([^']+).+?function"
-            ).toString()
+        val requesterUrl = "https://$host$keysCode"
 
-            urlTemp = "https://$host$keysCode"
-
-            //val requestUrl = url.substringBefore("/e/").plus("/dood")
-
-            Log.d("test", "urlContainer: $urlTemp")
-
-            rawToken = PatternManager.singleMatch(
-                responseBody,
-                "makePlay.+?return[^?]+([^\"]+)"
-            ).toString()
-
-            val hash = urlTemp?.
-            substringAfter("pass_md5/")?.
-            substringBefore("/")
-
-            Log.d("test", "hash: $hash")
-
-            val token = rawToken?.
-            substringAfter("?token=")?.
-            substringBefore("&expiry=")
-
-            Log.d("test", "token: $token")
-
-
-            request = Request.Builder()
-                .url(urlTemp?:return emptyList())
-                .header("Referer",url)
-                .build()
-
-            response = OkHttpClient()
-                .newCall(request)
-                .execute()
-
-            responseBody = response.body?.string().toString()
-
-            url = responseBody + getRandomString() + rawToken + System.currentTimeMillis() / 1000L
-
-            Log.d("test", "onExtract: $url")
-
-            request = Request.Builder()
-                .url(url)
-                .headers(doodHeaders(response.request.headers,host?:return emptyList()))
-                .build()
-
-
-
-            val client: OkHttpClient.Builder = OkHttpClient.Builder()
-
-            response = client
-                .build()
-                .newCall(
-                    request
-                )
-                .execute()
-
-            val xUrl = response.request.url.toString()
-
-            response = client
-                .build()
-                .newCall(
-                    request
-                        .newBuilder()
-                        .url(xUrl)
-                        .headers(
-                            doodHeaders(
-                                response.request.headers,
-                                host ?: return emptyList()
-                            )
-                        )
-                        .build()
-                )
-                .execute()
-
-            val code = response.code
-
-            Log.d("test", "onExtract: $code")
-
-            return listOf(
-                Video(
-                    quality = DEFAULT,
-                    url = url,
-                    headers = response.request.headers
-                        .toMap()
-                        .map { it.key to it.value }
-                        .toMap(HashMap())
+        response = client.newCall(
+            GET(
+                url = requesterUrl,
+                headers = hashMapOf(
+                    "Referer" to referer
                 )
             )
-            //Log.d("test", "onExtract: ${response.code}")
+        ).await()
 
-        } catch (e : Exception) {
-            Log.d("test", "error: ${e.message}")
-            return emptyList()
-        }
+        body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
+
+        val url = body + getRandomString() + token + (System.currentTimeMillis() / 1000L)
+
+        response = client.newCall(
+            GET(
+                headers = requestHeaders(response.request.headers, host)
+            )
+        ).await()
+
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name))
+
+        return listOf(
+            Video(
+                quality = DEFAULT,
+                url = url,
+                headers = response
+                    .request
+                    .headers
+                    .toMap()
+            )
+        )
     }
 
     private fun getRandomString(length: Int = 10): String {
@@ -144,14 +86,14 @@ class Doodstream(
             .joinToString("")
     }
 
-    private fun doodHeaders(headers: Headers,host: String) : Headers {
+    private fun requestHeaders(headers: Headers, host: String) : HashMap<String,String> {
+        return HashMap(
+            headers.newBuilder()
+                .add("User-Agent", "MoonGetter")
+                .add("Referer", "https://$host/")
+                .build()
+                .toMap()
 
-        return headers.newBuilder()
-            .add("User-Agent", "Aniyomi")
-            .add("Referer", "https://$host/")
-            .build()
-        *//*.toMap()
-        .map { it.key to it.value }
-        .toMap(HashMap())*//*
-    }*/
+        )
+    }
 }
