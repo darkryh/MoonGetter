@@ -75,7 +75,7 @@ class MyViewModel : ViewModel() {
         try {
 
             val server : Server? = MoonGetter
-                .initialize(context = event.context)
+                .initialize(context = context)
                 .setTimeout(8000)
                 .setEngine(engine)
                 .setHeaders(
@@ -168,7 +168,7 @@ class MyViewModel : ViewModel() {
         try {
 
             val server : Server? = MoonGetter
-                .initialize(context = event.context)
+                .initialize(context = context)
                 .setEngine(engine)
                 .get(url)
 
