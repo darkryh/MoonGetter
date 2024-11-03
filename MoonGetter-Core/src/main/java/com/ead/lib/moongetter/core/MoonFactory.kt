@@ -3,11 +3,13 @@ package com.ead.lib.moongetter.core
 import android.content.Context
 import android.util.Log
 import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.DEBUG_ERROR
+import com.ead.lib.moongetter.utils.Values.restoreValues
 import java.io.IOException
 
 /**
@@ -16,7 +18,7 @@ import java.io.IOException
  */
 internal object MoonFactory {
 
-
+    private val moonClient by lazy { MoonClient() }
 
     /**
      * Identify the server from a url
@@ -147,7 +149,8 @@ internal object MoonFactory {
             context = context,
             url = url,
             headers = headers,
-            configData = configData
+            configData = configData,
+            client = moonClient.httpClient
         )
 
 
@@ -156,14 +159,14 @@ internal object MoonFactory {
          * If the server is nullable return
          * and don't to extract process
          */
-        val server = serverResult ?: return null
+        val server = serverResult ?: return null.also { restoreValues() }
 
 
 
         /**
          * If the server is pending return null
          */
-        if (server.isPending) return null
+        if (server.isPending) return null.also { restoreValues() }
 
 
 
@@ -186,7 +189,7 @@ internal object MoonFactory {
         /**
          * Return the server
          */
-        return serverResult
+        return serverResult.also { restoreValues() }
     }
 
 
