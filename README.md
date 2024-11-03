@@ -91,10 +91,13 @@ class MyViewModel : ViewModel() {
         catch (e : InvalidServerException) { 
             e.printStackTrace()
         }
-        catch (e : IOException) {
+        catch (e : IllegalArgumentException) {
             e.printStackTrace()
         }
         catch (e : RuntimeException) {
+            e.printStackTrace()
+        }
+        catch (e : IOException) {
             e.printStackTrace()
         }
     }
@@ -175,10 +178,13 @@ class MyViewModel : ViewModel() {
         catch (e : InvalidServerException) {
             e.printStackTrace()
         }
-        catch (e : IOException) {
+        catch (e : IllegalArgumentException) {
             e.printStackTrace()
         }
         catch (e : RuntimeException) {
+            e.printStackTrace()
+        }
+        catch (e : IOException) {
             e.printStackTrace()
         }
     }
