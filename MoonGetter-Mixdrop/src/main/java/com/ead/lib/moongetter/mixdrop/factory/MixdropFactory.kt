@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalServer::class)
+
 package com.ead.lib.moongetter.mixdrop.factory
 
+import com.ead.lib.moongetter.core.ExperimentalServer
 import com.ead.lib.moongetter.mixdrop.Mixdrop
 import com.ead.lib.moongetter.models.Server
 
