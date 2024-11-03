@@ -4,6 +4,7 @@ package com.ead.lib.moongetter.models.builder
 
 import android.content.Context
 import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.core.MoonFactory
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
@@ -180,6 +181,7 @@ class Factory(
          * Return a list of servers that are supported and still functional, even the customs servers,
          * in another case, returns an empty list.
          */
+        @ExperimentalFeature
         suspend fun get(urls : List<String>) : List<Server> =
             MoonFactory.creates(
                 /**
