@@ -196,4 +196,4 @@ class MyViewModel : ViewModel() {
 - **getUntilFindResource()**: From the `urls` parameter, makes requests to find the first possible server and stops when one is found. If none is found, returns null.
 
 # Want to collaborate
-f you want to help or collaborate, feel free to contact me on X account @Darkryh or just make a request.
+if you want to help or collaborate, feel free to contact me on X account @Darkryh or just make a request.
