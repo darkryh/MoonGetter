@@ -44,7 +44,7 @@ repositories {
 
 dependencies {  
     implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
-    // this servers apply to servers that use web-view, needs to add core too
+    // the servers that use web-view, needs to use this core reference too
     // the following servers are Fireload,1CloudFile(OneCloudFile),Vidguard,GoFile(to-do)
     implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
     
