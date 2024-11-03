@@ -1,15 +1,20 @@
-package com.ead.lib.moongetter.models
+package com.ead.lib.moongetter.robot
 
 import android.content.Context
 import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Request
+import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import okhttp3.OkHttpClient
 
 open class ServerJwPlayer(
     context: Context,
-    url: String,
-    headers: HashMap<String,String>,
-    configurationData: Configuration.Data
-) : ServerRobot(context,url,headers,configurationData) {
+    url : String,
+    client: OkHttpClient,
+    headers : HashMap<String,String>,
+    configData : Configuration.Data,
+) : ServerRobot(context, url, client, headers, configData) {
 
 
     /**
