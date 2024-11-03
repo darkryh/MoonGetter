@@ -2,51 +2,61 @@ package com.ead.lib.moongetter.mixdrop
 
 import android.content.Context
 import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.ExperimentalServer
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import com.ead.lib.moongetter.utils.JSUnpacker
 import com.ead.lib.moongetter.utils.PatternManager
+import dev.datlag.jsunpacker.JsUnpacker
 import okhttp3.OkHttpClient
 
+@ExperimentalServer
 class Mixdrop(
     context: Context,
-    url: String,
+    url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : Server(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
     override val headers: HashMap<String, String> = headers.also {
         it["Referer"] = DEFAULT_REFERER
-        it["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+        it["Origin"] = DEFAULT_REFERER
     }
 
     override suspend fun onExtract(): List<Video> {
-        val response = OkHttpClient()
+        val response = client
             .configBuilder()
             .newCall(GET())
             .execute()
 
         if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
 
-        val responseBody = response.body?.toString() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
+        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
 
-        if (!JSUnpacker.detect(responseBody)) throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+        if (!JsUnpacker.detect(body)) throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
 
         return listOf(
             Video(
                 quality = DEFAULT,
-                url = "https:" + PatternManager.singleMatch(
-                    string = JSUnpacker.unpack(
-                        PatternManager.singleMatch(
-                            string = responseBody.toString(),
-                            regex = "eval(.*)"
-                        ).toString()
-                    ).toString(),
-                    regex = "wurl=?\"(.*?)\";"
-                ).toString(),
-                headers = headers.toMap()
+                request = Request(
+                    url = "https:" + (
+                            PatternManager.singleMatch(
+                                string = JsUnpacker.unpackAndCombine(
+                                    PatternManager.singleMatch(
+                                        string = body,
+                                        regex = "eval(.*)",
+                                        groupIndex = 0
+                                    ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+                                ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name)),
+                                regex = """wurl="?\"(.*?)\";""".trimIndent()
+                            ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+                            ),
+                    headers = headers,
+                    method = "GET"
+                )
             )
         )
     }
