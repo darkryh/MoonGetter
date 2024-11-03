@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalFeature::class)
+
 package com.ead.project.moongetter.presentation.main
 
 import android.util.Log
@@ -9,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ead.lib.moongetter.MoonGetter
 import com.ead.lib.moongetter.abyss.factory.AbyssFactory
+import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.doodstream.factory.DoodstreamFactory
 import com.ead.lib.moongetter.facebook.factory.FacebookFactory
 import com.ead.lib.moongetter.filemoon.factory.FilemoonFactory
@@ -106,11 +109,11 @@ class MainViewModel : ViewModel() {
                             .initialize(context = event.context)
                             .setTimeout(12000)
                             .setEngine(engine)
-                            .setHeaders(
+                            /*.setHeaders(
                                 mapOf(
                                     "User-Agent" to "Mozilla/5.0"
                                 )
-                            )
+                            )*/
                             .get(event.url ?: return@launch)
 
                         _messageResult.value = serversResults?.videos ?: emptyList()
