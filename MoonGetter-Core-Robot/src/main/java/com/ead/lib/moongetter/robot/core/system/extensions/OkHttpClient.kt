@@ -1,13 +1,15 @@
-package com.ead.lib.moongetter.core.system.extensions
+package com.ead.lib.moongetter.robot.core.system.extensions
 
+import com.ead.lib.moongetter.core.system.extensions.await
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.Response
 
 suspend fun OkHttpClient.onResponse(url : String) : Response? {
     return try {
         OkHttpClient()
             .newCall(
-                okhttp3.Request.Builder()
+                Request.Builder()
                     .url(url)
                     .build())
             .await()
