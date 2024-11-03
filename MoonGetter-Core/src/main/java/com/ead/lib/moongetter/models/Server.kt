@@ -8,9 +8,9 @@ import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import okhttp3.FormBody
 import okhttp3.Headers
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.IOException
 import java.lang.RuntimeException
-import okhttp3.Request
 import java.util.concurrent.TimeUnit
 
 open class Server(
@@ -23,6 +23,10 @@ open class Server(
      */
     protected open var url : String,
     /**
+     * @param @client the client of okhttp
+     */
+    protected open val client : OkHttpClient,
+    /**
      * @param @headers the headers of the server
      */
     protected open val headers : HashMap<String,String>,
@@ -31,7 +35,6 @@ open class Server(
      */
     protected open val configData : Configuration.Data
 ) {
-
 
 
     /**
@@ -101,7 +104,8 @@ open class Server(
      *
      * }
      */
-    @Throws(InvalidServerException::class,IOException::class, RuntimeException::class)
+    @Throws(InvalidServerException::class,IOException::class, RuntimeException::class,
+        IllegalArgumentException::class)
     open suspend fun onExtract() : List<Video> { return emptyList() }
 
 
@@ -273,8 +277,8 @@ open class Server(
         /**
          * representation of request results
          */
-        internal const val FORBIDDEN = 403
-        internal const val NOT_FOUND = 404
+        const val FORBIDDEN = 403
+        const val NOT_FOUND = 404
 
 
         /**
