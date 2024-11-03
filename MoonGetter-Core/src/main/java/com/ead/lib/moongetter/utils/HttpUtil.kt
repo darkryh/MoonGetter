@@ -1,3 +1,5 @@
+@file:SuppressLint("CustomX509TrustManager", "TrustAllX509TrustManager")
+
 package com.ead.lib.moongetter.utils
 
 import android.annotation.SuppressLint
@@ -12,7 +14,7 @@ object HttpUtil {
 
     private var isDisableCertificationConnects = false
 
-    @SuppressLint("CustomX509TrustManager","TrustAllX509TrustManager","TrustAllX509TrustManager")
+
     fun disableCertificationConnections(forceDisable: Boolean = false) {
         if (isDisableCertificationConnects && !forceDisable) return
         isDisableCertificationConnects = true
