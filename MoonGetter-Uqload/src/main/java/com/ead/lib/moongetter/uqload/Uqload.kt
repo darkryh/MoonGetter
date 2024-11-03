@@ -1,27 +1,35 @@
+@file:Suppress("RestrictedApi")
+
 package com.ead.lib.moongetter.uqload
 
 import android.content.Context
 import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.ExperimentalServer
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Request
+import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import com.ead.lib.moongetter.models.ServerUCR
 import com.ead.lib.moongetter.utils.PatternManager
+import com.ead.lib.moongetter.utils.Values.targetUrl
 import okhttp3.OkHttpClient
 
+@ExperimentalServer
 class Uqload(
     context: Context,
-    url: String,
+    url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : ServerUCR(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
     override val headers: HashMap<String, String> = headers.also {
         it["Referer"] = url
         it["Origin"] = url
     }
+
+    override var url: String = targetUrl ?: url
 
     override suspend fun onExtract() : List<Video> {
         var response = OkHttpClient()
