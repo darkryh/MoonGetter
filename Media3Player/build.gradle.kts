@@ -1,5 +1,6 @@
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
+val compileLibSdkVersion : String by project
 
 plugins {
     alias(libs.plugins.android.library)
@@ -9,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.ead.test.media3player"
-    compileSdk = 34
+    compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
         minSdk = 21

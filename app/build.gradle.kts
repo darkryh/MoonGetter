@@ -1,5 +1,6 @@
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
+val compileLibSdkVersion : String by project
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.ead.project.moongetter"
-    compileSdk = 34
+    compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
         applicationId = "com.ead.project.moongetter"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = compileLibSdkVersion.toInt()
         versionCode = 1
         versionName = "1.0"
 

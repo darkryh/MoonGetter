@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ead.lib.moongetter.hexload"
+    namespace = "com.ead.lib.moongetter.robot"
     compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
@@ -46,7 +46,7 @@ publishing {
             }
 
             groupId = "com.ead.lib"
-            artifactId = "moongetter-hexload"
+            artifactId = "moongetter-core-robot"
             version = moonGetterVersion
         }
     }
@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    implementation(libs.androidx.webkit)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

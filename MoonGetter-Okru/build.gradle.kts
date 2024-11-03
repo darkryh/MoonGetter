@@ -1,6 +1,7 @@
 val moonGetterVersion: String by project
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
+val compileLibSdkVersion : String by project
 
 plugins {
     alias(libs.plugins.android.library)
@@ -10,7 +11,7 @@ plugins {
 
 android {
     namespace = "com.ead.lib.moongetter.okru"
-    compileSdk = 34
+    compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
         minSdk = 21
@@ -58,7 +59,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockwebserver)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

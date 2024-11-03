@@ -1,16 +1,18 @@
 val moonGetterVersion: String by project
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
+val compileLibSdkVersion : String by project
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin)
     id("maven-publish")
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 android {
     namespace = "com.ead.lib.moongetter"
-    compileSdk = 34
+    compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
         minSdk = 21
@@ -54,17 +56,23 @@ publishing {
 dependencies {
     api(libs.okhttp)
 
+    api(libs.moshi)
+    api(libs.moshi.kotlin)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.webkit)
+    implementation(kotlin("reflect"))
+    
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mockwebserver)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(kotlin("reflect"))
 
-    implementation("dev.datlag.jsunpacker:jsunpacker:1.0.2") {
+    api(libs.kotlinx.serialization.json)
+
+    api("dev.datlag.jsunpacker:jsunpacker:1.0.2") {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
     }
 }
