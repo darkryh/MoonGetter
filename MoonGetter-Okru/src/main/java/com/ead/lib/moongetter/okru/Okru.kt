@@ -6,59 +6,70 @@ import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.JsonObject
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
 import org.apache.commons.text.StringEscapeUtils
-import org.json.JSONObject
 
 class Okru(
     context: Context,
     url : String,
-    headers : HashMap<String, String>,
-    configurationData: Configuration.Data
-) : Server(context,url,headers,configurationData) {
+    client: OkHttpClient,
+    headers : HashMap<String,String>,
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
     override val headers: HashMap<String, String> = headers.also { values -> values["User-Agent"] = USER_AGENT }
 
     override suspend fun onExtract(): List<Video> {
-        val response = OkHttpClient()
+        val response = client
             .configBuilder()
             .newCall(GET())
             .execute()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
 
         url = PatternManager.singleMatch(
-            string =  response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name)),
-            regex =  "data-options=\"(.*?)\""
-        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down,name))
+            string = response.body?.string() ?: throw InvalidServerException(context.getString(
+                    R.string.server_response_went_wrong,
+                    name
+                )),
+            regex = "data-options=\"(.*?)\""
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
 
         url = StringEscapeUtils.unescapeHtml4(url)
 
-        val json = JSONObject(url)
+        val json = JsonObject.fromJson(url)
             .getJSONObject("flashvars")
-            .getString("metadata")
+            ?.getString("metadata")
+            ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
 
-        val objectData = JSONObject(json).getJSONArray("videos")
+        val objectData = JsonObject.fromJson(json).getJSONArray("videos") ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
 
-        return (0 .. objectData.length() -1).map { pos ->
-            val url: String = objectData.getJSONObject(pos).getString("url")
-            when (objectData.getJSONObject(pos).getString("name")) {
+        return (0 until objectData.size).map { pos ->
+            /**
+             * Get the video object
+             */
+            val videoJson = objectData[pos]
+
+            /**
+             * Get the url
+             */
+            val url: String = videoJson.getString("url") ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+
+            /**
+             * Get the quality and return the video object
+             */
+            when (videoJson.getString("name")) {
                 "mobile" -> Video("144p", url)
                 "lowest" -> Video("240p", url)
-                "low"    -> Video("360p", url)
-                "sd"     -> Video("480p", url)
-                "hd"     -> Video("720p", url)
-                "full"   -> Video("1080p", url)
-                "quad"   -> Video("2000p", url)
-                "ultra"  -> Video("4000p", url)
-                else     -> Video("Default", url)
-            }.let { video ->
-                video.copy(
-                    request = video.request.copy(
-                        headers = headers
-                    )
-                )
+                "low" -> Video("360p", url)
+                "sd" -> Video("480p", url)
+                "hd" -> Video("720p", url)
+                "full" -> Video("1080p", url)
+                "quad" -> Video("2000p", url)
+                "ultra" -> Video("4000p", url)
+                else -> Video("Default", url)
             }
         }
     }
