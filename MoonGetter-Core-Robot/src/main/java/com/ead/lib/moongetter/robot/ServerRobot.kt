@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.models
+package com.ead.lib.moongetter.robot
 
 import android.content.Context
 import android.os.Build
@@ -9,9 +9,12 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
-import com.ead.lib.moongetter.core.system.extensions.onResponse
-import com.ead.lib.moongetter.core.system.models.MoonWebView
+import com.ead.lib.moongetter.robot.core.system.extensions.onResponse
+import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Request
+import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.utils.HttpUtil
+import com.ead.lib.moongetter.robot.core.system.model.MoonWebView
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -28,9 +31,10 @@ import kotlin.coroutines.resumeWithException
 open class ServerRobot(
     context: Context,
     url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : Server(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
 
     /**
@@ -211,7 +215,7 @@ open class ServerRobot(
                     webView.evaluateJavascript(code) {}
                 }
 
-                val response : Response? = runBlocking { OkHttpClient().onResponse(url) }
+                val response : Response? = runBlocking { client.onResponse(url) }
 
                 when(response) {
                     null -> {
