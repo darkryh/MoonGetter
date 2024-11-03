@@ -5,18 +5,20 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.ServerRobot
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.robot.ServerRobot
+import okhttp3.OkHttpClient
 
 @Pending
 @Unstable(reason = "Needs to redirect  to habilitate download")
 class Gofile(
     context: Context,
     url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : ServerRobot(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : ServerRobot(context, url, client, headers, configData) {
 
     override val isDeprecated: Boolean = true
 

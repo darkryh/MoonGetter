@@ -1,3 +1,5 @@
+@file:Suppress("RestrictedApi")
+
 package com.ead.lib.moongetter.mediafire
 
 import android.content.Context
@@ -7,17 +9,21 @@ import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.Values.targetUrl
 import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
 
 class Mediafire(
     context: Context,
     url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : Server(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
     override val headers: HashMap<String, String> = headers.also { it.remove("User-Agent") }
+
+    override var url: String = targetUrl ?: url
 
     override suspend fun onExtract(): List<Video> {
         val response = OkHttpClient()

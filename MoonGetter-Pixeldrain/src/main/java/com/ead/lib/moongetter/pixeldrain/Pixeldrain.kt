@@ -12,9 +12,10 @@ import okhttp3.OkHttpClient
 class Pixeldrain(
     context: Context,
     url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : Server(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : Server(context, url, client, headers, configData) {
 
     override suspend fun onExtract(): List<Video> {
         val id = PatternManager.singleMatch(

@@ -13,9 +13,10 @@ import okhttp3.OkHttpClient
 class SenvidModified(
     context : Context,
     url :String,
+    client : OkHttpClient,
     headers : HashMap<String,String>,
     configData: Configuration.Data
-) : Server(context,url,headers,configData) {
+) : Server(context,url,client,headers,configData) {
 
     private val urlRegex =  """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""".toRegex()
 

@@ -4,17 +4,19 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.ServerRobot
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.robot.ServerRobot
+import okhttp3.OkHttpClient
 
 @Unstable("This server is not stable for waiting download process")
 class OneCloudFile(
     context: Context,
-    url: String,
+    url : String,
+    client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : ServerRobot(context,url,headers,configurationData) {
+    configData : Configuration.Data,
+) : ServerRobot(context, url, client, headers, configData) {
 
     override suspend fun onExtract(): List<Video> {
         initializeBrowser()
