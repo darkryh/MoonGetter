@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.core.system.models
+package com.ead.lib.moongetter.robot.core.system.model
 
 import android.annotation.SuppressLint
 import android.content.Context
