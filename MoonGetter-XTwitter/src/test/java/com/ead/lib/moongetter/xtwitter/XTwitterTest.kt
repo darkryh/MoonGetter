@@ -1,24 +1,41 @@
-package com.ead.lib.moongetter.server_sites
+package com.ead.lib.moongetter.xtwitter
 
+import android.content.Context
+import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.Values
+import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import org.junit.After
 import org.junit.Before
+import org.junit.Test
 
 class XTwitterTest {
 
-    /*private lateinit var context: Context
+    private lateinit var context: Context
     private lateinit var server : MockWebServer
-*/
+    private val client = OkHttpClient()
+
+    private val hashMap = hashMapOf<String,String>()
+    private val configData = Configuration.Data()
+
     @Before
     fun setup() {
-        /*context = mockk(relaxed = true)
-        server = MockWebServer()*/
+        context = mockk(relaxed = true)
+        server = MockWebServer()
+
+        server.start()
     }
 
-    /*@Test
-    fun `onExtract should add videos when response is successful`() = runBlocking {
-        server.start()
-        //given
 
-        val url = server.url("").toString()
+    @Test
+    fun `onExtract should add videos when response is successful`() = runBlocking {
+
+        //given
+        val url = server.url("successful test").toString()
 
         val mockResponse = MockResponse()
             .setResponseCode(200)
@@ -27,45 +44,41 @@ class XTwitterTest {
         server.enqueue(mockResponse)
 
         //when
-        val xTwitter = XTwitter(context, url)
-        xTwitter.targetUrl = url
+        Values.targetUrl = url
+        val xTwitter = XTwitter(context, url, client , hashMap, configData)
         val videos = xTwitter.onExtract()
 
         //then
-        server.shutdown()
         assert(videos.firstOrNull()?.request?.url == "video-url.mp4")
     }
 
 
     @Test(expected = InvalidServerException::class)
     fun `onExtract should add videos when response is unsuccessful`() = runBlocking {
-        server.start()
-        //given
 
-        val url = server.url("").toString()
+        //given
+        val url = server.url("response is unsuccessful").toString()
 
         val mockResponse = MockResponse()
             .setResponseCode(400)
-            .setBody("""<td><a href='video-url.mp4'>Download</a></td>""".trimIndent())
 
         server.enqueue(mockResponse)
 
         //when
-        val xTwitter = XTwitter(context, url)
-        xTwitter.targetUrl = url
+        Values.targetUrl = url
+        val xTwitter = XTwitter(context, url, client , hashMap, configData)
         xTwitter.onExtract()
 
         //then
-        server.shutdown()
+        Unit
     }
 
 
     @Test(expected = RuntimeException::class)
     fun `onExtract should add videos when response is successful but body isn't expected with urls with # as answer, throws RuntimeException`() = runBlocking {
-        server.start()
-        //given
 
-        val url = server.url("").toString()
+        //given
+        val url = server.url("body isn't expected").toString()
 
         val mockResponse = MockResponse()
             .setResponseCode(200)
@@ -74,21 +87,20 @@ class XTwitterTest {
         server.enqueue(mockResponse)
 
         //when
-        val xTwitter = XTwitter(context, url)
-        xTwitter.targetUrl = url
+        Values.targetUrl = url
+        val xTwitter = XTwitter(context, url, client , hashMap, configData)
         xTwitter.onExtract()
 
         //then
-        server.shutdown()
+        Unit
     }
 
 
     @Test(expected = InvalidServerException::class)
     fun `onExtract should add videos when response is successful but body isn't expected, throws InvalidServerException`() = runBlocking {
-        server.start()
-        //given
 
-        val url = server.url("").toString()
+        //given
+        val url = server.url("# case match and no url is found").toString()
 
         val mockResponse = MockResponse()
             .setResponseCode(200)
@@ -97,11 +109,16 @@ class XTwitterTest {
         server.enqueue(mockResponse)
 
         //when
-        val xTwitter = XTwitter(context, url)
-        xTwitter.targetUrl = url
+        Values.targetUrl = url
+        val xTwitter = XTwitter(context, url, client ,hashMap, configData)
         xTwitter.onExtract()
 
         //then
+        Unit
+    }
+
+    @After
+    fun tearDown() {
         server.shutdown()
-    }*/
+    }
 }
