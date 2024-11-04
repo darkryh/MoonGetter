@@ -55,6 +55,7 @@ publishing {
 
 dependencies {
     implementation(project(":MoonGetter-Core"))
+    implementation(project(":MoonGetter-Core-Robot"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
