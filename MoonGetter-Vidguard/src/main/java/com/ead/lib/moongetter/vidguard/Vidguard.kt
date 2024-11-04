@@ -10,8 +10,8 @@ class Vidguard(
     url: String,
     client: OkHttpClient,
     headers : HashMap<String,String>,
-    configurationData: Configuration.Data
-) : ServerJwPlayer(context,url,client,headers,configurationData) {
+    configData: Configuration.Data
+) : ServerJwPlayer(context,url,client,headers,configData) {
     override val endingRegex: Regex = """.*/favicon\.ico$""".toRegex()
     override suspend fun onExtract() = onDefaultJwPlayer()
 }
