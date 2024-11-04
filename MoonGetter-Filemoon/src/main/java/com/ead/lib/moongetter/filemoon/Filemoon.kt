@@ -23,6 +23,9 @@ class Filemoon(
 ) : Server(context, url, client, headers, configData) {
 
     override val headers: HashMap<String, String> = headers.also {
+        it["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+        it["Accept-Language"] = "en-US,en;q=0.5"
+        it["Priority"] = "u=0, i"
         it["Origin"] = url
         it["Referer"] = url
     }
