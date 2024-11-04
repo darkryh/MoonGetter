@@ -121,7 +121,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onEvent(
                             event = MainEvent.OnNewResult(
                                 context = this@MainActivity as Context,
-                                url = "https://listeamed.net/e/Ro7kOVMVgkEZWBn"
+                                url = "https://filemoon.sx/e/cvnd9zqj2i9w"
                             )
                         )
 
@@ -225,7 +225,7 @@ fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (M
                         event(MainEvent.OnSelectedUrl(request = file.request))
                     },
                 text = "downloadUrl : " + file.request.url,
-                maxLines = 16
+                maxLines = 4
             )
             Spacer(
                 modifier = Modifier.height(8.dp)
