@@ -26,7 +26,7 @@ class Mediafire(
     override var url: String = targetUrl ?: url
 
     override suspend fun onExtract(): List<Video> {
-        val response = OkHttpClient()
+        val response = client
             .configBuilder()
             .newCall(GET())
             .await()

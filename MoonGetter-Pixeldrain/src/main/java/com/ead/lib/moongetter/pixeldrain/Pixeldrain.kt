@@ -25,7 +25,7 @@ class Pixeldrain(
 
         url = "https://pixeldrain.com/api/file/$id?download"
 
-        val response = OkHttpClient()
+        val response = client
             .configBuilder()
             .newCall(GET())
             .execute()

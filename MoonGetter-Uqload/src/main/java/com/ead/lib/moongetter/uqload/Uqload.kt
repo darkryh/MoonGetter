@@ -32,7 +32,7 @@ class Uqload(
     override var url: String = targetUrl ?: url
 
     override suspend fun onExtract() : List<Video> {
-        var response = OkHttpClient()
+        var response = client
             .configBuilder()
             .newCall(GET())
             .await()

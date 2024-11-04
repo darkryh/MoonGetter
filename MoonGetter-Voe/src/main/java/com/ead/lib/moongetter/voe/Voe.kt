@@ -23,7 +23,7 @@ class Voe(
 ) : Server(context, url, client, headers, configData) {
 
     override suspend fun onExtract(): List<Video> {
-        var response = OkHttpClient()
+        var response = client
             .configBuilder()
             .newCall(GET())
             .await()
@@ -35,7 +35,7 @@ class Voe(
             regex = """window\.location\.href\s*=\s*'([^']+)"""
         ).toString()
 
-        response = OkHttpClient()
+        response = client
             .configBuilder()
             .newCall(GET())
             .await()

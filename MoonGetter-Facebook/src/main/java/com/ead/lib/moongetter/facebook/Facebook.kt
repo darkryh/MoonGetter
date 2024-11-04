@@ -27,7 +27,7 @@ class Facebook(
     }
 
     override suspend fun onExtract() : List<Video> {
-        val response = OkHttpClient()
+        val response = client
             .configBuilder()
             .newCall(
                 POST(
