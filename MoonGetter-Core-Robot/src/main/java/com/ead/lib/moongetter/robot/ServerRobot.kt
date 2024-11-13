@@ -9,12 +9,13 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
-import com.ead.lib.moongetter.robot.core.system.extensions.onResponse
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Server
-import com.ead.lib.moongetter.utils.HttpUtil
+import com.ead.lib.moongetter.robot.core.system.extensions.onResponse
 import com.ead.lib.moongetter.robot.core.system.model.MoonWebView
+import com.ead.lib.moongetter.robot.utils.Thread.onUi
+import com.ead.lib.moongetter.utils.HttpUtil
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -285,11 +286,4 @@ open class ServerRobot(
         _webView = null
     }
 
-
-    companion object {
-        /**
-         * UI method to handle the instance of the web view scrapper
-         */
-        private fun onUi(task: () -> Unit) = com.ead.lib.moongetter.utils.Thread.onUi { task() }
-    }
 }
