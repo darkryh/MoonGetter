@@ -1,49 +1,27 @@
 @file:Suppress("UNUSED")
-@file:OptIn(ExperimentalFoundationApi::class)
 
 package com.ead.project.moongetter
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.ead.lib.moongetter.models.Video
-import com.ead.project.moongetter.presentation.main.MainEvent
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ead.project.moongetter.presentation.main.MainScreen
 import com.ead.project.moongetter.presentation.main.MainViewModel
+import com.ead.project.moongetter.presentation.main.event.MainEvent
 import com.ead.project.moongetter.presentation.theme.MoonGetterTheme
-import com.ead.test.media3player.Player
 import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
-
-    private val viewModel : MainViewModel by viewModels()
 
     private val customUrl = "https://custom.domain.com/aqua/sv?url=https://sendvid.com/k555oewr"
 
@@ -83,165 +61,33 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MoonGetterTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
 
                     val snackbarHostState = remember { SnackbarHostState() }
+                    val viewModel = viewModel<MainViewModel>()
 
-                    LaunchedEffect(key1 = true) {
-                        viewModel.eventFlow.collectLatest { event ->
+                    LaunchedEffect(Unit) {
+                        viewModel.event.collectLatest { event ->
                             when(event) {
-                                is MainViewModel.UiEvent.ShowSnackBar ->
-                                    snackbarHostState.showSnackbar(
-                                        message = event.message,
-                                        actionLabel = event.actionLabel,
-                                        duration = event.duration
-                                    )
+                                is MainEvent.Notify -> {
+                                }
                             }
                         }
                     }
 
-                    LaunchedEffect(key1 = true) {
-                        /**
-                         * Example use case to find the first resource possible or null
-                         */
-                        /*viewModel.onEvent(
-                            event = MainEvent.OnUntilFindNewResult(
-                                context = this@MainActivity as Context,
-                                urls = exampleCollectedVideosFromInternet
-                            )
-                        )*/
+                    val mainScreen = viewModel.state.collectAsStateWithLifecycle()
 
-                        /**
-                         * Example use case to find resources from a specific url
-                         */
-                        viewModel.onEvent(
-                            event = MainEvent.OnNewResult(
-                                context = this@MainActivity as Context,
-                                url = "https://filemoon.sx/e/cvnd9zqj2i9w"
-                            )
-                        )
-
-                        /**
-                         * Example use case to find all possible resources from a list of urls
-                         */
-                        /*viewModel.onEvent(
-                            event = MainEvent.OnNewResults(
-                                context = this@MainActivity as Context,
-                                urls = exampleCollectedVideosFromInternet
-                            )
-                        )*/
-                    }
-
-                    Scaffold(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-                    ) { paddingValues ->
-
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(paddingValues)
-                        ) {
-                            stickyHeader {
-                                Player(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    request = viewModel.mediaUrlSelected.value,
-                                    context = this@MainActivity
-                                )
-                                Spacer(modifier = Modifier.height(24.dp))
-                            }
-                            item {
-                                MessageResult(
-                                    videos = viewModel.messageResult.value,
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    event = viewModel::onEvent
-                                )
-                            }
-                        }
-                    }
+                    MainScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        snackbarHostState = snackbarHostState,
+                        intent = viewModel::onIntent,
+                        state = mainScreen.value
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun MessageResult(videos : List<Video>, modifier: Modifier = Modifier, event: (MainEvent) -> Unit) {
-
-    if (videos.isEmpty()) {
-        Text(
-            text = "Loading Resource..."
-        )
-        return
-    }
-
-    val context = LocalContext.current
-
-    Column(
-        modifier = modifier
-    ) {
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-        Text(
-            text = "Click Any Option to Reproduce",
-            style = MaterialTheme.typography.titleLarge
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        videos.forEach { file ->
-            Text(
-                text = if(file.quality != null) {
-                    "Quality : " + file.quality
-                } else {
-                    "Quality unknown"
-                }
-            )
-            Spacer(
-                modifier = Modifier.height(8.dp)
-            )
-            Text(
-                modifier = Modifier
-                    .clickable {
-
-                        /**
-                         * Copy url to the clipboard
-                         */
-
-                        val clipboard: ClipboardManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            context.getSystemService(ClipboardManager::class.java)
-                        } else {
-                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        }
-                        val clip = ClipData.newPlainText("Text copied", file.request.url)
-
-                        clipboard.setPrimaryClip(clip)
-                        event(MainEvent.OnSelectedUrl(request = file.request))
-                    },
-                text = "downloadUrl : " + file.request.url,
-                maxLines = 4
-            )
-            Spacer(
-                modifier = Modifier.height(8.dp)
-            )
-        }
-        Text(text = "developed by Darkryh")
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MoonGetterTheme {
-        MessageResult(
-            emptyList(),
-            event = {}
-        )
     }
 }
