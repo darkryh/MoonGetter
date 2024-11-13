@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.utils
+package com.ead.lib.moongetter.robot.utils
 
 import android.os.Handler
 import android.os.Looper
