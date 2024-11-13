@@ -57,8 +57,6 @@ class Doodstream(
 
         body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
 
-        val url = body + getRandomString() + token + (System.currentTimeMillis() / 1000L)
-
         response = client.newCall(
             GET(
                 headers = requestHeaders(response.request.headers, host)
@@ -70,7 +68,7 @@ class Doodstream(
         return listOf(
             Video(
                 quality = DEFAULT,
-                url = url,
+                url = (body + getRandomBuilderString() + token + (System.currentTimeMillis() / 1000L)),
                 headers = response
                     .request
                     .headers
@@ -79,7 +77,7 @@ class Doodstream(
         )
     }
 
-    private fun getRandomString(length: Int = 10): String {
+    private fun getRandomBuilderString(length: Int = 10): String {
         val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
         return (1..length)
             .map { allowedChars.random() }
@@ -93,7 +91,6 @@ class Doodstream(
                 .add("Referer", "https://$host/")
                 .build()
                 .toMap()
-
         )
     }
 }
