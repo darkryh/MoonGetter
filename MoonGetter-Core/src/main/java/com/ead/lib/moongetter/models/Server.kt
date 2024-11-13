@@ -149,7 +149,7 @@ open class Server(
     protected fun GET(
         url : String? = null,
         headers : HashMap<String,String>? = null,
-        useHeaders : Boolean = true
+        overrideHeaders: Headers?= null
     ) : Request {
 
 
@@ -182,7 +182,7 @@ open class Server(
                 /**
                  * Do the combining operation
                  */
-                if (!useHeaders) return@let builder
+                if (overrideHeaders != null) return@let builder.also { it.headers(overrideHeaders) }
                 builder.headers(
                     Headers
                         .Builder()
