@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ead.lib.moongetter.voe"
+    namespace = "com.ead.lib.moongetter.servers.robot"
     compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
@@ -47,23 +47,27 @@ publishing {
             }
 
             groupId = "com.ead.lib"
-            artifactId = "moongetter-voe"
+            artifactId = "moongetter-servers-robot"
             version = moonGetterVersion
         }
     }
 }
 
 dependencies {
-    implementation(project(":MoonGetter-Core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-
     testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.mockwebserver)
-
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    val modules = arrayOf(
+        ":MoonGetter-Fireload", ":MoonGetter-Gofile", ":MoonGetter-OneCloudFile",
+        ":MoonGetter-Vidguard"
+    )
+
+    modules.forEach { module ->
+        api(project(module))
+    }
 }

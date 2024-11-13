@@ -1,6 +1,7 @@
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
 val compileLibSdkVersion : String by project
+val libSdkMinVersion : String by project
 
 plugins {
     alias(libs.plugins.android.application)
@@ -14,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ead.project.moongetter"
-        minSdk = 21
+        minSdk = libSdkMinVersion.toInt()
         targetSdk = compileLibSdkVersion.toInt()
         versionCode = 1
         versionName = "1.0"
@@ -69,33 +70,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     implementation(project(":Media3Player"))
 
     implementation(project(":MoonGetter-Core"))
+    implementation(project(":MoonGetter-Core-Robot"))
 
-    implementation(project(":MoonGetter-Abyss"))
-    implementation(project(":MoonGetter-Doodstream"))
-    implementation(project(":MoonGetter-Facebook"))
-    implementation(project(":MoonGetter-Filemoon"))
-    implementation(project(":MoonGetter-Fireload"))
-    implementation(project(":MoonGetter-Gofile"))
-    implementation(project(":MoonGetter-Goodstream"))
-    implementation(project(":MoonGetter-GoogleDrive"))
-    implementation(project(":MoonGetter-Hexload"))
-    implementation(project(":MoonGetter-Lulustream"))
-    implementation(project(":MoonGetter-Mediafire"))
-    implementation(project(":MoonGetter-Mixdrop"))
-    implementation(project(":MoonGetter-Mp4Upload"))
-    implementation(project(":MoonGetter-Okru"))
-    implementation(project(":MoonGetter-OneCloudFile"))
-    implementation(project(":MoonGetter-Pixeldrain"))
-    implementation(project(":MoonGetter-Senvid"))
-    implementation(project(":MoonGetter-Streamtape"))
-    implementation(project(":MoonGetter-Streamwish"))
-    implementation(project(":MoonGetter-Uqload"))
-    implementation(project(":MoonGetter-Vidguard"))
-    implementation(project(":MoonGetter-Vihide"))
-    implementation(project(":MoonGetter-Voe"))
-    implementation(project(":MoonGetter-XTwitter"))
-    implementation(project(":MoonGetter-YourUpload"))
+    implementation(project(":MoonGetter-Servers"))
+    implementation(project(":MoonGetter-Servers-Robot"))
 }

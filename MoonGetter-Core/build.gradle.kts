@@ -2,6 +2,7 @@ val moonGetterVersion: String by project
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
 val compileLibSdkVersion : String by project
+val libSdkMinVersion : String by project
 
 plugins {
     alias(libs.plugins.android.library)
@@ -15,7 +16,7 @@ android {
     compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
-        minSdk = 21
+        minSdk = libSdkMinVersion.toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -58,6 +59,9 @@ dependencies {
 
     api(libs.moshi)
     api(libs.moshi.kotlin)
+
+    api("io.ktor:ktor-client-core:3.0.1") // Usa la última versión disponible
+    api("io.ktor:ktor-client-okhttp:3.0.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
