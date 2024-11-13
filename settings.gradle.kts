@@ -5,6 +5,8 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -44,3 +46,6 @@ include(":MoonGetter-Vihide")
 include(":MoonGetter-Voe")
 include(":MoonGetter-XTwitter")
 include(":MoonGetter-YourUpload")
+
+include(":MoonGetter-Servers")
+include(":MoonGetter-Servers-Robot")
