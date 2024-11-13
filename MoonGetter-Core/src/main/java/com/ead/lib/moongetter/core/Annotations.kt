@@ -10,10 +10,6 @@ annotation class Pending
 @Retention(AnnotationRetention.SOURCE )
 annotation class Unstable(val reason : String)
 
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Requires(val libraryName: String)
-
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
     message = "This function is experimental some ExperimentalServer are not compatible with it"
