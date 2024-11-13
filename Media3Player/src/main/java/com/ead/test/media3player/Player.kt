@@ -1,6 +1,5 @@
 package com.ead.test.media3player
 
-import android.content.Context
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -34,13 +34,11 @@ import com.ead.lib.moongetter.models.Request
 @Composable
 fun Player(
     modifier: Modifier = Modifier,
-    request: Request?,
-    context: Context
+    request: Request
 ) {
 
-    if (request == null) return
-
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
     val httpDataSourceFactory = DefaultHttpDataSource.Factory()
         .setAllowCrossProtocolRedirects(true)
