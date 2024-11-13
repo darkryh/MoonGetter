@@ -45,7 +45,19 @@ class Filemoon(
 
         response = client
             .configBuilder()
-            .newCall(GET())
+            .newCall(
+                GET(
+                    overrideHeaders = response.headers.let {
+                        val builder = it.newBuilder()
+
+                        headers.forEach { (key, value) ->
+                            builder.add(key, value)
+                        }
+
+                        builder.build()
+                    }
+                )
+            )
             .await()
 
         if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
