@@ -25,6 +25,7 @@ fun TextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChange: (FocusState) -> Unit = {},
     textStyle: TextStyle = TextStyle(),
+    hintTextStyle: TextStyle = TextStyle(),
     singleLine: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -47,7 +48,7 @@ fun TextField(
         )
 
         if(isHintVisible)
-            Text(text = hint, style = textStyle, color = Color.DarkGray)
+            Text(text = hint, style = hintTextStyle)
     }
 }
 
