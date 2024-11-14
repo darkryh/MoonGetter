@@ -73,6 +73,9 @@ class MainActivity : ComponentActivity() {
                         viewModel.event.collectLatest { event ->
                             when(event) {
                                 is MainEvent.Notify -> {
+                                    snackbarHostState.showSnackbar(
+                                        message = event.message.data
+                                    )
                                 }
                             }
                         }
