@@ -1,0 +1,16 @@
+package com.ead.project.moongetter.app.network.util
+
+enum class MoonGetterError : Error {
+    RESOURCE_TAKEN_DOWN,
+    INVALID_PARAMETERS_IN_BUILDER,
+    NO_PARAMETERS_TO_WORK,
+    SERVERS_RESPONSE_WENT_WRONG,
+    SERVER_ERROR,
+    REQUEST_TIMEOUT,
+    UNAUTHORIZED,
+    CONFLICT,
+    TOO_MANY_REQUESTS,
+    NO_INTERNET,
+    PAYLOAD_TOO_LARGE,
+    UNKNOWN;
+}
