@@ -5,6 +5,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.ExperimentalServer
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
@@ -36,12 +37,12 @@ class Filemoon(
             .newCall(GET())
             .await()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         url = PatternManager.singleMatch(
-            string =  response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name)),
+            string =  response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE),
             regex = """<iframe\s+[^>]*src=["'](https?://[^"']+)["'][^>]*>"""
-        ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
         response = client
             .configBuilder()
@@ -60,7 +61,7 @@ class Filemoon(
             )
             .await()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         return listOf(
             Video(
@@ -68,12 +69,10 @@ class Filemoon(
                 request = Request(
                     url = PatternManager.singleMatch(
                         string = JsUnpacker.unpackAndCombine(
-                            response.body?.string() ?: throw InvalidServerException(context.getString(
-                                R.string.server_response_went_wrong, name)
-                            )
-                        ) ?: throw InvalidServerException(context.getString(R.string.server_response_packed_function_not_found, name)),
+                            response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
+                        ) ?: throw InvalidServerException(context.getString(R.string.server_response_packed_function_not_found, name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND),
                         regex = """file\s*:\s*"(https?://[^"]+\.m3u8\?[^"]*)""".trimIndent()
-                    ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name)),
+                    ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND),
                     headers = headers,
                     method = "GET"
                 )
