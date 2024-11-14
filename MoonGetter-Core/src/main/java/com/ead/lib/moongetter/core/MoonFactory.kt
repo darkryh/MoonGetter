@@ -6,6 +6,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.DEBUG_ERROR
@@ -101,7 +102,9 @@ internal object MoonFactory {
             /**
              * if the list is empty throw [InvalidServerException]
              */
-            list.ifEmpty { throw InvalidServerException(context.getString(R.string.not_servers_found)) }
+            list.ifEmpty {
+                throw InvalidServerException(context.getString(R.string.not_servers_found), Error.NO_PARAMETERS_TO_WORK)
+            }
         }
     }
 
@@ -261,7 +264,9 @@ internal object MoonFactory {
             /**
              * if the servers is empty throw [InvalidServerException]
              */
-            servers.ifEmpty { throw InvalidServerException(context.getString(R.string.not_servers_found)) }
+            servers.ifEmpty {
+                throw InvalidServerException(context.getString(R.string.not_servers_found), Error.NO_PARAMETERS_TO_WORK)
+            }
         }
     }
 

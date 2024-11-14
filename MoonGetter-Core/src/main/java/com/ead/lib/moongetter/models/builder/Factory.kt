@@ -7,6 +7,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.core.MoonFactory
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.UserAgent
@@ -93,7 +94,8 @@ class Factory(
                 url =  url.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.url_not_provided) ?:
-                        "Url hans´t provided"
+                        "Url hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     )
                 },
                 /**
@@ -102,7 +104,8 @@ class Factory(
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided"
+                        "Engines hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     )
                 }
             )
@@ -120,11 +123,12 @@ class Factory(
          */
         fun identifier(urls : List<String>): List<String> =
             MoonFactory.identifierList(
-                context = context ?: throw InvalidServerException("Context hans´t provided"),
+                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_PARAMETERS),
                 urls = urls.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.urls_not_provided) ?:
-                        "Urls hans´t provided"
+                        "Urls hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     ) },
                 /**
                  * Pass engine servers
@@ -132,7 +136,8 @@ class Factory(
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided"
+                        "Engines hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     )
                 }
             )
@@ -147,14 +152,15 @@ class Factory(
                 /**
                  * The context provided for the ServerFactory object.
                  */
-                context = context ?: throw InvalidServerException("Context hans´t provided"),
+                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_PARAMETERS),
                 /**
                  * Validation url in case it is empty.
                  */
                 url =  url.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.url_not_provided) ?:
-                        "Url hans´t provided"
+                        "Url hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     )
                 },
                 /**
@@ -163,7 +169,8 @@ class Factory(
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided"
+                        "Engines hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     )
                 },
                 /**
@@ -187,14 +194,15 @@ class Factory(
                 /**
                  * The context provided for the ServerFactory object.
                  */
-                context = context ?: throw InvalidServerException("Context hans´t provided"),
+                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_PARAMETERS),
                 /**
                  * Validation urls in case it is empty.
                  */
                 urls = urls.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.urls_not_provided) ?:
-                        "Urls hans´t provided"
+                        "Urls hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     ) },
                 /**
                  * Pass engine servers
@@ -202,7 +210,8 @@ class Factory(
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided"
+                        "Engines hans´t provided",
+                        Error.NO_PARAMETERS_TO_WORK
                     )
                 },
                 /**
@@ -226,7 +235,7 @@ class Factory(
                 /**
                  * The context provided for the ServerFactory object.
                  */
-                context = context ?: throw InvalidServerException("Context hans´t provided"),
+                context = context ?: throw InvalidServerException("Context hans´t provided", Error.INVALID_PARAMETERS),
                 /**
                  * Validation urls in case it is empty.
                  */
