@@ -1,8 +1,8 @@
 [![](https://jitpack.io/v/darkryh/MoonGetter.svg)](https://jitpack.io/#darkryh/MoonGetter)
 # MoonGetter for Kotlin
 
-<p style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-  <img src="assets/images/moon-getter.png" alt="App Icon" height="256" />
+<p style="display: flex; justify-content: center; align-items: center; gap: 48px;">
+  <img src="assets/images/moon-getter.png" alt="App Icon" height="256" style="border: 32px solid transparent;" />
   <img src="assets/images/play-store.png" alt="Play Store Icon" height="256" />
 </p>
 
