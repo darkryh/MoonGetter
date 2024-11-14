@@ -4,6 +4,7 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.ExperimentalServer
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
@@ -32,11 +33,11 @@ class Mixdrop(
             .newCall(GET())
             .execute()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
-        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
+        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
 
-        if (!JsUnpacker.detect(body)) throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+        if (!JsUnpacker.detect(body)) throw InvalidServerException(context.getString(R.string.server_response_packed_function_not_found, name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND)
 
         return listOf(
             Video(
@@ -49,10 +50,10 @@ class Mixdrop(
                                         string = body,
                                         regex = "eval(.*)",
                                         groupIndex = 0
-                                    ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
-                                ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name)),
+                                    ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+                                ) ?: throw InvalidServerException(context.getString(R.string.server_response_packed_function_not_found, name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND),
                                 regex = """wurl="?\"(.*?)\";""".trimIndent()
-                            ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+                            ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
                             ),
                     headers = headers,
                     method = "GET"

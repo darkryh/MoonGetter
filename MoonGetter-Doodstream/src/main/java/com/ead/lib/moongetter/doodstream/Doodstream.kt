@@ -4,6 +4,7 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -28,7 +29,9 @@ class Doodstream(
             .newCall(GET())
             .await()
 
-        var body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+
+        var body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
 
         val host = response.request.url.host
 
@@ -37,12 +40,12 @@ class Doodstream(
         val keysCode = PatternManager.singleMatch(
             string = body,
             regex =  "dsplayer\\.hotkeys[^']+'([^']+).+?function"
-        ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
+        ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
         val token = PatternManager.singleMatch(
             string = body,
             regex = "makePlay.+?return[^?]+([^\"]+)"
-        ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
+        ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
         val requesterUrl = "https://$host$keysCode"
 
@@ -55,7 +58,9 @@ class Doodstream(
             )
         ).await()
 
-        body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it,name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+
+        body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
 
         response = client.newCall(
             GET(
@@ -63,7 +68,7 @@ class Doodstream(
             )
         ).await()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         return listOf(
             Video(

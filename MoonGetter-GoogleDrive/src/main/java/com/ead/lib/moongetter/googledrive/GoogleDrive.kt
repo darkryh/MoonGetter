@@ -6,6 +6,7 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -37,7 +38,7 @@ class GoogleDrive(
                 )
             )
             200 -> {
-                val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
+                val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
 
                 val id = PatternManager.singleMatch(
                     string = body,
@@ -63,15 +64,15 @@ class GoogleDrive(
                     Video(
                         quality = DEFAULT,
                         url = generateDownloadUrl(
-                            id = id ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name)),
-                            export = export ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name)),
-                            confirm = confirm ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name)),
-                            uuid = uuid ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+                            id = id ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND),
+                            export = export ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND),
+                            confirm = confirm ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND),
+                            uuid = uuid ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
                         )
                     )
                 )
             }
-            else -> throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+            else -> throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
         }
     }
 
@@ -88,7 +89,7 @@ class GoogleDrive(
         return PatternManager.singleMatch(
             string = string,
             regex = """\/file\/d\/([^\/?&]+)"""
-        ) ?: throw InvalidServerException(context.getString(R.string.server_regex_could_not_find_id, name))
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
     }
 
     private fun getRegexProperty(name : String) : String {

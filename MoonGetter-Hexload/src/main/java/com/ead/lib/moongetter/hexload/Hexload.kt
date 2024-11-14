@@ -7,6 +7,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.core.system.extensions.replaceDomainWith
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -26,7 +27,7 @@ class Hexload(
 ) : Server(context, url, client, headers, configData) {
 
     override var url: String = targetUrl ?: url.replaceDomainWith("hexload.com")
-    ?: throw InvalidServerException(context.getString(R.string.url_provided_is_not_expected, name))
+    ?: throw InvalidServerException(context.getString(R.string.url_provided_is_not_expected, name), Error.INVALID_URL_PARAMETER)
 
     override suspend fun onExtract(): List<Video> {
         var response = client
@@ -34,10 +35,10 @@ class Hexload(
             .newCall(GET())
             .await()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         val dataPattern = """data:\s*\{\s*(.*?)\s*\}""".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val dataContent = dataPattern.find((response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))))?.groupValues?.get(1)
+        val dataContent = dataPattern.find((response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)))?.groupValues?.get(1)
 
         response = client
             .configBuilder()
@@ -48,7 +49,7 @@ class Hexload(
                     formBody = PatternManager.findMultipleMatchesAsPairs(
                         string = dataContent.toString(),
                         regex = """(\w+):\s*['"]([^'"]+)['"]"""
-                    ).ifEmpty { throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name)) }
+                    ).ifEmpty { throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND) }
                         .let { bodyParams ->
                             val formBody = FormBody.Builder()
 
@@ -60,9 +61,9 @@ class Hexload(
             )
             .execute()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
-        val responseBody = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
+        val responseBody = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
 
         return listOf(
             Video(
@@ -71,7 +72,7 @@ class Hexload(
                     .fromJson(responseBody)
                     .getJSONObject("result")
                     ?.getString("url")
-                    ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name)),
+                    ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND),
             )
         )
     }

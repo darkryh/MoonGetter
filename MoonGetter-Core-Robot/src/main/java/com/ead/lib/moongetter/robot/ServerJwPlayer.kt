@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.robot
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -54,7 +55,7 @@ open class ServerJwPlayer(
             verificationRegex = interceptionRegex,
             endingRegex = endingRegex,
             jsCode = scriptLoader()
-        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
         /**
          * Release the browser

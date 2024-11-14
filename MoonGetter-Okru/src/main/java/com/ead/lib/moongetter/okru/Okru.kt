@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.okru
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -27,24 +28,21 @@ class Okru(
             .newCall(GET())
             .execute()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         url = PatternManager.singleMatch(
-            string = response.body?.string() ?: throw InvalidServerException(context.getString(
-                    R.string.server_response_went_wrong,
-                    name
-                )),
+            string = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE),
             regex = "data-options=\"(.*?)\""
-        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+        ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
         url = StringEscapeUtils.unescapeHtml4(url)
 
-        val json = JsonObject.fromJson(url)
+        val metadata = JsonObject.fromJson(url)
             .getJSONObject("flashvars")
             ?.getString("metadata")
-            ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+            ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
-        val objectData = JsonObject.fromJson(json).getJSONArray("videos") ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+        val objectData = JsonObject.fromJson(metadata).getJSONArray("videos") ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
         return (0 until objectData.size).map { pos ->
             /**
@@ -55,7 +53,7 @@ class Okru(
             /**
              * Get the url
              */
-            val url: String = videoJson.getString("url") ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))
+            val url: String = videoJson.getString("url") ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
             /**
              * Get the quality and return the video object

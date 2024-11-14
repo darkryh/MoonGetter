@@ -3,6 +3,7 @@ package com.ead.lib.moongetter.pixeldrain
 import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -30,7 +31,7 @@ class Pixeldrain(
             .newCall(GET())
             .execute()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         return listOf(
             Video(

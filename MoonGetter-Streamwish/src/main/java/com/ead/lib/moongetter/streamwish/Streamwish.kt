@@ -4,6 +4,7 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -31,19 +32,17 @@ class Streamwish(
             .newCall(GET())
             .await()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         return listOf(
             Video(
                 quality = DEFAULT,
                 url = PatternManager.singleMatch(
                     string = JsUnpacker.unpackAndCombine(
-                        response.body?.string() ?: throw InvalidServerException(context.getString(
-                            R.string.server_response_went_wrong, name)
-                        )
-                    ) ?: throw InvalidServerException(context.getString(R.string.server_response_packed_function_not_found, name)),
+                        response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
+                    ) ?: throw InvalidServerException(context.getString(R.string.server_response_packed_function_not_found, name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND),
                     regex = """file\s*:\s*"(https?://[^"]+\.m3u8\?[^"]*)""".trimIndent()
-                ).toString()
+                ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
             )
         )
     }

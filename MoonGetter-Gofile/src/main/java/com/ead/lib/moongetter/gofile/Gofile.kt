@@ -5,6 +5,7 @@ import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.robot.ServerRobot
@@ -30,7 +31,7 @@ class Gofile(
         evaluateJavascriptCodeAndDownload(scriptLoader())
 
         url = requestDeferredResource().await()?.url ?: throw InvalidServerException(context.getString(
-            R.string.server_requested_resource_was_taken_down,name))
+            R.string.server_requested_resource_was_taken_down,name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
         releaseBrowser()
 

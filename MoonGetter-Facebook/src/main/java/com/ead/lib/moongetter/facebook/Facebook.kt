@@ -6,6 +6,7 @@ import android.content.Context
 import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -39,9 +40,9 @@ class Facebook(
             )
             .await()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down, name))
+        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
-        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name))
+        val body = response.body?.string() ?: throw InvalidServerException(context.getString(R.string.server_response_went_wrong, name), Error.EMPTY_OR_NULL_RESPONSE)
 
         return listOf(
             Video(
@@ -52,7 +53,7 @@ class Facebook(
                 ) ?: PatternManager.singleMatch(
                     string = body,
                     regex = "id=\"hdlink\".*?href=\"(.*?)\""
-                ) ?: throw InvalidServerException(context.getString(R.string.server_resource_could_not_find_it, name))).replace("&amp;", "&")
+                ) ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)).replace("&amp;", "&")
             )
         )
     }
