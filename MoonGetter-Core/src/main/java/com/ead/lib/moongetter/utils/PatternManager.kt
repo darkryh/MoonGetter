@@ -21,7 +21,6 @@ object PatternManager {
         while (matcher.find()) {
             matcher.group(groupIndex)?.let { stringArrayList.add(it) }
         }
-        if (stringArrayList.isEmpty) throw RuntimeException("No matches found.")
         return stringArrayList
     }
 
@@ -37,8 +36,6 @@ object PatternManager {
                 matches.add(Pair(key, value))
             }
         }
-
-        if (matches.isEmpty()) throw RuntimeException("No matches found.")
         return matches
     }
 
