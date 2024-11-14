@@ -1,6 +1,9 @@
 [![](https://jitpack.io/v/darkryh/MoonGetter.svg)](https://jitpack.io/#darkryh/MoonGetter)
 # MoonGetter for Kotlin
 
+## ¿What is?
+![Bypass Cloudflare](assets/images/moon-getter.png)
+
 MoonGetter is an Android library for handling stream extraction and downloads. It offers the following features:
 - Support for adding custom servers
 - Utilizes the power of Kotlin coroutines
@@ -38,8 +41,8 @@ MoonGetter is an Android library for handling stream extraction and downloads. I
 
 ## Installation - Gradle
 ```groovy  
-repositories {   
-    maven { url 'https://jitpack.io' }  
+repositories {
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {  
@@ -48,7 +51,12 @@ dependencies {
     // the following servers are Fireload,1CloudFile(OneCloudFile),Vidguard,GoFile(to-do)
     implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
     
-    // implement you wanted extractor server
+    //implementation containing the whole supported servers
+    implementation("com.github.darkryh.MoonGetter:moongetter-servers:$version")
+    //In case of need servers that user web-view
+    implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
+    
+    // implement you wanted extractor server in case of need an specific server
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
