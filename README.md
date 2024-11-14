@@ -3,7 +3,7 @@
 
 <p style="display: flex; justify-content: center; gap: 10px;">
   <img src="assets/images/moon-getter.png" alt="Bypass Cloudflare" width="256" />
-  <img src="assets/images/playstore.png" alt="Play Store Icon" width="256" />
+  <img src="assets/images/playstore.png" alt="Play Store Icon" width="220" />
 </p>
 
 MoonGetter is an Android library for handling stream extraction and downloads. It offers the following features:
