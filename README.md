@@ -1,9 +1,9 @@
 [![](https://jitpack.io/v/darkryh/MoonGetter.svg)](https://jitpack.io/#darkryh/MoonGetter)
 # MoonGetter for Kotlin
 
-<p style="display: flex; justify-content: center; gap: 10px;">
-  <img src="assets/images/moon-getter.png" alt="Bypass Cloudflare" width="256" />
-  <img src="assets/images/playstore.png" alt="Play Store Icon" width="200" />
+<p style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+  <img src="assets/images/moon-getter.png" alt="Bypass Cloudflare" height="256" />
+  <img src="assets/images/playstore.png" alt="Play Store Icon" height="200" />
 </p>
 
 MoonGetter is an Android library for handling stream extraction and downloads. It offers the following features:
