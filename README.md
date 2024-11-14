@@ -55,7 +55,7 @@ dependencies {
     
     //implementation containing the whole supported servers
     implementation("com.github.darkryh.MoonGetter:moongetter-servers:$version")
-    //In case of need servers that user web-view
+    //In case of need servers that use web-view
     implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
     
     // implement you wanted extractor server in case of need an specific server
