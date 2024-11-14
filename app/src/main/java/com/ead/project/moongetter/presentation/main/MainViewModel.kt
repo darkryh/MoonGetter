@@ -2,7 +2,6 @@
 
 package com.ead.project.moongetter.presentation.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ead.lib.moongetter.MoonGetter
@@ -21,7 +20,6 @@ import com.ead.lib.moongetter.mediafire.factory.MediafireFactory
 import com.ead.lib.moongetter.mixdrop.factory.MixdropFactory
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.builder.Engine
-import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.mp4upload.factory.Mp4UploadFactory
 import com.ead.lib.moongetter.okru.factory.OkruFactory
 import com.ead.lib.moongetter.onecloudfile.factory.OneCloudFileFactory
@@ -35,10 +33,19 @@ import com.ead.lib.moongetter.vihide.factory.VihideFactory
 import com.ead.lib.moongetter.voe.factory.VoeFactory
 import com.ead.lib.moongetter.xtwitter.factory.XTwitterFactory
 import com.ead.lib.moongetter.yourupload.factory.YourUploadFactory
+import com.ead.project.moongetter.app.network.util.onError
+import com.ead.project.moongetter.app.network.util.onSuccess
+import com.ead.project.moongetter.app.system.extensions.onGetResult
+import com.ead.project.moongetter.app.system.extensions.onGetResults
+import com.ead.project.moongetter.app.system.extensions.onGetUntilFindResult
 import com.ead.project.moongetter.domain.custom_servers.factory.SenvidModifiedFactory
 import com.ead.project.moongetter.presentation.main.event.MainEvent
 import com.ead.project.moongetter.presentation.main.intent.MainIntent
+import com.ead.project.moongetter.presentation.main.intent.NetworkIntent
+import com.ead.project.moongetter.presentation.main.intent.SelectionIntent
+import com.ead.project.moongetter.presentation.main.intent.TextIntent
 import com.ead.project.moongetter.presentation.main.state.MainState
+import com.ead.project.moongetter.presentation.util.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,7 +53,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.io.IOException
 
 class MainViewModel() : ViewModel() {
 
@@ -96,69 +102,96 @@ class MainViewModel() : ViewModel() {
         .build()
 
     fun onIntent(intent: MainIntent) {
-        try {
-            when(intent) {
-                is MainIntent.EnteredTargetSearch -> {
-                    _state.value = state.value.copy(
-                        targetExtractTextField = _state.value.targetExtractTextField.copy(
-                            textField = intent.value,
-                            isHintVisible = intent.value.text.isBlank()
-                        )
-                    )
-                }
-                is MainIntent.OnGetResult -> viewModelScope.launch(Dispatchers.IO) {
-                    val serversResults : Server? = MoonGetter
-                        .initialize(context = intent.context)
-                        .setTimeout(12000)
-                        .setEngine(engine)
-                        .get(intent.url ?: return@launch)
 
-                    _state.value = state.value.copy(
-                        streamPlaylist = serversResults?.videos ?: throw InvalidServerException(
-                            "No videos found"
-                        )
+        when(intent) {
+            is TextIntent.EnteredTargetSearch -> {
+                _state.value = state.value.copy(
+                    targetExtractTextField = _state.value.targetExtractTextField.copy(
+                        textField = intent.value,
+                        isHintVisible = intent.value.text.isBlank()
                     )
-                }
-
-                is MainIntent.OnGetResults -> viewModelScope.launch(Dispatchers.IO) {
-                    val serversResults : List<Server> = MoonGetter
-                        .initialize(context = intent.context)
-                        .setTimeout(12000)
-                        .setEngine(engine)
-                        .get(intent.urls)
-
-                    _state.value = state.value.copy(
-                        streamPlaylist = serversResults.flatMap { it.videos }
-                    )
-                }
-                is MainIntent.OnGetUntilFindNewResult -> viewModelScope.launch(Dispatchers.IO) {
-                    val serversResults : Server? = MoonGetter
-                        .initialize(context = intent.context)
-                        .setTimeout(12000)
-                        .setEngine(engine)
-                        .getUntilFindResource(intent.urls)
-
-                    _state.value = state.value.copy(
-                        streamPlaylist = serversResults?.videos ?: throw InvalidServerException(
-                            "No videos found"
-                        )
-                    )
-                }
-                is MainIntent.OnSelectedUrl -> {
-                    _state.value = state.value.copy(
-                        selectedStream = intent.request
-                    )
-                }
+                )
             }
-        } catch (e : InvalidServerException) {
-            Log.d("MOON_ERROR", e.message ?: "unknown error")
-        }
-        catch (e : IOException) {
-            Log.d("MOON_ERROR", e.message ?: "unknown error")
-        }
-        catch (e : RuntimeException) {
-            Log.d("MOON_ERROR", e.message ?: "unknown error")
-        }
+            is TextIntent.ChangeSearchFocus -> {
+                _state.value = state.value.copy(
+                    targetExtractTextField = _state.value.targetExtractTextField.copy(
+                        isHintVisible = !intent.isFocused && state.value.targetExtractTextField.textField.text.isBlank()
+                    )
+                )
+            }
+            is NetworkIntent.OnGetResult -> viewModelScope.launch(Dispatchers.IO) {
+                loadingState()
 
+                MoonGetter
+                    .initialize(context = intent.context)
+                    .setTimeout(12000)
+                    .setEngine(engine)
+                    .onGetResult<Server>(intent.url ?: return@launch)
+                    .onSuccess {
+                        _state.value = state.value.copy(
+                            streamPlaylist = it.videos,
+                            selectedStream = it.videos.firstOrNull()?.request ?: return@onSuccess,
+                            isLoading = false
+                        )
+                    }
+                    .onError {
+                        loadingState(false)
+                        _event.emit(MainEvent.Notify(Message.Error(it.toString())))
+
+                    }
+            }
+
+            is NetworkIntent.OnGetResults -> viewModelScope.launch(Dispatchers.IO) {
+                loadingState()
+
+                MoonGetter
+                    .initialize(context = intent.context)
+                    .setTimeout(12000)
+                    .setEngine(engine)
+                    .onGetResults<List<Server>>(intent.urls)
+                    .onSuccess {
+                        _state.value = state.value.copy(
+                            streamPlaylist = it.flatMap { it.videos },
+                            selectedStream = it.firstOrNull()?.videos?.firstOrNull()?.request ?: return@onSuccess,
+                            isLoading = false
+                        )
+                    }
+                    .onError {
+                        _event.emit(MainEvent.Notify(Message.Error(it.toString())))
+                        loadingState(false)
+                    }
+            }
+            is NetworkIntent.OnGetUntilFindNewResult -> viewModelScope.launch(Dispatchers.IO) {
+                loadingState()
+
+                MoonGetter
+                    .initialize(context = intent.context)
+                    .setTimeout(12000)
+                    .setEngine(engine)
+                    .onGetUntilFindResult<Server>(intent.urls)
+                    .onSuccess {
+                        _state.value = state.value.copy(
+                            streamPlaylist = it.videos,
+                            selectedStream = it.videos.firstOrNull()?.request ?: return@onSuccess,
+                            isLoading = false
+                        )
+                    }
+                    .onError {
+                        _event.emit(MainEvent.Notify(Message.Error(it.toString())))
+                        loadingState(false)
+                    }
+            }
+            is SelectionIntent.OnSelectedUrl -> {
+                _state.value = state.value.copy(
+                    selectedStream = intent.request
+                )
+            }
+        }
+    }
+
+    private fun loadingState(value: Boolean = true) {
+        _state.value = state.value.copy(
+            isLoading = value
+        )
     }
 }
