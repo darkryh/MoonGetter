@@ -60,9 +60,6 @@ dependencies {
     api(libs.moshi)
     api(libs.moshi.kotlin)
 
-    api("io.ktor:ktor-client-core:3.0.1") // Usa la última versión disponible
-    api("io.ktor:ktor-client-okhttp:3.0.1")
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(kotlin("reflect"))
