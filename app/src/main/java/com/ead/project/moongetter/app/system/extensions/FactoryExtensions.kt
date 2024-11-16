@@ -6,7 +6,7 @@ import com.ead.lib.moongetter.models.builder.Factory
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.project.moongetter.app.network.util.MoonGetterError
 import com.ead.project.moongetter.app.network.util.Result
-import kotlinx.io.IOException
+import okio.IOException
 
 suspend inline fun <reified T> Factory.Builder.onGetResult(url : String) : Result<T,MoonGetterError> {
     return try {
