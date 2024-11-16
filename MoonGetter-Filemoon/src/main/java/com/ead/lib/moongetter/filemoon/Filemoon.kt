@@ -1,3 +1,5 @@
+@file:Suppress("RestrictedApi")
+
 package com.ead.lib.moongetter.filemoon
 
 import android.content.Context
@@ -11,6 +13,7 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
+import com.ead.lib.moongetter.utils.Values.targetUrl
 import dev.datlag.jsunpacker.JsUnpacker
 import okhttp3.OkHttpClient
 
@@ -30,6 +33,8 @@ class Filemoon(
         it["Origin"] = url
         it["Referer"] = url
     }
+
+    override var url: String = targetUrl ?: url
 
     override suspend fun onExtract(): List<Video> {
         var response = client
@@ -56,7 +61,8 @@ class Filemoon(
                         }
 
                         builder.build()
-                    }
+                    },
+                    isTesting = targetUrl != null
                 )
             )
             .await()
