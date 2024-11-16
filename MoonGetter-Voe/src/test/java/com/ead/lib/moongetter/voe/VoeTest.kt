@@ -35,18 +35,23 @@ class VoeTest {
 
         //given
         val url = server.url("successful test").toString()
+        val url2 = server.url("successful test2").toString()
 
-        val mockResponse = MockResponse()
+        var mockResponse = MockResponse()
             .setResponseCode(200)
             .setBody("""
-            player.src({
-            type: "video/mp4",
-            src: "https://a4.mp4upload.com:183/d/xkxw6mujz3b4quuoo6rbwy2plgvhwrqub6eiysvetztpjstheehj4kayo7kwjvgvh74f4v5c/video.mp4"           
-           });
-            if ("https://a4.mp4upload.com/i/02683/a1oxgwvtpj04.jpg") {
-             player.poster("https://a4.mp4upload.com/i/02683/a1oxgwvtpj04.jpg");
-            }
-          });  
+                window.location.href = '$url2';
+            """.trimIndent())
+
+        server.enqueue(mockResponse)
+
+        mockResponse = MockResponse()
+            .setResponseCode(200)
+            .setBody("""
+            var sources = {
+                'hls': 'aHR0cHM6Ly9kZWxpdmVyeS1ub2RlLXdpMTE0eDJicmU0eWx0Z2kudm9lLW5ldHdvcmsubmV0L2VuZ2luZS9obHMyLzAxLzEyMjYxL2JmeWRyNGZtbTdqcF8sbiwudXJsc2V0L21hc3Rlci5tM3U4P3Q9a0x0djdTOWNCT0FuREV0bk52TXZyUm5lWFA0UU5oUFVBWmtlVi1Qal93dyZzPTE3MzE3MTA0MTImZT0xNDQwMCZmPTYxMzA1ODY1Jm5vZGU9ZGVsaXZlcnktbm9kZS13aTExNHgyYnJlNHlsdGdpLnZvZS1uZXR3b3JrLm5ldCZpPTE4MS4xOTkmc3A9MjUwMCZhc249Mjc5NDc=',
+                'video_height': 720,
+            }; 
             """.trimIndent())
 
         server.enqueue(mockResponse)
@@ -58,7 +63,7 @@ class VoeTest {
         val videos = mp4Upload.onExtract()
 
         //then
-        assert(videos.firstOrNull()?.request?.url == "https://a4.mp4upload.com:183/d/xkxw6mujz3b4quuoo6rbwy2plgvhwrqub6eiysvetztpjstheehj4kayo7kwjvgvh74f4v5c/video.mp4")
+        assert(videos.firstOrNull()?.request?.url == "https://delivery-node-wi114x2bre4yltgi.voe-network.net/engine/hls2/01/12261/bfydr4fmm7jp_,n,.urlset/master.m3u8?t=kLtv7S9cBOAnDEtnNvMvrRneXP4QNhPUAZkeV-Pj_ww&s=1731710412&e=14400&f=61305865&node=delivery-node-wi114x2bre4yltgi.voe-network.net&i=181.199&sp=2500&asn=27947")
     }
 
 

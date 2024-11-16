@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.facebook
+package com.ead.lib.moongetter.doodstream
 
 import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
@@ -13,8 +13,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class FacebookTest {
-
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class DoodstreamTest {
     private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
@@ -46,11 +50,12 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client , hashMap, configData)
+        val doodstream = Doodstream(context, url, client , hashMap, configData)
         Values.targetUrl = url
-        val videos = facebook.onExtract()
+        val videos = doodstream.onExtract()
 
         //then
+        server.shutdown()
         assert(videos.firstOrNull()?.request?.url == "https://example.com/video-sd.mp4")
     }
 
@@ -70,11 +75,12 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client , hashMap, configData)
+        val doodstream = Doodstream(context, url, client , hashMap, configData)
         Values.targetUrl = url
-        val videos = facebook.onExtract()
+        val videos = doodstream.onExtract()
 
         //then
+        server.shutdown()
         assert(videos.firstOrNull()?.request?.url == "https://example.com/video-hd.mp4")
     }
 
@@ -92,12 +98,12 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client ,hashMap, configData)
+        val doodstream = Doodstream(context, url, client ,hashMap, configData)
         Values.targetUrl = url
-        facebook.onExtract()
+        doodstream.onExtract()
 
         //then
-        Unit
+        server.shutdown()
     }
 
 
@@ -115,12 +121,12 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client ,hashMap, configData)
+        val facebook = Doodstream(context, url, client ,hashMap, configData)
         Values.targetUrl = url
         facebook.onExtract()
 
         //then
-        Unit
+        server.shutdown()
     }
 
     @After
