@@ -6,10 +6,11 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 private val DEFAULT_HEADERS = Headers.headersOf("Accept", "*/*")
 private val DEFAULT_CACHE_CONTROL = CacheControl.Builder().noCache().build()
-private val DEFAULT_BODY = RequestBody.create(null, "")
+private val DEFAULT_BODY = "".toRequestBody()
 
 
 fun GET(
