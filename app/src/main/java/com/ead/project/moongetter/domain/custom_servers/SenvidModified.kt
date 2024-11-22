@@ -22,7 +22,7 @@ class SenvidModified(
     private val urlRegex =  """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""".toRegex()
 
     override var url: String = urlRegex.find(url)?.groupValues?.get(1) ?:
-    throw InvalidServerException(context.getString(R.string.url_provided_is_not_expected), Error.INVALID_URL_PARAMETER)
+    throw InvalidServerException(context.getString(R.string.url_provided_is_not_expected), Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY)
 
     override suspend fun onExtract(): List<Video> {
         val response = client
