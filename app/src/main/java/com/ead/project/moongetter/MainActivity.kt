@@ -8,18 +8,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ead.project.moongetter.presentation.main.MainScreen
 import com.ead.project.moongetter.presentation.main.MainViewModel
 import com.ead.project.moongetter.presentation.main.event.MainEvent
 import com.ead.project.moongetter.presentation.theme.MoonGetterTheme
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -67,14 +68,16 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     val snackbarHostState = remember { SnackbarHostState() }
-                    val viewModel = viewModel<MainViewModel>()
+                    val viewModel = getViewModel<MainViewModel>()
 
                     LaunchedEffect(Unit) {
                         viewModel.event.collectLatest { event ->
                             when(event) {
                                 is MainEvent.Notify -> {
                                     snackbarHostState.showSnackbar(
-                                        message = event.message.data
+                                        message = event.message.data,
+                                        duration = SnackbarDuration.Indefinite,
+                                        withDismissAction = true
                                     )
                                 }
                             }
