@@ -12,5 +12,6 @@ enum class MoonGetterError : Error {
     TOO_MANY_REQUESTS,
     NO_INTERNET,
     PAYLOAD_TOO_LARGE,
+    NOT_RECOGNIZED_URL,
     UNKNOWN;
 }
