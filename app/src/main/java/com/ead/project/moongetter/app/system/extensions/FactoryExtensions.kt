@@ -10,7 +10,7 @@ import okio.IOException
 
 suspend inline fun <reified T> Factory.Builder.onGetResult(url : String) : Result<T,MoonGetterError> {
     return try {
-        val  result = get(url) ?: return Result.Error(MoonGetterError.UNKNOWN)
+        val  result = get(url) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL)
         Result.Success(
             result as T
         )
@@ -64,7 +64,7 @@ suspend inline fun <reified T> Factory.Builder.onGetResult(url : String) : Resul
 
 suspend inline fun <reified T> Factory.Builder.onGetUntilFindResult(urls : List<String>) : Result<T,MoonGetterError> {
     return try {
-        val  result = getUntilFindResource(urls) ?: return Result.Error(MoonGetterError.UNKNOWN)
+        val  result = getUntilFindResource(urls) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL)
         Result.Success(
             result as T
         )
@@ -119,7 +119,7 @@ suspend inline fun <reified T> Factory.Builder.onGetUntilFindResult(urls : List<
 @OptIn(ExperimentalFeature::class)
 suspend inline fun <reified T> Factory.Builder.onGetResults(urls : List<String>) : Result<T,MoonGetterError> {
     return try {
-        val  result = get(urls).ifEmpty { return Result.Error(MoonGetterError.UNKNOWN) }
+        val  result = get(urls).ifEmpty { return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL) }
         Result.Success(
             result as T
         )
