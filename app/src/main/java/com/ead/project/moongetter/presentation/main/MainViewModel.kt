@@ -4,48 +4,23 @@ package com.ead.project.moongetter.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ead.lib.moongetter.MoonGetter
-import com.ead.lib.moongetter.abyss.factory.AbyssFactory
 import com.ead.lib.moongetter.core.ExperimentalFeature
-import com.ead.lib.moongetter.doodstream.factory.DoodstreamFactory
-import com.ead.lib.moongetter.facebook.factory.FacebookFactory
-import com.ead.lib.moongetter.filemoon.factory.FilemoonFactory
-import com.ead.lib.moongetter.fireload.factory.FireloadFactory
-import com.ead.lib.moongetter.gofile.factory.GofileFactory
-import com.ead.lib.moongetter.goodstream.factory.GoodStreamFactory
-import com.ead.lib.moongetter.googledrive.factory.GoogleDriveFactory
-import com.ead.lib.moongetter.hexload.factory.HexloadFactory
-import com.ead.lib.moongetter.lulustream.factory.LulustreamFactory
-import com.ead.lib.moongetter.mediafire.factory.MediafireFactory
-import com.ead.lib.moongetter.mixdrop.factory.MixdropFactory
 import com.ead.lib.moongetter.models.Server
-import com.ead.lib.moongetter.models.builder.Engine
-import com.ead.lib.moongetter.mp4upload.factory.Mp4UploadFactory
-import com.ead.lib.moongetter.okru.factory.OkruFactory
-import com.ead.lib.moongetter.onecloudfile.factory.OneCloudFileFactory
-import com.ead.lib.moongetter.pixeldrain.factory.PixeldrainFactory
-import com.ead.lib.moongetter.senvid.factory.SenvidFactory
-import com.ead.lib.moongetter.streamtape.factory.StreamtapeFactory
-import com.ead.lib.moongetter.streamwish.factory.StreamwishFactory
-import com.ead.lib.moongetter.uqload.factory.UqloadFactory
-import com.ead.lib.moongetter.vidguard.factory.VidguardFactory
-import com.ead.lib.moongetter.vihide.factory.VihideFactory
-import com.ead.lib.moongetter.voe.factory.VoeFactory
-import com.ead.lib.moongetter.xtwitter.factory.XTwitterFactory
-import com.ead.lib.moongetter.yourupload.factory.YourUploadFactory
+import com.ead.lib.moongetter.models.builder.Factory
+import com.ead.project.moongetter.app.network.util.MoonGetterError
 import com.ead.project.moongetter.app.network.util.onError
 import com.ead.project.moongetter.app.network.util.onSuccess
 import com.ead.project.moongetter.app.system.extensions.onGetResult
 import com.ead.project.moongetter.app.system.extensions.onGetResults
 import com.ead.project.moongetter.app.system.extensions.onGetUntilFindResult
-import com.ead.project.moongetter.domain.custom_servers.factory.SenvidModifiedFactory
 import com.ead.project.moongetter.presentation.main.event.MainEvent
+import com.ead.project.moongetter.presentation.main.event.MainEvent.*
 import com.ead.project.moongetter.presentation.main.intent.MainIntent
 import com.ead.project.moongetter.presentation.main.intent.NetworkIntent
 import com.ead.project.moongetter.presentation.main.intent.SelectionIntent
 import com.ead.project.moongetter.presentation.main.intent.TextIntent
 import com.ead.project.moongetter.presentation.main.state.MainState
-import com.ead.project.moongetter.presentation.util.Message
+import com.ead.project.moongetter.presentation.util.Message.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,52 +29,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel() : ViewModel() {
+class MainViewModel(
+    val moonFactoryBuilder : Factory.Builder,
+) : ViewModel() {
 
     private val _state : MutableStateFlow<MainState> = MutableStateFlow(MainState())
     val state : StateFlow<MainState> = _state.asStateFlow()
 
     private val _event = MutableSharedFlow<MainEvent>()
     val event = _event.asSharedFlow()
-
-    private val engine : Engine = Engine.Builder()
-        .onCore(
-            engines = arrayOf(
-                /**
-                 * CustomServerFactory
-                 */
-                SenvidModifiedFactory,
-                /**
-                 * DefaultServerFactory
-                 */
-                AbyssFactory,
-                DoodstreamFactory,
-                FacebookFactory,
-                FilemoonFactory,
-                FireloadFactory,
-                GofileFactory,
-                GoodStreamFactory,
-                GoogleDriveFactory,
-                HexloadFactory,
-                LulustreamFactory,
-                MediafireFactory,
-                MixdropFactory,
-                Mp4UploadFactory,
-                OkruFactory,
-                OneCloudFileFactory,
-                PixeldrainFactory,
-                SenvidFactory,
-                StreamtapeFactory,
-                StreamwishFactory,
-                UqloadFactory,
-                VidguardFactory,
-                VihideFactory,
-                VoeFactory,
-                XTwitterFactory,
-                YourUploadFactory
-            )
-        )
-        .build()
 
     fun onIntent(intent: MainIntent) {
 
@@ -122,10 +60,7 @@ class MainViewModel() : ViewModel() {
             is NetworkIntent.OnGetResult -> viewModelScope.launch(Dispatchers.IO) {
                 loadingState()
 
-                MoonGetter
-                    .initialize(context = intent.context)
-                    .setTimeout(12000)
-                    .setEngine(engine)
+                moonFactoryBuilder
                     .onGetResult<Server>(intent.url ?: return@launch)
                     .onSuccess {
                         _state.value = state.value.copy(
@@ -134,20 +69,57 @@ class MainViewModel() : ViewModel() {
                             isLoading = false
                         )
                     }
-                    .onError {
-                        loadingState(false)
-                        _event.emit(MainEvent.Notify(Message.Error(it.toString())))
+                    .onError { moonGetterError ->
+                        when(moonGetterError) {
+                            MoonGetterError.RESOURCE_TAKEN_DOWN -> {
+                                _event.emit(Notify(Error("Resource taken down")))
+                            }
+                            MoonGetterError.INVALID_PARAMETERS_IN_BUILDER -> {
+                                _event.emit(Notify(Error("Invalid parameters in builder")))
+                            }
+                            MoonGetterError.NO_PARAMETERS_TO_WORK -> {
+                                _event.emit(Notify(Error("The textfield doesn't need to be empty, insert embed url video from streaming site")))
+                            }
+                            MoonGetterError.SERVERS_RESPONSE_WENT_WRONG -> {
+                                _event.emit(Notify(Error("Servers response went wrong, try again")))
+                            }
+                            MoonGetterError.SERVER_ERROR -> {
+                                _event.emit(Notify(Error("Server error, try another time")))
+                            }
+                            MoonGetterError.REQUEST_TIMEOUT -> {
+                                _event.emit(Notify(Error("Request timeout, check internet connexion")))
+                            }
+                            MoonGetterError.UNAUTHORIZED -> {
+                                _event.emit(Notify(Error("Unauthorized request")))
+                            }
+                            MoonGetterError.CONFLICT -> {
+                                _event.emit(Notify(Error("Conflict connexion")))
+                            }
+                            MoonGetterError.TOO_MANY_REQUESTS -> {
+                                _event.emit(Notify(Error("Too many requests detected, try another time")))
+                            }
+                            MoonGetterError.NO_INTERNET -> {
+                                _event.emit(Notify(Error("No internet connexion")))
+                            }
+                            MoonGetterError.PAYLOAD_TOO_LARGE -> {
+                                _event.emit(Notify(Error("Payload too large")))
+                            }
+                            MoonGetterError.NOT_RECOGNIZED_URL -> {
+                                _event.emit(Notify(Error("Embed url not supported or invalid")))
 
+                            }
+                            MoonGetterError.UNKNOWN -> {
+                                _event.emit(Notify(Error("Unknown error")))
+                            }
+                        }
+                        loadingState(false)
                     }
             }
 
             is NetworkIntent.OnGetResults -> viewModelScope.launch(Dispatchers.IO) {
                 loadingState()
 
-                MoonGetter
-                    .initialize(context = intent.context)
-                    .setTimeout(12000)
-                    .setEngine(engine)
+                moonFactoryBuilder
                     .onGetResults<List<Server>>(intent.urls)
                     .onSuccess {
                         _state.value = state.value.copy(
@@ -156,18 +128,56 @@ class MainViewModel() : ViewModel() {
                             isLoading = false
                         )
                     }
-                    .onError {
-                        _event.emit(MainEvent.Notify(Message.Error(it.toString())))
+                    .onError { moonGetterError ->
+                        when(moonGetterError) {
+                            MoonGetterError.RESOURCE_TAKEN_DOWN -> {
+                                _event.emit(Notify(Error("Resource taken down")))
+                            }
+                            MoonGetterError.INVALID_PARAMETERS_IN_BUILDER -> {
+                                _event.emit(Notify(Error("Invalid parameters in builder")))
+                            }
+                            MoonGetterError.NO_PARAMETERS_TO_WORK -> {
+                                _event.emit(Notify(Error("The textfield doesn't need to be empty, insert embed url video from streaming site")))
+                            }
+                            MoonGetterError.SERVERS_RESPONSE_WENT_WRONG -> {
+                                _event.emit(Notify(Error("Servers response went wrong, try again")))
+                            }
+                            MoonGetterError.SERVER_ERROR -> {
+                                _event.emit(Notify(Error("Server error, try another time")))
+                            }
+                            MoonGetterError.REQUEST_TIMEOUT -> {
+                                _event.emit(Notify(Error("Request timeout, check internet connexion")))
+                            }
+                            MoonGetterError.UNAUTHORIZED -> {
+                                _event.emit(Notify(Error("Unauthorized request")))
+                            }
+                            MoonGetterError.CONFLICT -> {
+                                _event.emit(Notify(Error("Conflict connexion")))
+                            }
+                            MoonGetterError.TOO_MANY_REQUESTS -> {
+                                _event.emit(Notify(Error("Too many requests detected, try another time")))
+                            }
+                            MoonGetterError.NO_INTERNET -> {
+                                _event.emit(Notify(Error("No internet connexion")))
+                            }
+                            MoonGetterError.PAYLOAD_TOO_LARGE -> {
+                                _event.emit(Notify(Error("Payload too large")))
+                            }
+                            MoonGetterError.NOT_RECOGNIZED_URL -> {
+                                _event.emit(Notify(Error("Embed url not supported or invalid")))
+
+                            }
+                            MoonGetterError.UNKNOWN -> {
+                                _event.emit(Notify(Error("Unknown error")))
+                            }
+                        }
                         loadingState(false)
                     }
             }
             is NetworkIntent.OnGetUntilFindNewResult -> viewModelScope.launch(Dispatchers.IO) {
                 loadingState()
 
-                MoonGetter
-                    .initialize(context = intent.context)
-                    .setTimeout(12000)
-                    .setEngine(engine)
+                moonFactoryBuilder
                     .onGetUntilFindResult<Server>(intent.urls)
                     .onSuccess {
                         _state.value = state.value.copy(
@@ -176,8 +186,49 @@ class MainViewModel() : ViewModel() {
                             isLoading = false
                         )
                     }
-                    .onError {
-                        _event.emit(MainEvent.Notify(Message.Error(it.toString())))
+                    .onError { moonGetterError ->
+                        when(moonGetterError) {
+                            MoonGetterError.RESOURCE_TAKEN_DOWN -> {
+                                _event.emit(Notify(Error("Resource taken down")))
+                            }
+                            MoonGetterError.INVALID_PARAMETERS_IN_BUILDER -> {
+                                _event.emit(Notify(Error("Invalid parameters in builder")))
+                            }
+                            MoonGetterError.NO_PARAMETERS_TO_WORK -> {
+                                _event.emit(Notify(Error("The textfield doesn't need to be empty, insert embed url video from streaming site")))
+                            }
+                            MoonGetterError.SERVERS_RESPONSE_WENT_WRONG -> {
+                                _event.emit(Notify(Error("Servers response went wrong, try again")))
+                            }
+                            MoonGetterError.SERVER_ERROR -> {
+                                _event.emit(Notify(Error("Server error, try another time")))
+                            }
+                            MoonGetterError.REQUEST_TIMEOUT -> {
+                                _event.emit(Notify(Error("Request timeout, check internet connexion")))
+                            }
+                            MoonGetterError.UNAUTHORIZED -> {
+                                _event.emit(Notify(Error("Unauthorized request")))
+                            }
+                            MoonGetterError.CONFLICT -> {
+                                _event.emit(Notify(Error("Conflict connexion")))
+                            }
+                            MoonGetterError.TOO_MANY_REQUESTS -> {
+                                _event.emit(Notify(Error("Too many requests detected, try another time")))
+                            }
+                            MoonGetterError.NO_INTERNET -> {
+                                _event.emit(Notify(Error("No internet connexion")))
+                            }
+                            MoonGetterError.PAYLOAD_TOO_LARGE -> {
+                                _event.emit(Notify(Error("Payload too large")))
+                            }
+                            MoonGetterError.NOT_RECOGNIZED_URL -> {
+                                _event.emit(Notify(Error("Embed url not supported or invalid")))
+
+                            }
+                            MoonGetterError.UNKNOWN -> {
+                                _event.emit(Notify(Error("Unknown error")))
+                            }
+                        }
                         loadingState(false)
                     }
             }
