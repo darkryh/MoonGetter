@@ -17,8 +17,8 @@ android {
         applicationId = "com.ead.project.moongetter"
         minSdk = libSdkMinVersion.toInt()
         targetSdk = compileLibSdkVersion.toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,6 +70,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.koin.android)
+    testImplementation(libs.koin.test)
+
     implementation(project(":Media3Player"))
 
     implementation(project(":MoonGetter-Core"))
@@ -77,7 +80,4 @@ dependencies {
 
     implementation(project(":MoonGetter-Servers"))
     implementation(project(":MoonGetter-Servers-Robot"))
-
-    implementation(libs.koin.android)
-    testImplementation(libs.koin.test)
 }
