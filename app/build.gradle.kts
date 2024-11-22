@@ -70,8 +70,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
     implementation(project(":Media3Player"))
 
     implementation(project(":MoonGetter-Core"))
@@ -79,4 +77,7 @@ dependencies {
 
     implementation(project(":MoonGetter-Servers"))
     implementation(project(":MoonGetter-Servers-Robot"))
+
+    implementation(libs.koin.android)
+    testImplementation(libs.koin.test)
 }
