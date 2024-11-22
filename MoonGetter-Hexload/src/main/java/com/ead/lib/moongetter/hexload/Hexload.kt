@@ -27,7 +27,7 @@ class Hexload(
 ) : Server(context, url, client, headers, configData) {
 
     override var url: String = targetUrl ?: url.replaceDomainWith("hexload.com")
-    ?: throw InvalidServerException(context.getString(R.string.url_provided_is_not_expected, name), Error.INVALID_URL_PARAMETER)
+    ?: throw InvalidServerException(context.getString(R.string.url_provided_is_not_expected, name), Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY)
 
     override suspend fun onExtract(): List<Video> {
         var response = client
