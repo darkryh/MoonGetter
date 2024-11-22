@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -165,17 +166,26 @@ fun MainScreen(
                                 horizontal = 4.dp
                             ),
                         onClick = {
-                            intent(NetworkIntent.OnGetResult(context, state.targetExtractTextField.textField.text))
-                            keyboardController?.hide()
+                            if (!state.isLoading) {
+                                intent(NetworkIntent.OnGetResult(context, state.targetExtractTextField.textField.text))
+                                keyboardController?.hide()
+                            }
                         }
                     ) {
-                        Icon(
-                            modifier = Modifier
-                            ,
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search url to extract icon",
-                            tint = MaterialTheme.colorScheme.inverseSurface
-                        )
+                        if (!state.isLoading) {
+                            Icon(
+                                modifier = Modifier,
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search url to extract icon",
+                                tint = MaterialTheme.colorScheme.inverseSurface
+                            )
+                        }
+                        else {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                                strokeWidth = 4.dp
+                            )
+                        }
                     }
                 }
             }
