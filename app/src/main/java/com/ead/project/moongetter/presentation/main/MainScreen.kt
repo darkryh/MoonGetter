@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -53,7 +54,7 @@ import com.ead.test.media3player.Player
 fun MainScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    intent : (MainIntent) -> Unit,
+    intent: (MainIntent) -> Unit,
     state: MainState
 ) {
     val context = LocalContext.current
@@ -62,7 +63,6 @@ fun MainScreen(
     Scaffold(
         modifier = modifier
             .fillMaxSize(),
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -108,41 +108,62 @@ fun MainScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = MaterialTheme.shapes.extraLarge
-                        )
-                        .padding(
-                            vertical = 0.dp,
-                            horizontal = 16.dp
-                        ),
+                        ,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TextField(
+                    Box(
                         modifier = Modifier
-                            .weight(1f),
-                        value = state.targetExtractTextField.textField,
-                        onValueChange = { intent(TextIntent.EnteredTargetSearch(it)) },
-                        onFocusChange = { intent(TextIntent.ChangeSearchFocus(it.isFocused)) },
-                        hint = state.targetExtractTextField.hint,
-                        isHintVisible = state.targetExtractTextField.isHintVisible,
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Go
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onGo = {
-                                intent(NetworkIntent.OnGetResult(context, state.targetExtractTextField.textField.text))
-                            }
-                        ),
-                        textStyle = TextStyle(
-                            color = MaterialTheme.colorScheme.inverseSurface
-                        ),
-                        hintTextStyle = TextStyle(
-                            color = MaterialTheme.colorScheme.inverseSurface
-                        ),
-                        singleLine = true
-                    )
+                            .weight(1f)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = MaterialTheme.shapes.extraLarge
+                            )
+                            .padding(
+                                vertical = 16.dp,
+                                horizontal = 16.dp
+                            )
+
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                            ,
+                            value = state.targetExtractTextField.textField,
+                            onValueChange = { intent(TextIntent.EnteredTargetSearch(it)) },
+                            onFocusChange = { intent(TextIntent.ChangeSearchFocus(it.isFocused)) },
+                            hint = state.targetExtractTextField.hint,
+                            isHintVisible = state.targetExtractTextField.isHintVisible,
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Go
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onGo = {
+                                    intent(NetworkIntent.OnGetResult(context, state.targetExtractTextField.textField.text))
+                                }
+                            ),
+                            textStyle = TextStyle(
+                                color = MaterialTheme.colorScheme.inverseSurface
+                            ),
+                            hintTextStyle = TextStyle(
+                                color = MaterialTheme.colorScheme.inverseSurface
+                            ),
+                            singleLine = true
+                        )
+
+                    }
+
                     IconButton(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 8.dp
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = MaterialTheme.shapes.extraLarge
+                            )
+                            .padding(
+                                horizontal = 4.dp
+                            ),
                         onClick = {
                             intent(NetworkIntent.OnGetResult(context, state.targetExtractTextField.textField.text))
                             keyboardController?.hide()
@@ -150,7 +171,7 @@ fun MainScreen(
                     ) {
                         Icon(
                             modifier = Modifier
-                                .padding(start = 8.dp),
+                            ,
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search url to extract icon",
                             tint = MaterialTheme.colorScheme.inverseSurface
@@ -158,6 +179,21 @@ fun MainScreen(
                     }
                 }
             }
+
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                snackbar = { snackbarData ->
+                    Snackbar(
+                        snackbarData = snackbarData,
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        actionColor = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            )
 
             if (state.isLoading) {
                 LoadingAnimation(
@@ -185,6 +221,7 @@ fun MainScreen(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
