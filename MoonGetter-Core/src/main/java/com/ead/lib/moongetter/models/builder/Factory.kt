@@ -123,7 +123,7 @@ class Factory(
          */
         fun identifier(urls : List<String>): List<String> =
             MoonFactory.identifierList(
-                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_PARAMETERS),
+                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_BUILDER_PARAMETERS),
                 urls = urls.ifEmpty {
                     throw InvalidServerException(
                         context?.getString(R.string.urls_not_provided) ?:
@@ -152,7 +152,7 @@ class Factory(
                 /**
                  * The context provided for the ServerFactory object.
                  */
-                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_PARAMETERS),
+                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_BUILDER_PARAMETERS),
                 /**
                  * Validation url in case it is empty.
                  */
@@ -194,7 +194,7 @@ class Factory(
                 /**
                  * The context provided for the ServerFactory object.
                  */
-                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_PARAMETERS),
+                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_BUILDER_PARAMETERS),
                 /**
                  * Validation urls in case it is empty.
                  */
@@ -235,7 +235,7 @@ class Factory(
                 /**
                  * The context provided for the ServerFactory object.
                  */
-                context = context ?: throw InvalidServerException("Context hans´t provided", Error.INVALID_PARAMETERS),
+                context = context ?: throw InvalidServerException("Context hans´t provided", Error.INVALID_BUILDER_PARAMETERS),
                 /**
                  * Validation urls in case it is empty.
                  */
