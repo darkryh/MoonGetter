@@ -6,25 +6,28 @@ import com.ead.lib.moongetter.models.builder.Factory
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.project.moongetter.app.network.util.MoonGetterError
 import com.ead.project.moongetter.app.network.util.Result
+import kotlinx.coroutines.delay
 import okio.IOException
+
+const val DelayValue = 500L
 
 suspend inline fun <reified T> Factory.Builder.onGetResult(url : String) : Result<T,MoonGetterError> {
     return try {
-        val  result = get(url) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL)
+        val  result = get(url) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL).also { delay(DelayValue) }
         Result.Success(
             result as T
         )
     }
     catch (e : InvalidServerException) {
         return when(e.error) {
-            Error.INVALID_URL_PARAMETER -> {
+            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
-            Error.INVALID_PARAMETERS -> {
+            Error.INVALID_BUILDER_PARAMETERS -> {
                 Result.Error(MoonGetterError.INVALID_PARAMETERS_IN_BUILDER)
             }
             Error.NO_PARAMETERS_TO_WORK -> {
-                Result.Error(MoonGetterError.NO_PARAMETERS_TO_WORK)
+                Result.Error(MoonGetterError.NO_PARAMETERS_TO_WORK).also { delay(DelayValue) }
             }
             Error.EMPTY_OR_NULL_RESPONSE -> {
                 Result.Error(MoonGetterError.SERVERS_RESPONSE_WENT_WRONG)
@@ -64,21 +67,21 @@ suspend inline fun <reified T> Factory.Builder.onGetResult(url : String) : Resul
 
 suspend inline fun <reified T> Factory.Builder.onGetUntilFindResult(urls : List<String>) : Result<T,MoonGetterError> {
     return try {
-        val  result = getUntilFindResource(urls) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL)
+        val  result = getUntilFindResource(urls) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL).also { delay(DelayValue) }
         Result.Success(
             result as T
         )
     }
     catch (e : InvalidServerException) {
         return when(e.error) {
-            Error.INVALID_URL_PARAMETER -> {
+            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
-            Error.INVALID_PARAMETERS -> {
+            Error.INVALID_BUILDER_PARAMETERS -> {
                 Result.Error(MoonGetterError.INVALID_PARAMETERS_IN_BUILDER)
             }
             Error.NO_PARAMETERS_TO_WORK -> {
-                Result.Error(MoonGetterError.NO_PARAMETERS_TO_WORK)
+                Result.Error(MoonGetterError.NO_PARAMETERS_TO_WORK).also { delay(DelayValue) }
             }
             Error.EMPTY_OR_NULL_RESPONSE -> {
                 Result.Error(MoonGetterError.SERVERS_RESPONSE_WENT_WRONG)
@@ -119,21 +122,21 @@ suspend inline fun <reified T> Factory.Builder.onGetUntilFindResult(urls : List<
 @OptIn(ExperimentalFeature::class)
 suspend inline fun <reified T> Factory.Builder.onGetResults(urls : List<String>) : Result<T,MoonGetterError> {
     return try {
-        val  result = get(urls).ifEmpty { return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL) }
+        val  result = get(urls).ifEmpty { return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL).also { delay(DelayValue) } }
         Result.Success(
             result as T
         )
     }
     catch (e : InvalidServerException) {
         return when(e.error) {
-            Error.INVALID_URL_PARAMETER -> {
+            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
-            Error.INVALID_PARAMETERS -> {
+            Error.INVALID_BUILDER_PARAMETERS -> {
                 Result.Error(MoonGetterError.INVALID_PARAMETERS_IN_BUILDER)
             }
             Error.NO_PARAMETERS_TO_WORK -> {
-                Result.Error(MoonGetterError.NO_PARAMETERS_TO_WORK)
+                Result.Error(MoonGetterError.NO_PARAMETERS_TO_WORK).also { delay(DelayValue) }
             }
             Error.EMPTY_OR_NULL_RESPONSE -> {
                 Result.Error(MoonGetterError.SERVERS_RESPONSE_WENT_WRONG)
