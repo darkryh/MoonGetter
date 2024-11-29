@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.uqload
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -14,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class UqloadTest {
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -23,7 +20,6 @@ class UqloadTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -44,7 +40,7 @@ class UqloadTest {
 
         //when
         Values.targetUrl = url
-        val uqload = Uqload(context, url, client , hashMap, configData)
+        val uqload = Uqload(url, client , hashMap, configData)
         val videos = uqload.onExtract()
 
         //then
@@ -66,7 +62,7 @@ class UqloadTest {
 
         //when
         Values.targetUrl = url
-        val uqload = Uqload(context, url, client ,hashMap, configData)
+        val uqload = Uqload(url, client ,hashMap, configData)
         uqload.onExtract()
 
         //then
@@ -88,7 +84,7 @@ class UqloadTest {
 
         //when
         Values.targetUrl = url
-        val uqload = Uqload(context, url, client ,hashMap, configData)
+        val uqload = Uqload(url, client ,hashMap, configData)
         uqload.onExtract()
 
         //then

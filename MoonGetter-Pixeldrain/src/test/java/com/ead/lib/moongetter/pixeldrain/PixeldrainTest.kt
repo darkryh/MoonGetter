@@ -1,10 +1,9 @@
 package com.ead.lib.moongetter.pixeldrain
 
-import android.content.Context
+
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -14,7 +13,6 @@ import org.junit.Before
 import org.junit.Test
 
 class PixeldrainTest {
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -23,7 +21,6 @@ class PixeldrainTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -53,7 +50,7 @@ class PixeldrainTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Pixeldrain(context, url, client ,hashMap, configData)
+        val mp4Upload = Pixeldrain(url, client ,hashMap, configData)
 
         val videos = mp4Upload.onExtract()
 
@@ -76,7 +73,7 @@ class PixeldrainTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Pixeldrain(context, url, client , hashMap, configData)
+        val mp4Upload = Pixeldrain(url, client , hashMap, configData)
         mp4Upload.onExtract()
 
         //then
@@ -98,7 +95,7 @@ class PixeldrainTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Pixeldrain(context, url, client , hashMap, configData)
+        val mp4Upload = Pixeldrain(url, client , hashMap, configData)
         mp4Upload.onExtract()
 
         //then

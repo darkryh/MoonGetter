@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.hexload
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -14,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class HexloadTest {
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -23,7 +20,6 @@ class HexloadTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -87,7 +83,7 @@ class HexloadTest {
         //when
         Values.targetUrl = url
         Values.targetUrl2 = url2
-        val hexload = Hexload(context, url, client , hashMap, configData)
+        val hexload = Hexload(url, client , hashMap, configData)
 
         val videos = hexload.onExtract()
 
@@ -110,7 +106,7 @@ class HexloadTest {
 
         //when
         Values.targetUrl = url
-        val hexload = Hexload(context, url, client , hashMap, configData)
+        val hexload = Hexload(url, client , hashMap, configData)
         hexload.onExtract()
 
         //then
@@ -132,7 +128,7 @@ class HexloadTest {
 
         //when
         Values.targetUrl = url
-        val hexload = Hexload(context, url, client ,hashMap, configData)
+        val hexload = Hexload(url, client ,hashMap, configData)
         hexload.onExtract()
 
         //then

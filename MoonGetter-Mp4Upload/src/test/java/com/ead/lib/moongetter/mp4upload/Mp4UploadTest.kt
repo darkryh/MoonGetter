@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.mp4upload
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -14,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class Mp4UploadTest {
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -23,7 +20,6 @@ class Mp4UploadTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -53,7 +49,7 @@ class Mp4UploadTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Mp4Upload(context, url, client , hashMap, configData)
+        val mp4Upload = Mp4Upload(url, client , hashMap, configData)
 
         val videos = mp4Upload.onExtract()
 
@@ -76,7 +72,7 @@ class Mp4UploadTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Mp4Upload(context, url, client , hashMap, configData)
+        val mp4Upload = Mp4Upload(url, client , hashMap, configData)
         mp4Upload.onExtract()
 
         //then
@@ -98,7 +94,7 @@ class Mp4UploadTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Mp4Upload(context, url, client ,hashMap, configData)
+        val mp4Upload = Mp4Upload(url, client ,hashMap, configData)
         mp4Upload.onExtract()
 
         //then

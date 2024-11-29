@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.facebook
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -15,7 +13,6 @@ import org.junit.Test
 
 class FacebookTest {
 
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -24,7 +21,6 @@ class FacebookTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -46,7 +42,7 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client , hashMap, configData)
+        val facebook = Facebook(url, client , hashMap, configData)
         Values.targetUrl = url
         val videos = facebook.onExtract()
 
@@ -70,7 +66,7 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client , hashMap, configData)
+        val facebook = Facebook(url, client , hashMap, configData)
         Values.targetUrl = url
         val videos = facebook.onExtract()
 
@@ -92,7 +88,7 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client ,hashMap, configData)
+        val facebook = Facebook(url, client ,hashMap, configData)
         Values.targetUrl = url
         facebook.onExtract()
 
@@ -115,7 +111,7 @@ class FacebookTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Facebook(context, url, client ,hashMap, configData)
+        val facebook = Facebook(url, client ,hashMap, configData)
         Values.targetUrl = url
         facebook.onExtract()
 

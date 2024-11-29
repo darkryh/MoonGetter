@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.voe
+package com.ead.lib.moongetter.android.robot
 
 import org.junit.Test
 

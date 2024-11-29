@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.googledrive
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -15,7 +13,6 @@ import org.junit.Test
 
 class GoogleDriveTest {
 
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -24,7 +21,6 @@ class GoogleDriveTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -52,7 +48,7 @@ class GoogleDriveTest {
 
         //when
         Values.targetUrl = url
-        val googleDrive = GoogleDrive(context, url, client , hashMap, configData)
+        val googleDrive = GoogleDrive(url, client , hashMap, configData)
 
         val videos = googleDrive.onExtract()
 
@@ -75,7 +71,7 @@ class GoogleDriveTest {
 
         //when
         Values.targetUrl = url
-        val googleDrive = GoogleDrive(context, url, client , hashMap, configData)
+        val googleDrive = GoogleDrive(url, client , hashMap, configData)
         googleDrive.onExtract()
 
         //then
@@ -97,7 +93,7 @@ class GoogleDriveTest {
 
         //when
         Values.targetUrl = url
-        val googleDrive = GoogleDrive(context, url, client , hashMap, configData)
+        val googleDrive = GoogleDrive(url, client , hashMap, configData)
         googleDrive.onExtract()
 
         //then

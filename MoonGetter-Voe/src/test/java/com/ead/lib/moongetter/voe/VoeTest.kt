@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.voe
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -14,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class VoeTest {
-    private lateinit var context: Context
     private lateinit var server : MockWebServer
     private val client = OkHttpClient()
 
@@ -23,7 +20,6 @@ class VoeTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -58,7 +54,7 @@ class VoeTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Voe(context, url, client , hashMap, configData)
+        val mp4Upload = Voe(url, client , hashMap, configData)
 
         val videos = mp4Upload.onExtract()
 
@@ -81,7 +77,7 @@ class VoeTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Voe(context, url, client , hashMap, configData)
+        val mp4Upload = Voe(url, client , hashMap, configData)
         mp4Upload.onExtract()
 
         //then
@@ -103,7 +99,7 @@ class VoeTest {
 
         //when
         Values.targetUrl = url
-        val mp4Upload = Voe(context, url, client ,hashMap, configData)
+        val mp4Upload = Voe(url, client ,hashMap, configData)
         mp4Upload.onExtract()
 
         //then

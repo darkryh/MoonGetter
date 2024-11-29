@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.doodstream
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -19,7 +17,6 @@ import org.junit.Test
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class DoodstreamTest {
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -28,7 +25,6 @@ class DoodstreamTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -50,7 +46,7 @@ class DoodstreamTest {
         server.enqueue(mockResponse)
 
         //when
-        val doodstream = Doodstream(context, url, client , hashMap, configData)
+        val doodstream = Doodstream(url, client , hashMap, configData)
         Values.targetUrl = url
         val videos = doodstream.onExtract()
 
@@ -75,7 +71,7 @@ class DoodstreamTest {
         server.enqueue(mockResponse)
 
         //when
-        val doodstream = Doodstream(context, url, client , hashMap, configData)
+        val doodstream = Doodstream(url, client , hashMap, configData)
         Values.targetUrl = url
         val videos = doodstream.onExtract()
 
@@ -98,7 +94,7 @@ class DoodstreamTest {
         server.enqueue(mockResponse)
 
         //when
-        val doodstream = Doodstream(context, url, client ,hashMap, configData)
+        val doodstream = Doodstream(url, client ,hashMap, configData)
         Values.targetUrl = url
         doodstream.onExtract()
 
@@ -121,7 +117,7 @@ class DoodstreamTest {
         server.enqueue(mockResponse)
 
         //when
-        val facebook = Doodstream(context, url, client ,hashMap, configData)
+        val facebook = Doodstream(url, client ,hashMap, configData)
         Values.targetUrl = url
         facebook.onExtract()
 

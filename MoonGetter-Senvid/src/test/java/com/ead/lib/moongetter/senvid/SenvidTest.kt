@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.senvid
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -14,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class SenvidTest {
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -23,7 +20,6 @@ class SenvidTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -44,7 +40,7 @@ class SenvidTest {
 
         //when
         Values.targetUrl = url
-        val senvid = Senvid(context, url, client , hashMap, configData)
+        val senvid = Senvid(url, client , hashMap, configData)
         val videos = senvid.onExtract()
 
         //then
@@ -65,7 +61,7 @@ class SenvidTest {
 
         //when
         Values.targetUrl = url
-        val senvid = Senvid(context, url, client , hashMap, configData)
+        val senvid = Senvid(url, client , hashMap, configData)
         senvid.onExtract()
 
         //then
@@ -87,7 +83,7 @@ class SenvidTest {
 
         //when
         Values.targetUrl = url
-        val senvid = Senvid(context, url, client , hashMap, configData)
+        val senvid = Senvid(url, client , hashMap, configData)
         senvid.onExtract()
 
         //then

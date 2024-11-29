@@ -1,10 +1,8 @@
 package com.ead.lib.moongetter.mediafire
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -14,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class MediafireTest {
-    private lateinit var context: Context
     private val client = OkHttpClient()
     private lateinit var server : MockWebServer
 
@@ -23,7 +20,6 @@ class MediafireTest {
 
     @Before
     fun setup() {
-        context = mockk(relaxed = true)
         server = MockWebServer()
 
         server.start()
@@ -55,7 +51,7 @@ class MediafireTest {
 
         //when
         Values.targetUrl = url
-        val mediafire = Mediafire(context, url, client , hashMap, configData)
+        val mediafire = Mediafire(url, client , hashMap, configData)
 
         val videos = mediafire.onExtract()
 
@@ -78,7 +74,7 @@ class MediafireTest {
 
         //when
         Values.targetUrl = url
-        val mediafire = Mediafire(context, url, client , hashMap, configData)
+        val mediafire = Mediafire(url, client , hashMap, configData)
         mediafire.onExtract()
 
         //then
@@ -100,7 +96,7 @@ class MediafireTest {
 
         //when
         Values.targetUrl = url
-        val mediafire = Mediafire(context, url, client , hashMap, configData)
+        val mediafire = Mediafire(url, client , hashMap, configData)
         mediafire.onExtract()
 
         //then
