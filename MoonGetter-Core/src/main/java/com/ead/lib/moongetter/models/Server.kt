@@ -2,7 +2,6 @@
 
 package com.ead.lib.moongetter.models
 
-import android.content.Context
 import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import okhttp3.FormBody
@@ -10,14 +9,9 @@ import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
-import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 
 open class Server(
-    /**
-     * @param @context the context of the application
-     */
-    protected open val context: Context,
     /**
      * @param @url the url of the server
      */
@@ -35,6 +29,11 @@ open class Server(
      */
     protected open val configData : Configuration.Data
 ) {
+
+    /**
+     * @return the robot
+     */
+    var _robot : Robot? = null
 
 
     /**
@@ -166,7 +165,7 @@ open class Server(
                 /**
                  * combine headers in case the GET operations demands
                  */
-                val headers = if (headers != null) {
+                val headersCombination = if (headers != null) {
                     this@Server.headers + headers
                 } else {
                     this@Server.headers
@@ -195,7 +194,7 @@ open class Server(
                              * Mapping the headers hashmap into
                              * okhttp headers
                              */
-                            headers.forEach { (key, value) ->
+                            headersCombination.forEach { (key, value) ->
                                 headersBuilder.add(key, value)
                             }
                             headersBuilder
@@ -231,7 +230,7 @@ open class Server(
                 /**
                  * combine headers in case the POST operations demands
                  */
-                val headers = if (headers != null) {
+                val headersCombination = if (headers != null) {
                     this@Server.headers + headers
                 } else {
                     this@Server.headers
@@ -258,7 +257,7 @@ open class Server(
                              * Mapping the headers hashmap into
                              * okhttp headers
                              */
-                            headers.forEach { (key, value) ->
+                            headersCombination.forEach { (key, value) ->
                                 headersBuilder.add(key, value)
                             }
                             headersBuilder
