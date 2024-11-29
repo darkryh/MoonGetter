@@ -49,3 +49,5 @@ include(":MoonGetter-YourUpload")
 
 include(":MoonGetter-Servers")
 include(":MoonGetter-Servers-Robot")
+
+include(":MoonGetter-Android-Robot")
