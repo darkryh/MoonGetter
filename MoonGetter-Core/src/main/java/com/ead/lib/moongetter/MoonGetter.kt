@@ -1,6 +1,5 @@
 package com.ead.lib.moongetter
 
-import android.content.Context
 import com.ead.lib.moongetter.models.builder.Config
 import com.ead.lib.moongetter.models.builder.Initializer
 
@@ -23,9 +22,9 @@ open class MoonGetter {
          *
          * The Request.Builder object.
          */
-        fun initialize(context: Context) : Config.Builder {
+        fun Builder() : Config.Builder {
             return Initializer.Builder()
-                .initialize(context)
+                .initialize()
         }
 
     }
