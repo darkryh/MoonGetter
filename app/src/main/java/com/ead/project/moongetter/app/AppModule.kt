@@ -2,6 +2,7 @@ package com.ead.project.moongetter.app
 
 import com.ead.lib.moongetter.MoonGetter
 import com.ead.lib.moongetter.abyss.factory.AbyssFactory
+import com.ead.lib.moongetter.android.robot.AndroidRobot
 import com.ead.lib.moongetter.doodstream.factory.DoodstreamFactory
 import com.ead.lib.moongetter.facebook.factory.FacebookFactory
 import com.ead.lib.moongetter.filemoon.factory.FilemoonFactory
@@ -72,16 +73,22 @@ val appModule = module {
                     YourUploadFactory
                 )
             )
+            .onRobot(
+                AndroidRobot
+                    .Builder()
+                    .onContext(
+                        context = get()
+                    )
+                    .build()
+            )
             .build()
     }
     single<Factory.Builder> {
         MoonGetter
-            .initialize(
-                context = get()
-            )
+            .Builder()
             .setTimeout(12000)
             .setEngine(
-                engine = get()
+                engine = get(),
             )
     }
     viewModel<MainViewModel> {
