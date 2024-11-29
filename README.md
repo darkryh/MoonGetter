@@ -86,7 +86,7 @@ dependencies {
     // contains the whole robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
 
-    // Specific server implementations in case of needed an some of them
+    // Specific server implementations in case of need some of them
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
