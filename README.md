@@ -2,14 +2,8 @@
 
 # MoonGetter for Kotlin
 
-<div align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.ead.project.moongetter" target="_blank">
-    <img src="assets/images/moon-getter.png" alt="App Icon" height="256" style="margin: 16px; border: 2px solid #ccc;" />
-  </a>
-  <a href="https://play.google.com/store/apps/details?id=com.ead.project.moongetter" target="_blank">
-    <img src="assets/images/play-store.png" alt="Play Store Icon" height="256" style="margin: 16px; border: 2px solid #ccc;" />
-  </a>
-</div>
+[![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
+[![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 
 **MoonGetter** is an Kotlin library for stream extraction and downloads. It provides the following features:
 
@@ -43,8 +37,8 @@
 
 ---
 ## Robot Servers
-### This servers needs to export the robot-core with his respective platform robot api
-### Note: In case of want to use for android use Android-Robot lib, in other user still in TODO
+# This servers needs to export the robot-core with his respective platform robot api
+# Note: In case of want to use for android use Android-Robot lib, in other user still in TODO
 1. **Fireload**
 2. **Vidguard**
 3. **1CloudFile**
@@ -191,18 +185,17 @@ class MyViewModel : ViewModel() {
                 /**
                  * others custom or supported servers OkruFactory,FilemoonFactory, etc
                  */
-            ),
-            .onRobot(
-                AndroidRobot
-                    .Builder()
-                    .onContext(
-                        context = /*context*/ passed in some way DI recommended
-                    )
-                    .build()
-                // Note for the moment the library just provide an AndroidRobot Api
-                // for android platform, still todo for Kotlin in General
             )
-            .build()
+        )
+        .onRobot(
+            AndroidRobot
+                .Builder()
+                .onContext(
+                    context = /*context*/ passed in some way DI recommended
+                )
+                .build()
+            // Note for the moment the library just provide an AndroidRobot Api
+            // for android platform, still todo for Kotlin in General
         )
         .build()
 
