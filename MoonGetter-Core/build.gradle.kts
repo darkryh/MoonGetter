@@ -7,9 +7,9 @@ val javaVirtualMachineTarget = JvmTarget.fromTarget(javaStringVersion)
 
 plugins {
     id("java-library")
-    alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
-    kotlin("plugin.serialization") version "2.0.21"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 java {
@@ -49,7 +49,7 @@ dependencies {
     
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
-    testImplementation(libs.mockwebserver)
+    testImplementation(libs.mock.web.server)
     
     api("dev.datlag.jsunpacker:jsunpacker:1.0.2") {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")

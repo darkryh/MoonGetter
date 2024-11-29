@@ -7,8 +7,8 @@ val javaVirtualMachineTarget = JvmTarget.fromTarget(javaStringVersion)
 
 plugins {
     id("java-library")
-    alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 java {

@@ -7,8 +7,8 @@ val javaVirtualMachineTarget = JvmTarget.fromTarget(javaStringVersion)
 
 plugins {
     id("java-library")
-    alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 java {
@@ -42,5 +42,5 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
-    testImplementation(libs.mockwebserver)
+    testImplementation(libs.mock.web.server)
 }
