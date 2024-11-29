@@ -1,40 +1,38 @@
 package com.ead.lib.moongetter.fireload
 
-import android.content.Context
-import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.core.Unstable
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.Error
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.robot.ServerRobot
 import okhttp3.OkHttpClient
 
 @Unstable(reason = "Scripts await countdown timer to load url")
 class Fireload(
-    context: Context,
     url : String,
     client: OkHttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
-) : ServerRobot(context, url, client, headers, configData) {
+) : ServerRobot(url, client, headers, configData) {
 
     override suspend fun onExtract(): List<Video> {
-        initializeBrowser()
+        initializeRobot(headers = headers)
 
-        loadUrlAwait(url)
+        loadUrl(url)
 
         val titleState = evaluateJavascriptCode("document.title")
             .removeSurrounding("\"")
 
         if (titleState == "Error | Fireload")
-            throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.RESOURCE_TAKEN_DOWN)
+            throw InvalidServerException(Resources.resourceTakenDown(name), Error.RESOURCE_TAKEN_DOWN)
 
         evaluateJavascriptCodeAndDownload(scriptLoader())
 
-        url = requestDeferredResource().await()?.url ?: throw InvalidServerException(context.getString(R.string.server_requested_resource_was_taken_down, name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+        url = requestDeferredResource().await()?.url ?: throw InvalidServerException(Resources.resourceTakenDown(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
-        releaseBrowser()
+        releaseRobot()
 
         return listOf(
             Video(

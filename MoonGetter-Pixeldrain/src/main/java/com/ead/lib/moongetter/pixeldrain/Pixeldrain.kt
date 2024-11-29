@@ -1,9 +1,8 @@
 package com.ead.lib.moongetter.pixeldrain
 
-import android.content.Context
-import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.Error
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -11,12 +10,11 @@ import com.ead.lib.moongetter.utils.PatternManager
 import okhttp3.OkHttpClient
 
 class Pixeldrain(
-    context: Context,
     url : String,
     client: OkHttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
-) : Server(context, url, client, headers, configData) {
+) : Server(url, client, headers, configData) {
 
     override suspend fun onExtract(): List<Video> {
         val id = PatternManager.singleMatch(
@@ -31,7 +29,7 @@ class Pixeldrain(
             .newCall(GET())
             .execute()
 
-        if (!response.isSuccessful) throw InvalidServerException(context.getString(R.string.server_domain_is_down,name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
         return listOf(
             Video(
