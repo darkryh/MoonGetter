@@ -78,6 +78,8 @@ dependencies {
     implementation(project(":MoonGetter-Core"))
     implementation(project(":MoonGetter-Core-Robot"))
 
+    implementation(project(":MoonGetter-Android-Robot"))
+
     implementation(project(":MoonGetter-Servers"))
     implementation(project(":MoonGetter-Servers-Robot"))
 }

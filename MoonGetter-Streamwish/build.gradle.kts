@@ -1,41 +1,24 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 val moonGetterVersion: String by project
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
-val compileLibSdkVersion : String by project
-val libSdkMinVersion : String by project
+val javaVirtualMachineTarget = JvmTarget.fromTarget(javaStringVersion)
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.kotlin)
+    id("java-library")
+    alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
 }
 
-android {
-    namespace = "com.ead.lib.moongetter.streamwish"
-    compileSdk = compileLibSdkVersion.toInt()
+java {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
 
-    defaultConfig {
-        minSdk = libSdkMinVersion.toInt()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
-    }
-    kotlinOptions {
-        jvmTarget = javaStringVersion
+kotlin {
+    compilerOptions {
+        jvmTarget = javaVirtualMachineTarget
     }
 }
 
@@ -43,7 +26,7 @@ publishing {
     publications {
         register<MavenPublication>("release") {
             afterEvaluate {
-                from(components["release"])
+                from(components["java"])
             }
 
             groupId = "com.ead.lib"
@@ -55,15 +38,7 @@ publishing {
 
 dependencies {
     implementation(project(":MoonGetter-Core"))
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mockwebserver)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

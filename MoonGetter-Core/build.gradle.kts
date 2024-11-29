@@ -1,42 +1,25 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 val moonGetterVersion: String by project
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
-val compileLibSdkVersion : String by project
-val libSdkMinVersion : String by project
+val javaVirtualMachineTarget = JvmTarget.fromTarget(javaStringVersion)
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.kotlin)
+    id("java-library")
+    alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
-    kotlin("plugin.serialization") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
-android {
-    namespace = "com.ead.lib.moongetter"
-    compileSdk = compileLibSdkVersion.toInt()
+java {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
 
-    defaultConfig {
-        minSdk = libSdkMinVersion.toInt()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
-    }
-    kotlinOptions {
-        jvmTarget = javaStringVersion
+kotlin {
+    compilerOptions {
+        jvmTarget = javaVirtualMachineTarget
     }
 }
 
@@ -44,7 +27,7 @@ publishing {
     publications {
         register<MavenPublication>("release") {
             afterEvaluate {
-                from(components["release"])
+                from(components["java"])
             }
 
             groupId = "com.ead.lib"
@@ -59,20 +42,15 @@ dependencies {
 
     api(libs.moshi)
     api(libs.moshi.kotlin)
+    api(libs.kotlinx.serialization.json)
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.kotlinx.coroutines.core)
+    api(libs.kotlinx.coroutines.core)
     implementation(kotlin("reflect"))
     
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mockwebserver)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    api(libs.kotlinx.serialization.json)
-
+    
     api("dev.datlag.jsunpacker:jsunpacker:1.0.2") {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
     }
