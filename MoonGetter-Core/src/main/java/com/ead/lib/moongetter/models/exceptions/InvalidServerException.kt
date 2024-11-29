@@ -1,6 +1,6 @@
 package com.ead.lib.moongetter.models.exceptions
 
-import com.ead.lib.moongetter.models.Error
+import com.ead.lib.moongetter.models.error.Error
 
 class InvalidServerException (
     message: String,

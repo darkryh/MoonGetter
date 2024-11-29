@@ -2,15 +2,15 @@
 
 package com.ead.lib.moongetter.utils
 
-import androidx.annotation.VisibleForTesting
+import org.jetbrains.annotations.VisibleForTesting
 
 object Values {
     const val DEBUG_ERROR = "MOON_ERROR"
 
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    @VisibleForTesting
     var targetUrl : String? = null
 
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    @VisibleForTesting
     var targetUrl2 : String? = null
 
     fun restoreValues() {

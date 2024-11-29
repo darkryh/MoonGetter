@@ -1,7 +1,5 @@
 package com.ead.lib.moongetter.utils
 
-import android.annotation.SuppressLint
-import android.util.Log
 import com.ead.lib.moongetter.models.Track
 import com.ead.lib.moongetter.models.VideoPlaylist
 import okhttp3.Headers
@@ -85,7 +83,6 @@ class PlaylistUtils(private val client: OkHttpClient, private val headers: Heade
         val masterPlaylist = client.newCall(GET(playlistUrl, masterHeaders)).execute()
             .body?.string() ?: return emptyList() // Return an empty list if the response body is null
 
-        Log.d("test", "extractFromHls: ${(masterHeaders)}")
 
         // Check if there are multiple streams available
         if (PLAYLIST_SEPARATOR !in masterPlaylist) {
@@ -117,7 +114,6 @@ class PlaylistUtils(private val client: OkHttpClient, private val headers: Heade
             )
         }.toList()
 
-        Log.d("test", "extractFromHls: $subtitleTracks")
 
         // Get audio tracks
         val audioTracks = audioList + AUDIO_REGEX.findAll(masterPlaylist).mapNotNull {
@@ -127,7 +123,6 @@ class PlaylistUtils(private val client: OkHttpClient, private val headers: Heade
             )
         }.toList()
 
-        Log.d("test", "extractFromHls: $audioTracks")
 
         return masterPlaylist.substringAfter(PLAYLIST_SEPARATOR).split(PLAYLIST_SEPARATOR).mapNotNull {
             val resolution = it.substringAfter("RESOLUTION=")
@@ -148,7 +143,7 @@ class PlaylistUtils(private val client: OkHttpClient, private val headers: Heade
                 audioTracks = audioTracks,
             )
         }
-            .also { Log.d("test", "extractFromHls: $it") }
+            .also {  }
     }
 
     private fun getAbsoluteUrl(url: String, playlistUrl: String, masterBase: String): String? {
@@ -248,8 +243,7 @@ class PlaylistUtils(private val client: OkHttpClient, private val headers: Heade
         // Add the logic to extract video information from the DASH .mpd file here.
         return emptyList() // Placeholder for actual implementation
     }
-
-    @SuppressLint("DefaultLocale")
+    
     private fun formatBytes(bytes: Long?): String {
         return if (bytes == null) "unknown" else {
             val units = arrayOf("B", "KB", "MB", "GB", "TB")

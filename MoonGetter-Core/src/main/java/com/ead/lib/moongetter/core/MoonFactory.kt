@@ -1,12 +1,10 @@
 package com.ead.lib.moongetter.core
 
-import android.content.Context
-import android.util.Log
-import com.ead.lib.moongetter.R
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server
-import com.ead.lib.moongetter.models.Error
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.DEBUG_ERROR
@@ -67,7 +65,6 @@ internal object MoonFactory {
      * if none servers was found return InvalidServerException
      */
     fun identifierList(
-        context: Context,
         /**
          * @param urls that's provided in the MoonGetter Builder
          */
@@ -103,7 +100,7 @@ internal object MoonFactory {
              * if the list is empty throw [InvalidServerException]
              */
             list.ifEmpty {
-                throw InvalidServerException(context.getString(R.string.not_servers_found), Error.NO_PARAMETERS_TO_WORK)
+                throw InvalidServerException(Resources.NOT_SERVERS_FOUND, Error.NO_PARAMETERS_TO_WORK)
             }
         }
     }
@@ -117,10 +114,6 @@ internal object MoonFactory {
      */
     suspend fun create(
         /**
-         * @param context that's provided in the MoonGetter Builder
-         */
-        context: Context,
-        /**
          * @param url that's provided in the MoonGetter Builder
          */
         url : String,
@@ -128,6 +121,7 @@ internal object MoonFactory {
          * @param serversFactory that's provided in the MoonGetter Builder
          */
         serversFactory : Array<Server.Factory>,
+        robot: Robot?,
         /**
          * @param headers that's provided in the MoonGetter Builder
          */
@@ -138,7 +132,7 @@ internal object MoonFactory {
         configData: Configuration.Data
         /**
          * return a nullable server
-         */
+         */,
     ) : Server? {
 
 
@@ -149,11 +143,11 @@ internal object MoonFactory {
          * the builder process
          */
         val serverResult = serversFactory.onFactory(
-            context = context,
             url = url,
             headers = headers,
             configData = configData,
-            client = moonClient.httpClient
+            client = moonClient.httpClient,
+            robot = robot
         )
 
 
@@ -204,10 +198,6 @@ internal object MoonFactory {
      */
     suspend fun creates(
         /**
-         * @param context that's provided in the MoonGetter Builder
-         */
-        context: Context,
-        /**
          * @param urls that's provided in the MoonGetter Builder
          */
         urls : List<String>,
@@ -215,6 +205,7 @@ internal object MoonFactory {
          * @param serversFactory that's provided in the MoonGetter Builder
          */
         serversFactory : Array<Server.Factory>,
+        robot: Robot?,
         /**
          * @param headers that's provided in the MoonGetter Builder
          */
@@ -244,7 +235,7 @@ internal object MoonFactory {
                     /**
                      * create the server using [create]
                      */
-                    val server = create(context, url, serversFactory, headers, configData)
+                    val server = create(url, serversFactory, robot, headers, configData)
 
                     /**
                      * In case of null return to next cycle
@@ -265,7 +256,7 @@ internal object MoonFactory {
              * if the servers is empty throw [InvalidServerException]
              */
             servers.ifEmpty {
-                throw InvalidServerException(context.getString(R.string.not_servers_found), Error.NO_PARAMETERS_TO_WORK)
+                throw InvalidServerException(Resources.NOT_SERVERS_FOUND, Error.NO_PARAMETERS_TO_WORK)
             }
         }
     }
@@ -280,15 +271,12 @@ internal object MoonFactory {
      */
     suspend fun createUntilFindResource(
         /**
-         * @param context that's provided in the MoonGetter Builder
-         */
-        context: Context,
-        /**
          * @param urls that's provided in the MoonGetter Builder
          */
         urls : List<String>,
 
         serversFactory : Array<Server.Factory>,
+        robot: Robot?,
         /**
          * @param headers that's provided in the MoonGetter Builder
          */
@@ -312,7 +300,7 @@ internal object MoonFactory {
                 /**
                  * create the server using [create]
                  */
-                val server = create(context, url, serversFactory, headers, configData)
+                val server = create(url, serversFactory, robot, headers, configData)
                 /**
                  * if resource is founded return the server
                  */
@@ -325,15 +313,15 @@ internal object MoonFactory {
              */
             catch (e : InvalidServerException) {
                 e.printStackTrace()
-                Log.e(DEBUG_ERROR,e.message ?: context.getString(R.string.unknown_error))
+                print("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
             catch (e : RuntimeException) {
                 e.printStackTrace()
-                Log.e(DEBUG_ERROR,e.message ?: context.getString(R.string.unknown_error))
+                print("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
             catch (e : IOException) {
                 e.printStackTrace()
-                Log.e(DEBUG_ERROR,e.message ?: context.getString(R.string.unknown_error))
+                print("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
         }
 
