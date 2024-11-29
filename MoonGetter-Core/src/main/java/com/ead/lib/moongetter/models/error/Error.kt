@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.models
+package com.ead.lib.moongetter.models.error
 
 enum class Error {
 
