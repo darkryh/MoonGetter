@@ -1,52 +1,65 @@
 [![](https://jitpack.io/v/darkryh/MoonGetter.svg)](https://jitpack.io/#darkryh/MoonGetter)
+
 # MoonGetter for Kotlin
 
-<p style="display: flex; justify-content: center; align-items: center; gap: 48px;">
-  <a href="https://play.google.com/store/apps/details?id=com.ead.project.moongetter" target="_blank" style="border: 32px solid transparent;">
-    <img src="assets/images/moon-getter.png" alt="App Icon" height="256" />
+<div align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.ead.project.moongetter" target="_blank">
+    <img src="assets/images/moon-getter.png" alt="App Icon" height="256" style="margin: 16px; border: 2px solid #ccc;" />
   </a>
   <a href="https://play.google.com/store/apps/details?id=com.ead.project.moongetter" target="_blank">
-    <img src="assets/images/play-store.png" alt="Play Store Icon" height="256" />
+    <img src="assets/images/play-store.png" alt="Play Store Icon" height="256" style="margin: 16px; border: 2px solid #ccc;" />
   </a>
-</p>
+</div>
 
-MoonGetter is an Android library for handling stream extraction and downloads. It offers the following features:
-- Support for adding custom servers
-- Utilizes the power of Kotlin coroutines
-- Handles errors with custom exceptions
+**MoonGetter** is an Kotlin library for stream extraction and downloads. It provides the following features:
+
+- Support for custom server integration
+- Built with Kotlin coroutines for asynchronous tasks
+- Robust error handling with custom exceptions
+
+---
 
 ## Supported Servers
 
 1. **Google Drive**
 2. **Mediafire**
 3. **Streamtape**
-4. **Fireload**
-5. **PixelDrain**
-6. **Okru**
-7. **StreamWish**
-8. **Voe**
-9. **Senvid**
-10. **Vihide**
-11. **Filemoon**
-12. **Vidguard**
-13. **Hexload**
-14. **1CloudFile**
-15. **YourUpload**
-16. **Facebook**
-17. **XTwitter**
-18. **LuluStream**
-19. **Mp4Upload**
-20. **Uqload**
-21. **Mixdrop**
-22. **Doodstream**
+4. **PixelDrain**
+5. **Okru**
+6. **StreamWish**
+7. **Voe**
+8. **Senvid**
+9. **Vihide**
+10. **Filemoon**
+11. **Hexload**
+12. **YourUpload**
+13. **Facebook**
+14. **XTwitter**
+15. **LuluStream**
+16. **Mp4Upload**
+17. **Uqload**
+18. **Mixdrop**
+19. **Doodstream**
+
+---
+## Robot Servers
+### This servers needs to export the robot-core with his respective platform robot api
+### Note: In case of want to use for android use Android-Robot lib, in other user still in TODO
+1. **Fireload**
+2. **Vidguard**
+3. **1CloudFile**
 
 ### TO-DO Servers
+
 1. **GoodStream**
 2. **Gofile**
 3. **Abyss**
 
+---
+
 ## Installation - Gradle
-```groovy  
+
+```groovy
 repositories {
     maven { url = uri("https://jitpack.io") }
 }
@@ -85,11 +98,11 @@ class MyViewModel : ViewModel() {
         )
         .build()
 
-    fun getMediaStreams(context: Context, url: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun getMediaStreams(url: String) = viewModelScope.launch(Dispatchers.IO) {
         try {
 
             val server : Server? = MoonGetter
-                .initialize(context = context)
+                .Builder()
                 .setTimeout(8000)
                 .setEngine(engine)
                 .setHeaders(
@@ -126,27 +139,31 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 
 class CustomServer(
-    context: Context,
-    url : String,
-    client: OkHttpClient,
+    url :String,
+    client : OkHttpClient,
     headers : HashMap<String,String>,
-    configData : Configuration.Data,
-) : Server(context, url, client, headers, configData) {
+    configData: Configuration.Data
+) : Server(url,client,headers,configData) {
 
-    private val urlRegex = "Regex example this is not really necesary".toRegex()
+    private val urlRegex =  "Regex example this is not really necesary".toRegex()
 
-    // Override the URL to connect to another URL if needed
-    override var url: String = urlRegex.find(url)?.groupValues?.get(1)
-        ?: throw InvalidServerException(context.getString(R.string.unknown_error))
+    override var url: String = urlRegex.find(url)?.groupValues?.get(1) ?:
+    throw InvalidServerException(Resources.invalidProcessInExpectedUrlEntry(name), Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY)
 
-    override suspend fun onExtract() : List<Video> {
-        // Perform your extraction process
+    override suspend fun onExtract(): List<Video> {
+        val response = client
+            .newCall(GET())
+            .await()
 
-        // return a video list to handle in case of empty just return InvalidServerException
+        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+
         return listOf(
             Video(
                 quality = DEFAULT,
-                url = "extracted url"
+                url = PatternManager.singleMatch(
+                    string =  response.body?.string().toString(),
+                    regex =  "<source src=\"(.*?)\""
+                ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
             )
         )
     }
@@ -174,7 +191,18 @@ class MyViewModel : ViewModel() {
                 /**
                  * others custom or supported servers OkruFactory,FilemoonFactory, etc
                  */
+            ),
+            .onRobot(
+                AndroidRobot
+                    .Builder()
+                    .onContext(
+                        context = /*context*/ passed in some way DI recommended
+                    )
+                    .build()
+                // Note for the moment the library just provide an AndroidRobot Api
+                // for android platform, still todo for Kotlin in General
             )
+            .build()
         )
         .build()
 
@@ -182,7 +210,7 @@ class MyViewModel : ViewModel() {
         try {
 
             val server : Server? = MoonGetter
-                .initialize(context = context)
+                .Builder()
                 .setEngine(engine)
                 .get(url)
 
