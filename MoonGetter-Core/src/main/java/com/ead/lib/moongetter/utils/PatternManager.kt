@@ -2,8 +2,6 @@ package com.ead.lib.moongetter.utils
 
 import java.util.regex.Pattern
 
-
-@Suppress("SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN")
 object PatternManager {
 
     fun singleMatch(string: String, regex : String, groupIndex : Int = 1, patternFlag : Int = Pattern.MULTILINE): String? {
