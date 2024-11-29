@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.robot.core.system.model
+package com.ead.lib.moongetter.android.robot.core.model
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,7 +8,7 @@ import com.ead.lib.moongetter.models.Request
 import kotlinx.coroutines.CompletableDeferred
 
 @SuppressLint("SetJavaScriptEnabled")
-class MoonWebView @JvmOverloads constructor(
+class RobotView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet?= null,
     defStyle : Int=0,
@@ -16,6 +16,7 @@ class MoonWebView @JvmOverloads constructor(
     val headers : Map<String,String> = emptyMap()) : WebView(context,attrs,defStyle,defStylerRes) {
 
     var onDownloadListener: (Request) -> Unit = {}
+
     val requestDeferred = CompletableDeferred<Request?>(null)
 
     init {
@@ -34,13 +35,13 @@ class MoonWebView @JvmOverloads constructor(
                         "Content-Disposition" to contentDisposition,
                         "Content-Type" to mimetype,
                         "Content-Length" to contentLength.toString()
-                    ),
+                    )
                 )
             )
         }
     }
 
-    fun releaseBrowser() {
+    fun releaseRobotView() {
         requestDeferred.cancel()
     }
 }

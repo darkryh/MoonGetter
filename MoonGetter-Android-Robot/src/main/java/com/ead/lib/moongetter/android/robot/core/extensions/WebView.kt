@@ -1,8 +1,17 @@
-package com.ead.lib.moongetter.robot.core.system.extensions
+package com.ead.lib.moongetter.android.robot.core.extensions
 
+import android.webkit.WebChromeClient
 import android.webkit.WebView
-import com.ead.lib.moongetter.core.system.extensions.delete
 
+
+fun WebView.defaultConfiguration(
+    domStorageEnabled : Boolean
+) {
+    webChromeClient = WebChromeClient()
+    settings.domStorageEnabled = domStorageEnabled
+}
+
+/*
 fun WebView.getSourceCode(callback: (String) -> Unit) {
     evaluateJavascript(
         """
@@ -33,4 +42,4 @@ fun String.toHtml() : String =
 
 fun String.lineSeparator(): String {
     return this.delete("\\n") + System.lineSeparator()
-}
+}*/
