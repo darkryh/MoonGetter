@@ -85,6 +85,9 @@ dependencies {
     implementation("com.github.darkryh.MoonGetter:moongetter-servers:$version")
     // contains the whole robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
+    
+    // required only if you are using robot servers and using for Android Platform
+    implementation("com.github.darkryh.MoonGetter:moongetter-android-robot:$version")
 
     // Specific server implementations in case of need some of them
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
