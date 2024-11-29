@@ -52,7 +52,7 @@
 
 ## Robot Servers
 
-> **Note**: These servers require the `moongetter-core-robot` dependency and the respective platform Robot API. For Android, use the `Android-Robot` library. General Kotlin support is under development.
+> **Note**: These servers require the `moongetter-core-robot` dependency and the respective platform Robot API. For Android, use the `moongetter-android-robot` library. General Kotlin support is under development.
 
 1. **Fireload**
 2. **Vidguard**
