@@ -110,6 +110,17 @@ class MyViewModel : ViewModel() {
                 //YourCustomServerFactory recommended use object
             )
         )
+        // Use this only if you want to use Robot-Servers
+        .onRobot(
+            AndroidRobot
+                .Builder()
+                .onContext(
+                    context = /*context*/ passed in some way DI recommended
+                )
+                .build()
+            // Note for the moment the library just provide an AndroidRobot Api
+            // for android platform, still todo for Kotlin in General
+        )
         .build()
 
     fun getMediaStreams(url: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -206,17 +217,6 @@ class MyViewModel : ViewModel() {
                  * others custom or supported servers OkruFactory,FilemoonFactory, etc
                  */
             )
-        )
-        // Use this only if you want to use Robot-Servers
-        .onRobot(
-            AndroidRobot
-                .Builder()
-                .onContext(
-                    context = /*context*/ passed in some way DI recommended
-                )
-                .build()
-            // Note for the moment the library just provide an AndroidRobot Api
-            // for android platform, still todo for Kotlin in General
         )
         .build()
 
