@@ -1,7 +1,7 @@
 package com.ead.project.moongetter.app.system.extensions
 
 import com.ead.lib.moongetter.core.ExperimentalFeature
-import com.ead.lib.moongetter.models.Error
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.builder.Factory
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.project.moongetter.app.network.util.MoonGetterError
