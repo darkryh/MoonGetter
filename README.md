@@ -79,14 +79,14 @@ repositories {
 dependencies {
     // required
     implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
-    // required only if are using robot servers
+    // required only if you are using robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
     // contains the whole servers, aside from robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-servers:$version")
     // contains the whole robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
 
-    // Specific server implementations in case of needed an specific
+    // Specific server implementations in case of needed an some of them
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
@@ -204,6 +204,7 @@ class MyViewModel : ViewModel() {
                  */
             )
         )
+        // Use this only if you want to use Robot-Servers
         .onRobot(
             AndroidRobot
                 .Builder()
