@@ -5,11 +5,24 @@
 [![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 [![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 
-**MoonGetter** is an Kotlin library for stream extraction and downloads. It provides the following features:
+**MoonGetter** is a powerful and versatile Kotlin library designed for stream extraction and file downloads. It empowers developers with the following features:
 
-- Support for custom server integration
-- Built with Kotlin coroutines for asynchronous tasks
-- Robust error handling with custom exceptions
+- **Custom server integration**: Easily add and configure your own extraction logic to suit unique requirements.
+- **Kotlin coroutines**: Leverage asynchronous, non-blocking operations for improved performance and responsiveness.
+- **Advanced error handling**: Streamline debugging with robust custom exceptions tailored to specific scenarios.
+---
+
+## Compatibility Table
+
+| Feature                | Android | Kotlin | KMP |
+|------------------------|:-------:|:------:|:---:|
+| Core Library           |    ✅    |   ✅    |  ⏳  |
+| Robot Servers API      |    ✅    |   ⏳    |  ⏳  |
+| Server Implementations |    ✅    |   ✅    |  ⏳  |
+
+> **Legend**:  
+> ✅ - Supported  
+> ⏳ - In progress
 
 ---
 
@@ -36,9 +49,11 @@
 19. **Doodstream**
 
 ---
+
 ## Robot Servers
-#### This servers needs to export the robot-core with his respective platform robot api
-#### Note: In case of want to use for android use Android-Robot lib, in other user still in TODO
+
+> **Note**: These servers require the `moongetter-core-robot` dependency and the respective platform Robot API. For Android, use the `Android-Robot` library. General Kotlin support is under development.
+
 1. **Fireload**
 2. **Vidguard**
 3. **1CloudFile**
@@ -51,30 +66,32 @@
 
 ---
 
-## Installation - Gradle
+## Installation (Gradle)
+
+Add JitPack to your repositories:
 
 ```groovy
+
 repositories {
     maven { url = uri("https://jitpack.io") }
 }
 
-dependencies {  
+dependencies {
+    // required
     implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
-    // the servers that use web-view, needs to use this core reference too
-    // the following servers are Fireload,1CloudFile(OneCloudFile),Vidguard,GoFile(to-do)
+    // required only if are using robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
-    
-    //implementation containing the whole supported servers
+    // contains the whole servers, aside from robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-servers:$version")
-    //In case of need servers that use web-view
+    // contains the whole robot servers
     implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
-    
-    // implement you wanted extractor server in case of need an specific server
+
+    // Specific server implementations in case of needed an specific
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamwish:$version")
-} 
+}
 ```  
 # Example of Use Case
 ```kotlin
@@ -199,7 +216,7 @@ class MyViewModel : ViewModel() {
         )
         .build()
 
-    fun getMediaStreams(context: Context, url: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun getMediaStreams(url: String) = viewModelScope.launch(Dispatchers.IO) {
         try {
 
             val server : Server? = MoonGetter
