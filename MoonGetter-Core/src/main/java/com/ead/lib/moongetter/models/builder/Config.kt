@@ -1,17 +1,10 @@
 package com.ead.lib.moongetter.models.builder
 
-import android.content.Context
 import com.ead.lib.moongetter.models.Configuration
 
 class Config(
     builder : Builder
 ) {
-
-    /**
-     * The context of the application.
-     */
-    @get:JvmName("context") val context: Context? = builder.context
-
 
     /**
      * The config set on the builder
@@ -25,12 +18,6 @@ class Config(
     @get:JvmName("factory") val factory: Factory.Builder = builder.factory
 
     class Builder() {
-
-        /**
-         * Internal variable to store the context of the application.
-         */
-        internal var context : Context? = null
-
 
         /**
          * Internal variable to store the timeout of the server to connect to.
@@ -59,12 +46,6 @@ class Config(
 
 
             /**
-             * Injects the context of the application.
-             */
-            factory.context = this.context
-
-
-            /**
              * Injects the config set on the builder
              */
             factory.configData = this.configData
@@ -84,7 +65,6 @@ class Config(
 
 
         internal constructor(config : Config) : this() {
-            this.context = config.context
             this.configData = config.configData
             this.factory = config.factory
         }
