@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.robot.core.system.extensions
+package com.ead.lib.moongetter.android.robot.core.extensions
 
 import com.ead.lib.moongetter.core.system.extensions.await
 import okhttp3.OkHttpClient
