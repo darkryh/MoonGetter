@@ -1,8 +1,7 @@
-@file:SuppressLint("CustomX509TrustManager", "TrustAllX509TrustManager")
+@file:Suppress("CustomX509TrustManager", "TrustAllX509TrustManager")
 
 package com.ead.lib.moongetter.utils
 
-import android.annotation.SuppressLint
 import java.security.cert.X509Certificate
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
