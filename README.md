@@ -2,14 +2,9 @@
 
 # MoonGetter for Kotlin
 
-<div align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.ead.project.moongetter" target="_blank">
-    <img src="assets/images/moon-getter.png" alt="App Icon" height="256" />
-  </a>
-  <a href="https://play.google.com/store/apps/details?id=com.ead.project.moongetter" target="_blank">
-    <img src="assets/images/play-store.png" alt="Play Store Icon" height="256" />
-  </a>
-</div>
+[![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
+[![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
+
 **MoonGetter** is an Kotlin library for stream extraction and downloads. It provides the following features:
 
 - Support for custom server integration
