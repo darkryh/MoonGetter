@@ -2,12 +2,11 @@
 
 package com.ead.lib.moongetter.models.builder
 
-import android.content.Context
-import com.ead.lib.moongetter.R
+import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.core.MoonFactory
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.Error
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.UserAgent
@@ -15,11 +14,6 @@ import com.ead.lib.moongetter.utils.UserAgent
 class Factory(
     builder : Builder
 ) {
-
-    /**
-     * The context of the application.
-     */
-    @get:JvmName("context") val context: Context? = builder.context
 
 
     /**
@@ -41,12 +35,6 @@ class Factory(
 
 
     class Builder() {
-
-
-        /**
-         * Internal variable to store the context of the application.
-         */
-        internal var context : Context? = null
 
 
         /**
@@ -93,8 +81,7 @@ class Factory(
             MoonFactory.identifier(
                 url =  url.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.url_not_provided) ?:
-                        "Url hans´t provided",
+                        Resources.NO_PARAMETERS_TO_WORK,
                         Error.NO_PARAMETERS_TO_WORK
                     )
                 },
@@ -103,9 +90,8 @@ class Factory(
                  */
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided",
-                        Error.NO_PARAMETERS_TO_WORK
+                        Resources.ENGINES_NOT_PROVIDED,
+                        Error.INVALID_BUILDER_PARAMETERS
                     )
                 }
             )
@@ -123,11 +109,9 @@ class Factory(
          */
         fun identifier(urls : List<String>): List<String> =
             MoonFactory.identifierList(
-                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_BUILDER_PARAMETERS),
                 urls = urls.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.urls_not_provided) ?:
-                        "Urls hans´t provided",
+                        Resources.NO_PARAMETERS_TO_WORK,
                         Error.NO_PARAMETERS_TO_WORK
                     ) },
                 /**
@@ -135,9 +119,8 @@ class Factory(
                  */
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided",
-                        Error.NO_PARAMETERS_TO_WORK
+                        Resources.ENGINES_NOT_PROVIDED,
+                        Error.INVALID_BUILDER_PARAMETERS
                     )
                 }
             )
@@ -150,16 +133,11 @@ class Factory(
         suspend fun get(url : String) : Server? =
             MoonFactory.create(
                 /**
-                 * The context provided for the ServerFactory object.
-                 */
-                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_BUILDER_PARAMETERS),
-                /**
                  * Validation url in case it is empty.
                  */
                 url =  url.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.url_not_provided) ?:
-                        "Url hans´t provided",
+                        Resources.NO_PARAMETERS_TO_WORK,
                         Error.NO_PARAMETERS_TO_WORK
                     )
                 },
@@ -168,11 +146,12 @@ class Factory(
                  */
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided",
-                        Error.NO_PARAMETERS_TO_WORK
+                        Resources.ENGINES_NOT_PROVIDED,
+                        Error.INVALID_BUILDER_PARAMETERS
                     )
                 },
+                robot = engine.robot,
+
                 /**
                  * Pass headers
                  */
@@ -192,16 +171,11 @@ class Factory(
         suspend fun get(urls : List<String>) : List<Server> =
             MoonFactory.creates(
                 /**
-                 * The context provided for the ServerFactory object.
-                 */
-                context = context ?: throw InvalidServerException("Context hans´t provided",Error.INVALID_BUILDER_PARAMETERS),
-                /**
                  * Validation urls in case it is empty.
                  */
                 urls = urls.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.urls_not_provided) ?:
-                        "Urls hans´t provided",
+                        Resources.NO_PARAMETERS_TO_WORK,
                         Error.NO_PARAMETERS_TO_WORK
                     ) },
                 /**
@@ -209,11 +183,11 @@ class Factory(
                  */
                 serversFactory = engine.servers.ifEmpty {
                     throw InvalidServerException(
-                        context?.getString(R.string.engines_not_provided) ?:
-                        "Engines hans´t provided",
-                        Error.NO_PARAMETERS_TO_WORK
+                        Resources.ENGINES_NOT_PROVIDED,
+                        Error.INVALID_BUILDER_PARAMETERS
                     )
                 },
+                robot = engine.robot,
                 /**
                  * Pass headers
                  */
@@ -233,17 +207,24 @@ class Factory(
         suspend fun getUntilFindResource(urls : List<String>) : Server? =
             MoonFactory.createUntilFindResource(
                 /**
-                 * The context provided for the ServerFactory object.
-                 */
-                context = context ?: throw InvalidServerException("Context hans´t provided", Error.INVALID_BUILDER_PARAMETERS),
-                /**
                  * Validation urls in case it is empty.
                  */
-                urls = urls,
+                urls = urls.ifEmpty {
+                    throw InvalidServerException(
+                        Resources.NO_PARAMETERS_TO_WORK,
+                        Error.NO_PARAMETERS_TO_WORK
+                    )
+                },
                 /**
                  * Pass engine servers
                  */
-                serversFactory = engine.servers,
+                serversFactory = engine.servers.ifEmpty {
+                    throw InvalidServerException(
+                        Resources.ENGINES_NOT_PROVIDED,
+                        Error.INVALID_BUILDER_PARAMETERS
+                    )
+                },
+                robot = engine.robot,
                 /**
                  * Pass headers
                  */
@@ -256,7 +237,6 @@ class Factory(
 
 
         internal constructor(factory : Factory) : this() {
-            this.context = factory.context
             this.headers = factory.headers
             this.configData = factory.timeout
             this.engine = factory.engine

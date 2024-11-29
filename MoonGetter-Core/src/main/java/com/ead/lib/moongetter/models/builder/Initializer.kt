@@ -1,16 +1,8 @@
 package com.ead.lib.moongetter.models.builder
 
-import android.content.Context
-
 class Initializer(
     builder : Builder
 ) {
-
-    /**
-     * The context of the application.
-     */
-    @get:JvmName("context") val context: Context? = builder.context
-
 
     /**
      * The request configuration of the connection.
@@ -18,12 +10,6 @@ class Initializer(
     @get:JvmName("config") val config: Config.Builder = builder.config
 
     class Builder() {
-
-
-        /**
-         * Internal variable to store the context of the application.
-         */
-        internal var context : Context? = null
 
 
         /**
@@ -44,16 +30,9 @@ class Initializer(
          *
          * The Request.Builder object.
          */
-        fun initialize(context: Context) : Config.Builder {
-            this.context = context
-
-            config.context = this.context
-
-            return config
-        }
+        fun initialize() : Config.Builder { return config }
 
         internal constructor(initializer: Initializer) : this() {
-            this.context = initializer.context
             this.config = initializer.config
         }
     }
