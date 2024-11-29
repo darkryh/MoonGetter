@@ -1,7 +1,7 @@
 package com.ead.lib.moongetter.models
 
-import android.net.Uri
 import okhttp3.Headers
+import java.net.URI
 
 @Suppress("unused_parameter")
 data class VideoPlaylist(val url: String,
@@ -14,6 +14,6 @@ data class VideoPlaylist(val url: String,
     constructor(url: String,
                 quality: String,
                 videoUrl: String?,
-                uri: Uri? = null,
+                uri: URI? = null,
                 headers: Headers? = null) : this(url, quality, videoUrl, headers)
 }
