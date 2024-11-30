@@ -254,7 +254,7 @@ class MyViewModel : ViewModel() {
 # Requests
 
 - **get(url : String)**: Makes a request to get a nullable server from the `url` parameter.
-- **getList(urls : List<String>)**: Makes a request to get a list of servers from the `urls` parameter.
+- **get(urls : List<String>)**: Makes a request to get a list of servers from the `urls` parameter.
 - **getUntilFindResource()**: From the `urls` parameter, makes requests to find the first possible server and stops when one is found. If none is found, returns null.
 
 # Want to collaborate
