@@ -119,7 +119,8 @@ suspend inline fun <reified T> Factory.Builder.onGetUntilFindResult(urls : List<
     }
 }
 
-@OptIn(ExperimentalFeature::class)
+
+@ExperimentalFeature
 suspend inline fun <reified T> Factory.Builder.onGetResults(urls : List<String>) : Result<T,MoonGetterError> {
     return try {
         val  result = get(urls).ifEmpty { return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL).also { delay(DelayValue) } }
