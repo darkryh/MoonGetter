@@ -37,16 +37,15 @@
 7. **Voe**
 8. **Senvid**
 9. **Vihide**
-10. **Filemoon**
-11. **Hexload**
-12. **YourUpload**
-13. **Facebook**
-14. **XTwitter**
-15. **LuluStream**
-16. **Mp4Upload**
-17. **Uqload**
-18. **Mixdrop**
-19. **Doodstream**
+10. **Hexload**
+11. **YourUpload**
+12. **Facebook**
+13. **XTwitter**
+14. **LuluStream**
+15. **Mp4Upload**
+16. **Uqload**
+17. **Mixdrop**
+18. **Doodstream**
 
 ---
 
@@ -54,9 +53,10 @@
 
 > **Note**: These servers require the `moongetter-core-robot` dependency and the respective platform Robot API. For Android, use the `moongetter-android-robot` library. General Kotlin support is under development.
 
-1. **Fireload**
+1. **Fireload[Deprecated]**
 2. **Vidguard**
 3. **1CloudFile**
+4. **Filemoon**
 
 ### TO-DO Servers
 

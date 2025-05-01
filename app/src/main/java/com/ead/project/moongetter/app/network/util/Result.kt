@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.ead.project.moongetter.app.network.util
 
 sealed interface Result<out D, out E: Error> {

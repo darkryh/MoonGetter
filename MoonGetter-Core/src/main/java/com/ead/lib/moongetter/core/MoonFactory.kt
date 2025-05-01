@@ -247,9 +247,22 @@ internal object MoonFactory {
                  * catching expected exceptions
                  * [InvalidServerException], [RuntimeException], [IOException]
                  */
-                catch (e : InvalidServerException) { e.printStackTrace() }
-                catch (e : RuntimeException) { e.printStackTrace() }
-                catch (e : IOException) { e.printStackTrace() }
+                catch (e : InvalidServerException) {
+                    e.printStackTrace()
+                    println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                }
+                catch (e : RuntimeException) {
+                    e.printStackTrace()
+                    println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                }
+                catch (e : IOException) {
+                    e.printStackTrace()
+                    println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                }
+                catch (e : Exception) {
+                    e.printStackTrace()
+                    println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                }
             }
 
             /**
@@ -313,15 +326,19 @@ internal object MoonFactory {
              */
             catch (e : InvalidServerException) {
                 e.printStackTrace()
-                print("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
             catch (e : RuntimeException) {
                 e.printStackTrace()
-                print("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
             catch (e : IOException) {
                 e.printStackTrace()
-                print("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+            }
+            catch (e : Exception) {
+                e.printStackTrace()
+                println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
         }
 

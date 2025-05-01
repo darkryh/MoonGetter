@@ -9,13 +9,15 @@ import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.robot.ServerRobot
 import okhttp3.OkHttpClient
 
-@Unstable(reason = "Scripts await countdown timer to load url")
+@Unstable(reason = "Will be fixed soon for the moment deprecated")
 class Fireload(
     url : String,
     client: OkHttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : ServerRobot(url, client, headers, configData) {
+
+    override val isDeprecated: Boolean get() = true
 
     override suspend fun onExtract(): List<Video> {
         initializeRobot(headers = headers)

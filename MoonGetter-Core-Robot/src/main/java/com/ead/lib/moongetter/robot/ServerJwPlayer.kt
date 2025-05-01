@@ -39,7 +39,7 @@ open class ServerJwPlayer(
         /**
          * Initialize the browser
          */
-        initializeRobot(false,headers)
+        initializeRobot(domStorageEnabled = false, headers = headers)
 
 
         /**

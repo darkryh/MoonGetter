@@ -6,6 +6,7 @@ import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import okhttp3.FormBody
 import okhttp3.Headers
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -142,67 +143,66 @@ open class Server(
     }
 
     /**
-     * @return the request of okhttp core dependency
-     * with GET method and combine headers from the builder
+     * Creates and returns an OkHttp GET request.
+     *
+     * This function allows combining base server headers with optional custom headers,
+     * overriding headers if needed, and dynamically appending query parameters to the URL.
+     *
+     * @param url Optional. If provided, overrides the server's base URL for this request.
+     * @param headers Optional. Additional headers to include alongside the server's base headers.
+     * @param overrideHeaders Optional. If provided and not in testing mode, completely replaces all headers.
+     * @param queryParameters Optional. Query parameters to append to the URL in a safe and structured way.
+     * @param isTesting Optional. If true, overrideHeaders will be ignored even if provided.
+     *
+     * @return Configured OkHttp [Request] object ready to be executed.
      */
     protected fun GET(
-        url : String? = null,
-        headers : HashMap<String,String>? = null,
-        overrideHeaders: Headers?= null,
-        isTesting : Boolean = false
-    ) : Request {
+        url: String? = null,
+        headers: HashMap<String, String>? = null,
+        overrideHeaders: Headers? = null,
+        queryParameters: Map<String, String>? = null,
+        isTesting: Boolean = false
+    ): Request {
+        return Request.Builder().let { builder ->
 
-
-        /**
-         * request that prefab some basic operations
-         * that most of servers do
-         */
-        return Request
-            .Builder()
-            .let { builder ->
-
-
-                /**
-                 * combine headers in case the GET operations demands
-                 */
-                val headersCombination = if (headers != null) {
-                    this@Server.headers + headers
-                } else {
-                    this@Server.headers
-                }
-
-
-                /**
-                 * set url in case GET operations demands
-                 * in other case use the url from the server
-                 */
-                builder.url(url ?: this.url)
-
-
-                /**
-                 * Do the combining operation
-                 */
-                if (overrideHeaders != null && !isTesting) return@let builder.also { it.headers(overrideHeaders) }
-
-                builder.headers(
-                    Headers
-                        .Builder()
-                        .let { headersBuilder ->
-
-
-                            /**
-                             * Mapping the headers hashmap into
-                             * okhttp headers
-                             */
-                            headersCombination.forEach { (key, value) ->
-                                headersBuilder.add(key, value)
-                            }
-                            headersBuilder
-                        }
-                        .build()
-                )
+            // Combine server-level headers with optional per-request headers
+            val headersCombination = if (headers != null) {
+                this@Server.headers + headers
+            } else {
+                this@Server.headers
             }
-            .build()
+
+            // Build the final URL including query parameters if provided
+            val finalUrl = (url ?: this.url).let { baseUrl ->
+                if (queryParameters.isNullOrEmpty()) {
+                    baseUrl
+                } else {
+                    val httpUrlBuilder = url?.toHttpUrlOrNull()?.newBuilder()
+                    queryParameters.forEach { (key, value) ->
+                        httpUrlBuilder?.addQueryParameter(key, value)
+                    }
+                    httpUrlBuilder?.build().toString()
+                }
+            }
+
+            // Set the URL into the request builder
+            builder.url(finalUrl)
+
+            // If overrideHeaders is provided and not testing, apply them directly
+            if (overrideHeaders != null && !isTesting) {
+                return@let builder.also { it.headers(overrideHeaders) }
+            }
+
+            // Otherwise, map and add all combined headers
+            builder.headers(
+                Headers.Builder().let { headersBuilder ->
+                    headersCombination.forEach { (key, value) ->
+                        headersBuilder.add(key, value)
+                    }
+                    headersBuilder
+                }.build()
+            )
+        }.build()
     }
 
 

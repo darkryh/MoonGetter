@@ -47,7 +47,7 @@ class Lulustream(
                         ) ?: throw InvalidServerException(Resources.expectedPackedResponseNotFound(name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND)
                     }
                     else responseBody ,
-                    regex = """file\s*:\s*"(https?://[^"]+\.m3u8\?[^"]*)""".trimIndent()
+                    regex = """\s*\w+\s*:\s*"(https?://[^"]+\.m3u8\?[^"]*)""".trimIndent()
                 ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND),
                 method = "GET",
                 headers = headers

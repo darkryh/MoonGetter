@@ -33,15 +33,24 @@ class Vihide(
 
         if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
 
+        val responseBody = response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)
+
+        val isUnpackedResource = JsUnpacker.detect(responseBody)
+
         return listOf(
             Video(
                 quality = DEFAULT,
                 url = PatternManager.singleMatch(
-                    string = JsUnpacker.unpackAndCombine(
-                        response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)
-                    ) ?: throw InvalidServerException(Resources.expectedPackedResponseNotFound(name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND),
-                    regex = """file\s*:\s*"(https?://[^"]+\.m3u8\?[^"]*)""".trimIndent()
-                ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+                    string = if (isUnpackedResource) {
+                        JsUnpacker.unpackAndCombine(
+                            responseBody
+                        ) ?: throw InvalidServerException(Resources.expectedPackedResponseNotFound(name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND)
+                    }
+                    else responseBody ,
+                    regex = """"[^"]*"\s*:\s*"(https?://[^"]+\.m3u8[^"]*)"""".trimIndent()
+                ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND),
+                method = "GET",
+                headers = headers
             )
         )
     }

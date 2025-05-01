@@ -29,7 +29,8 @@ import com.ead.lib.moongetter.vihide.factory.VihideFactory
 import com.ead.lib.moongetter.voe.factory.VoeFactory
 import com.ead.lib.moongetter.xtwitter.factory.XTwitterFactory
 import com.ead.lib.moongetter.yourupload.factory.YourUploadFactory
-import com.ead.project.moongetter.domain.custom_servers.factory.SenvidModifiedFactory
+import com.ead.project.moongetter.domain.custom_servers.sendvid_modified.factory.SenvidModifiedFactory
+import com.ead.project.moongetter.domain.custom_servers.test.las_estrellas.factory.LasEstrellasFactory
 import com.ead.project.moongetter.presentation.main.MainViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -43,6 +44,7 @@ val appModule = module {
                      * CustomServerFactory
                      */
                     SenvidModifiedFactory,
+                    LasEstrellasFactory,
                     /**
                      * DefaultServerFactory
                      */
