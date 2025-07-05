@@ -9,6 +9,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 java {
@@ -38,6 +39,7 @@ publishing {
 
 dependencies {
     implementation(project(":MoonGetter-Core"))
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mock.web.server)

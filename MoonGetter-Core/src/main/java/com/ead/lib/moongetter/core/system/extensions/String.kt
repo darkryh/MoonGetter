@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.ead.lib.moongetter.core.system.extensions
 
 import com.ead.lib.moongetter.utils.PatternManager

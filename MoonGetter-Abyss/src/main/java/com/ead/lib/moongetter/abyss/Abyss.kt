@@ -1,18 +1,19 @@
 package com.ead.lib.moongetter.abyss
 
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
 
 class Abyss(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -20,16 +21,13 @@ class Abyss(
     override val isDeprecated: Boolean = true
 
     override suspend fun onExtract(): List<Video> {
-        val response = OkHttpClient()
-            .configBuilder()
-            .newCall(GET())
-            .await()
+        val response = client.GET()
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
         val dataInBase64 = decoder(
             PatternManager.singleMatch(
-                string = response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE),
+                string = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
                 regex = """atob\("([^"]+)""""
             )?.removeSuffix("_") ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
         )

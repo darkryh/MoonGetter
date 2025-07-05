@@ -38,7 +38,6 @@ publishing {
 
 dependencies {
     implementation(project(":MoonGetter-Core"))
-    implementation(project(":MoonGetter-Core-Robot"))
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mock.web.server)

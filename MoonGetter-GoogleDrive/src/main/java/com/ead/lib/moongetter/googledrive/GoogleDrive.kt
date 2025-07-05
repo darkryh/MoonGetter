@@ -1,21 +1,21 @@
-@file:Suppress("RestrictedApi")
+@file:Suppress("RestrictedApi","VisibleForTests")
 
 package com.ead.lib.moongetter.googledrive
 
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.targetUrl
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.statement.bodyAsText
 
 class GoogleDrive(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -24,11 +24,9 @@ class GoogleDrive(
 
     override suspend fun onExtract(): List<Video> {
         val response = client
-            .configBuilder()
-            .newCall(GET())
-            .await()
+            .GET()
 
-        return when (response.code) {
+        return when (response.status.value) {
             206 -> listOf(
                 Video(
                     quality = DEFAULT,
@@ -36,7 +34,7 @@ class GoogleDrive(
                 )
             )
             200 -> {
-                val body = response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)
+                val body = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
                 val id = PatternManager.singleMatch(
                     string = body,
@@ -70,7 +68,7 @@ class GoogleDrive(
                     )
                 )
             }
-            else -> throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+            else -> throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
         }
     }
 

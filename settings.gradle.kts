@@ -51,3 +51,6 @@ include(":MoonGetter-Servers")
 include(":MoonGetter-Servers-Robot")
 
 include(":MoonGetter-Android-Robot")
+include(":MoonGetter-Client")
+include(":MoonGetter-Client-OkHttp")
+include(":MoonGetter-Client-Ktor")

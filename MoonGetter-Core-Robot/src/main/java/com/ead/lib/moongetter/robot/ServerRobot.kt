@@ -3,15 +3,15 @@ package com.ead.lib.moongetter.robot
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Server
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.CompletableDeferred
-import okhttp3.OkHttpClient
 
 /**
  * Server robot class for sites that needs simulates browser operations
  */
 open class ServerRobot(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -43,6 +43,6 @@ open class ServerRobot(
         return robot.requestDeferredResource()
     }
 
-    protected open fun releaseRobot() = { robot.release() }
+    protected open fun releaseRobot(): () -> Unit = { robot.release() }
 
 }

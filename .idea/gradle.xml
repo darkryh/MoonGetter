@@ -13,6 +13,9 @@
             <option value="$PROJECT_DIR$/Media3Player" />
             <option value="$PROJECT_DIR$/MoonGetter-Abyss" />
             <option value="$PROJECT_DIR$/MoonGetter-Android-Robot" />
+            <option value="$PROJECT_DIR$/MoonGetter-Client" />
+            <option value="$PROJECT_DIR$/MoonGetter-Client-Ktor" />
+            <option value="$PROJECT_DIR$/MoonGetter-Client-OkHttp" />
             <option value="$PROJECT_DIR$/MoonGetter-Core" />
             <option value="$PROJECT_DIR$/MoonGetter-Core-Robot" />
             <option value="$PROJECT_DIR$/MoonGetter-Doodstream" />

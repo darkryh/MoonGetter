@@ -1,6 +1,6 @@
 package com.ead.lib.moongetter.models
 
-import okhttp3.Headers
+import io.ktor.http.Headers
 import java.net.URI
 
 @Suppress("unused_parameter")

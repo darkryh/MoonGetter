@@ -1,20 +1,24 @@
 package com.ead.lib.moongetter.doodstream
 
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
-import okhttp3.Headers
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
+import com.ead.lib.moongetter.utils.toHashMap
+import com.ead.lib.moongetter.utils.toHttpUrl
+import io.ktor.client.HttpClient
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
+import io.ktor.http.Headers
+import io.ktor.http.isSuccess
+
 
 class Doodstream(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -24,12 +28,11 @@ class Doodstream(
     override suspend fun onExtract(): List<Video> {
 
         var response = client
-            .newCall(GET())
-            .await()
+            .GET()
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
-        var body = response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)
+        var body = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
         val host = response.request.url.host
 
@@ -47,26 +50,23 @@ class Doodstream(
 
         val requesterUrl = "https://$host$keysCode"
 
-        response = client.newCall(
-            GET(
-                url = requesterUrl,
-                headers = hashMapOf(
-                    "Referer" to referer
-                )
+        response = client.
+        GET(
+            requestUrl = requesterUrl,
+            overrideHeaders = hashMapOf(
+                "Referer" to referer
             )
-        ).await()
+        )
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
-        body = response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)
+        body = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
-        response = client.newCall(
-            GET(
-                headers = requestHeaders(response.request.headers, host)
-            )
-        ).await()
+        response = client.GET(
+            overrideHeaders = requestHeaders(response.request.headers, host)
+        )
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
         return listOf(
             Video(
@@ -75,7 +75,7 @@ class Doodstream(
                 headers = response
                     .request
                     .headers
-                    .toMap()
+                    .toHashMap()
             )
         )
     }
@@ -89,11 +89,9 @@ class Doodstream(
 
     private fun requestHeaders(headers: Headers, host: String) : HashMap<String,String> {
         return HashMap(
-            headers.newBuilder()
-                .add("User-Agent", "MoonGetter")
-                .add("Referer", "https://$host/")
-                .build()
-                .toMap()
+            headers.toHashMap()
+                .plus("User-Agent" to  "MoonGetter")
+                .plus("Referer" to "https://$host/")
         )
     }
 }

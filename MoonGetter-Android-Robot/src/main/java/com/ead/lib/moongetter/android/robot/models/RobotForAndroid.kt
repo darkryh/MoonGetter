@@ -9,7 +9,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import com.ead.lib.moongetter.android.robot.core.extensions.defaultConfiguration
-import com.ead.lib.moongetter.android.robot.core.extensions.onResponse
 import com.ead.lib.moongetter.android.robot.core.model.RobotView
 import com.ead.lib.moongetter.android.robot.utils.Thread.onUi
 import com.ead.lib.moongetter.models.Configuration
@@ -18,13 +17,16 @@ import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server.Companion.FORBIDDEN
 import com.ead.lib.moongetter.models.Server.Companion.NOT_FOUND
 import com.ead.lib.moongetter.utils.HttpUtil
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.OkHttpClient
-import okhttp3.Response
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -112,7 +114,7 @@ class RobotForAndroid(
         var isLoadedOrExcepted = false
 
         return suspendCancellableCoroutine { continuation ->
-            loadedUrlListener = { url ->
+            loadedUrlListener = {
                 if (!isLoadedOrExcepted) {
                     isLoadedOrExcepted = true
                     continuation.resume(Unit)
@@ -142,7 +144,7 @@ class RobotForAndroid(
         url: String,
         verificationRegex: Regex,
         endingRegex: Regex,jsCode : String?,
-        client: OkHttpClient,
+        client: HttpClient,
         configData: Configuration.Data
     ) : String?  {
         while (_robotView == null) delay(100)
@@ -160,15 +162,15 @@ class RobotForAndroid(
                     robotView.evaluateJavascript(code) {}
                 }
 
-                val response : Response? = runBlocking { client.onResponse(url) }
+                val response : HttpResponse = runBlocking { client.get { url(url) } }
 
-                when(response) {
-                    null -> {
+                when {
+                    response.status.isSuccess() -> {
                         isResultFounded = true
                         continuation.resume(null)
                     }
                     else -> {
-                        val code = response.code
+                        val code = response.status.value
 
                         if ((code == FORBIDDEN || code == NOT_FOUND) && !isResultFounded) {
                             isResultFounded = true

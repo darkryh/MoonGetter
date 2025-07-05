@@ -7,12 +7,12 @@ import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.robot.ServerRobot
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
 
 @Unstable(reason = "Will be fixed soon for the moment deprecated")
 class Fireload(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : ServerRobot(url, client, headers, configData) {

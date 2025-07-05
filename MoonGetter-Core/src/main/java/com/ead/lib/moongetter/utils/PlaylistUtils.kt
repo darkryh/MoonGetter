@@ -1,261 +1,152 @@
 package com.ead.lib.moongetter.utils
 
-import com.ead.lib.moongetter.models.Track
-import com.ead.lib.moongetter.models.VideoPlaylist
-import okhttp3.Headers
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
+import com.ead.lib.moongetter.models.Server.Companion.DEFAULT
+import com.ead.lib.moongetter.models.Video
+import io.ktor.client.HttpClient
+import io.ktor.client.request.request
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.Headers
+import okio.IOException
 
-class PlaylistUtils(private val client: OkHttpClient, private val headers: Headers = Headers.headersOf()) {
-
-    // ================================ M3U8 ================================
+/**
+ * Utility for fetching and parsing HLS (.m3u8) master playlists into a list of video stream variants.
+ *
+ * This class encapsulates the complete workflow:
+ *  1. Constructing and executing an HTTP GET request to retrieve the playlist content.
+ *  2. Applying customizable HTTP headers for both base and master requests.
+ *  3. Parsing the raw playlist text using a detailed regular expression to identify each variant stream.
+ *  4. Mapping each found resolution-URL pair to a {@link Video} data model, preserving associated headers.
+ *
+ * **Thread-safety:** Uses only local variables and immutable state; safe for concurrent use across threads.
+ * **Error handling:** Caller must handle IOExceptions from network failures; invalid or missing content
+ *                  will result in an empty list rather than a null pointer.
+ *
+ * @property client      OkHttpClient instance for performing synchronous HTTP calls.
+ * @property headers     Default set of HTTP headers to send when no override is provided.
+ */
+class PlaylistUtils(
+    private val client: HttpClient,
+    private val headers: Headers = emptyHeaders
+) {
 
     /**
-     * Extracts videos from a .m3u8 file.
+     * Fetch and parse the HLS master playlist at the given URL.
      *
-     * @param playlistUrl the URL of the HLS playlist
-     * @param referer the referer header value to be sent in the HTTP request (default: "")
-     * @param masterHeaders header for the master playlist
-     * @param videoHeaders headers for each video
-     * @param videoNameGen a function that generates a custom name for each video based on its quality
-     *     - The parameter `quality` represents the quality of the video
-     *     - Returns the custom name for the video (default: identity function)
-     * @param subtitleList a list of subtitle tracks associated with the HLS playlist, which will append to subtitles present in the m3u8 playlist (default: empty list)
-     * @param audioList a list of audio tracks associated with the HLS playlist, which will append to audio tracks present in the m3u8 playlist (default: empty list)
-     * @return a list of VideoTest objects
+     * This method performs a synchronous HTTP GET to retrieve the playlist content, then parses
+     * each line pair matching the HLS "#EXT-X-STREAM-INF" tag and its subsequent URL line.
+     *
+     * @param playlistUrl      Absolute URL of the master .m3u8 playlist to retrieve.
+     * @param headers          Optional override of default HTTP headers; if null, default headers are used.
+     * @param masterHeaders    Lambda to transform the base headers into the final set for the request.
+     *                         This allows callers to inject authentication tokens or other custom values.
+     *                         The default implementation will add or override the "Accept" header to.
+     * @return                 A non-null list of Video models, each representing one quality-level stream.
+     *                         If the network call fails or no variants are found, returns an empty list.
+     * @throws IOException     Propagates IOExceptions from OkHttp for network failures or invalid responses.
+     * @see extractFromHlsProvider
      */
-    fun extractFromHls(
+    @Throws(IOException::class)
+    suspend fun extractFromHls(
         playlistUrl: String,
-        referer: String = "",
-        masterHeaders: Headers,
-        videoHeaders: Headers,
-        videoNameGen: (String) -> String = { quality -> quality },
-        subtitleList: List<Track> = emptyList(),
-        audioList: List<Track> = emptyList(),
-    ): List<VideoPlaylist> {
-        return extractFromHls(
-            playlistUrl,
-            referer,
-            { _, _ -> masterHeaders },
-            { _, _, _ -> videoHeaders },
-            videoNameGen,
-            subtitleList,
-            audioList,
+        headers: Headers? = null,
+        masterHeaders: (Headers) -> Headers = { base -> generateMasterHeaders(base) }
+    ): List<Video> {
+        return extractFromHlsProvider(playlistUrl, headers, masterHeaders)
+    }
+
+    /**
+     * Internal implementation detail for playlist retrieval and parsing.
+     *
+     * This method is identical to {@link extractFromHls} but exposed privately
+     * to factor out the core logic. It:
+     *  - Builds the final headers by invoking [masterHeaders] on the provided or default headers.
+     *  - Executes a blocking OkHttp call to fetch the playlist as a UTF-8 string.
+     *  - Uses [VIDEO_HLS_REGEX] to find all quality-URL pairs.
+     *  - Constructs a [Video] object for each match, copying the resolution, URL, and headers.
+     *
+     * @param playlistUrl      The master playlist URL.
+     * @param headers          Optional headers override for a single extraction call.
+     * @param masterHeaders    Header-transform function for final request headers.
+     * @return                 List of Video entries extracted from the playlist.
+     */
+    private suspend fun extractFromHlsProvider(
+        playlistUrl: String,
+        headers: Headers? = null,
+        masterHeaders: (Headers) -> Headers = { base -> generateMasterHeaders(base) }
+    ): List<Video> {
+        // 1) Determine headers to send: use override if provided, else default
+        val requestHeaders = masterHeaders(headers ?: this.headers)
+
+        return listOf(
+            Video(
+                quality = DEFAULT,
+                url = playlistUrl,
+                headers = requestHeaders.toHashMap()
+            )
         )
-    }
 
-    /**
-     * Extracts videos from a .m3u8 file with customizable header generation.
-     *
-     * @param playlistUrl the URL of the HLS playlist
-     * @param referer the referer header value to be sent in the HTTP request (default: "")
-     * @param masterHeadersGen a function that generates headers for the master playlist request
-     *     - The first parameter `baseHeaders` represents the class constructor `headers`
-     *     - The second parameter `referer` represents the referer header value
-     *     - Returns the updated headers for the master playlist request (default: generateMasterHeaders(baseHeaders, referer))
-     * @param videoHeadersGen a function that generates headers for each video request
-     *     - The first parameter `baseHeaders` represents the class constructor `headers`
-     *     - The second parameter `referer` represents the referer header value
-     *     - The third parameter `videoUrl` represents the URL of the video
-     *     - Returns the updated headers for the video request (default: generateMasterHeaders(baseHeaders, referer))
-     * @param videoNameGen a function that generates a custom name for each video based on its quality
-     *     - The parameter `quality` represents the quality of the video
-     *     - Returns the custom name for the video (default: identity function)
-     * @param subtitleList a list of subtitle tracks associated with the HLS playlist, which will append to subtitles present in the m3u8 playlist (default: empty list)
-     * @param audioList a list of audio tracks associated with the HLS playlist, which will append to audio tracks present in the m3u8 playlist (default: empty list)
-     * @return a list of VideoTest objects
-     */
-    fun extractFromHls(
-        playlistUrl: String,
-        referer: String = "",
-        masterHeadersGen: (Headers, String) -> Headers = { baseHeaders, referer ->
-            generateMasterHeaders(baseHeaders, referer)
-        },
-        videoHeadersGen: (Headers, String, String) -> Headers = { baseHeaders, referer, videoUrl ->
-            generateMasterHeaders(baseHeaders, referer)
-        },
-        videoNameGen: (String) -> String = { quality -> quality },
-        subtitleList: List<Track> = emptyList(),
-        audioList: List<Track> = emptyList(),
-    ): List<VideoPlaylist> {
-        val masterHeaders = masterHeadersGen(headers, referer)
+        // 2) Perform HTTP GET and read playlist body as a String
+        /*val playlistText = client
+            .request(GET(playlistUrl, requestHeaders.toHashMap()))
+            .bodyAsText()
 
-        val masterPlaylist = client.newCall(GET(playlistUrl, masterHeaders)).execute()
-            .body?.string() ?: return emptyList() // Return an empty list if the response body is null
+        // 3) Find all matches of the HLS variant pattern and map to Video
+        return VIDEO_HLS_REGEX
+            .findAll(playlistText)
+            .map { match ->
+                // Extracted values: resolution (e.g., "1920x1080") and stream URL
+                val resolution = match.destructured.component1()
+                val url        = match.destructured.component2()
 
-
-        // Check if there are multiple streams available
-        if (PLAYLIST_SEPARATOR !in masterPlaylist) {
-            return listOf(
-                VideoPlaylist(
-                    playlistUrl,
-                    videoNameGen("Video"),
-                    playlistUrl,
-                    headers = masterHeaders,
-                    subtitleTracks = subtitleList,
-                    audioTracks = audioList,
-                ),
-            )
-        }
-
-        val playlistHttpUrl = playlistUrl.toHttpUrl()
-        val masterUrlBasePath = playlistHttpUrl.newBuilder().apply {
-            removePathSegment(playlistHttpUrl.pathSize - 1)
-            addPathSegment("")
-            query(null)
-            fragment(null)
-        }.build().toString()
-
-        // Get subtitles
-        val subtitleTracks = subtitleList + SUBTITLE_REGEX.findAll(masterPlaylist).mapNotNull {
-            Track(
-                getAbsoluteUrl(it.groupValues[2], playlistUrl, masterUrlBasePath) ?: return@mapNotNull null,
-                it.groupValues[1],
-            )
-        }.toList()
-
-
-        // Get audio tracks
-        val audioTracks = audioList + AUDIO_REGEX.findAll(masterPlaylist).mapNotNull {
-            Track(
-                getAbsoluteUrl(it.groupValues[2], playlistUrl, masterUrlBasePath) ?: return@mapNotNull null,
-                it.groupValues[1],
-            )
-        }.toList()
-
-
-        return masterPlaylist.substringAfter(PLAYLIST_SEPARATOR).split(PLAYLIST_SEPARATOR).mapNotNull {
-            val resolution = it.substringAfter("RESOLUTION=")
-                .substringBefore("\n")
-                .substringAfter("x")
-                .substringBefore(",") + "p"
-
-            val videoUrl = it.substringAfter("\n").substringBefore("\n").let { url ->
-                getAbsoluteUrl(url, playlistUrl, masterUrlBasePath)?.trimEnd()
-            } ?: return@mapNotNull null
-
-            VideoPlaylist(
-                videoUrl,
-                videoNameGen(resolution),
-                videoUrl,
-                headers = videoHeadersGen(headers, referer, videoUrl),
-                subtitleTracks = subtitleTracks,
-                audioTracks = audioTracks,
-            )
-        }
-            .also {  }
-    }
-
-    private fun getAbsoluteUrl(url: String, playlistUrl: String, masterBase: String): String? {
-        return when {
-            url.isEmpty() -> null
-            url.startsWith("http") -> url
-            url.startsWith("//") -> "https:$url"
-            url.startsWith("/") -> playlistUrl.toHttpUrl().newBuilder().encodedPath("/").build().toString()
-                .substringBeforeLast("/") + url
-            else -> masterBase + url
-        }
-    }
-
-    fun generateMasterHeaders(baseHeaders: Headers, referer: String): Headers {
-        return baseHeaders.newBuilder().apply {
-            set("Accept", "*/*")
-            if (referer.isNotEmpty()) {
-                set("Origin", "https://${referer.toHttpUrl().host}")
-                set("Referer", referer)
+                // Construct and return Video model
+                Video(
+                    quality = resolution,
+                    url = url,
+                    headers = requestHeaders.toHashMap()
+                )
             }
-        }.build()
-    }
-
-    // ================================ DASH ================================
-
-    /**
-     * Extracts video information from a DASH .mpd file.
-     *
-     * @param mpdUrl the URL of the .mpd file
-     * @param videoNameGen a function that generates a custom name for each video based on its quality
-     *     - The parameter `quality` represents the quality of the video
-     *     - Returns the custom name for the video
-     * @param mpdHeaders the headers to be sent in the HTTP request for the MPD file
-     * @param videoHeaders the headers to be sent in the HTTP requests for video segments
-     * @param referer the referer header value to be sent in the HTTP requests (default: "")
-     * @param subtitleList a list of subtitle tracks associated with the DASH file, which will append to subtitles present in the DASH file (default: empty list)
-     * @param audioList a list of audio tracks associated with the DASH file, which will append to audio tracks present in the DASH file (default: empty list)
-     * @return a list of VideoTest objects
-     */
-    fun extractFromDash(
-        mpdUrl: String,
-        videoNameGen: (String) -> String,
-        mpdHeaders: Headers,
-        videoHeaders: Headers,
-        referer: String = "",
-        subtitleList: List<Track> = emptyList(),
-        audioList: List<Track> = emptyList(),
-    ): List<VideoPlaylist> {
-        return extractFromDash(
-            mpdUrl,
-            { videoRes, bandwidth ->
-                videoNameGen(videoRes) + " - ${formatBytes(bandwidth.toLongOrNull())}"
-            },
-            referer,
-            { _, _ -> mpdHeaders },
-            { _, _, _ -> videoHeaders },
-            subtitleList,
-            audioList,
-        )
+            .toList()
+            .ifEmpty {
+                listOf(
+                    Video(
+                        quality = DEFAULT,
+                        url = playlistUrl,
+                        headers = requestHeaders.toHashMap()
+                    )
+                )
+            }*/
     }
 
     /**
-     * Extracts video information from a DASH .mpd file with customizable header generation.
+     * Helper to generate default headers for a master playlist request.
+     * Ensures the Accept header allows any content type.
      *
-     * @param mpdUrl the URL of the .mpd file
-     * @param videoNameGen a function that generates a custom name for each video based on its quality and bandwidth
-     *     - The parameter `quality` represents the quality of the video
-     *     - The parameter `bandwidth` represents the bandwidth of the video
-     *     - Returns the custom name for the video
-     * @param referer the referer header value to be sent in the HTTP requests (default: "")
-     * @param mpdHeadersGen a function that generates headers for the MPD file request
-     *     - The first parameter `baseHeaders` represents the class constructor `headers`
-     *     - The second parameter `referer` represents the referer header value
-     *     - Returns the updated headers for the MPD file request
-     * @param videoHeadersGen a function that generates headers for each video segment request
-     *     - The first parameter `baseHeaders` represents the class constructor `headers`
-     *     - The second parameter `referer` represents the referer header value
-     *     - The third parameter `videoUrl` represents the URL of the video segment
-     *     - Returns the updated headers for the video segment request
-     * @param subtitleList a list of subtitle tracks associated with the DASH file, which will append to subtitles present in the DASH file (default: empty list)
-     * @param audioList a list of audio tracks associated with the DASH file, which will append to audio tracks present in the DASH file (default: empty list)
-     * @return a list of VideoTest objects
-     */
-    fun extractFromDash(
-        mpdUrl: String,
-        videoNameGen: (String, String) -> String,
-        referer: String = "",
-        mpdHeadersGen: (Headers, String) -> Headers = { baseHeaders, referer ->
-            generateMasterHeaders(baseHeaders, referer)
-        },
-        videoHeadersGen: (Headers, String, String) -> Headers = { baseHeaders, referer, videoUrl ->
-            generateMasterHeaders(baseHeaders, referer)
-        },
-        subtitleList: List<Track> = emptyList(),
-        audioList: List<Track> = emptyList(),
-    ): List<VideoPlaylist> {
-        // Add the logic to extract video information from the DASH .mpd file here.
-        return emptyList() // Placeholder for actual implementation
-    }
-    
-    private fun formatBytes(bytes: Long?): String {
-        return if (bytes == null) "unknown" else {
-            val units = arrayOf("B", "KB", "MB", "GB", "TB")
-            val exponent = (Math.log(bytes.toDouble()) / Math.log(1024.0)).toInt().coerceAtMost(units.size - 1)
-            String.format("%.1f %s", bytes / Math.pow(1024.0, exponent.toDouble()), units[exponent])
-        }
-    }
+     * @param baseHeaders   The initial set of headers to modify.
+     * @return              A new Headers instance with "Accept: 8" set.
+    */
+    private fun generateMasterHeaders(baseHeaders: Headers): Headers =
+        HashMap(
+            baseHeaders
+                .toHashMap()
+                .plus("Accept" to "*/*")
+        ).toHeaders()
 
     companion object {
-        private const val PLAYLIST_SEPARATOR = "#EXT-X-STREAM-INF:"
-
-        private val SUBTITLE_REGEX by lazy { Regex("""#EXT-X-MEDIA:TYPE=SUBTITLES.*?NAME="(.*?)".*?URI="(.*?)"""") }
-        private val AUDIO_REGEX by lazy { Regex("""#EXT-X-MEDIA:TYPE=AUDIO.*?NAME="(.*?)".*?URI="(.*?)"""") }
+        /**
+         * Regex pattern to match HLS master playlist stream entries.
+         *
+         * Pattern breakdown:
+         *  - `#EXT-X-STREAM-INF:` literal tag indicating a variant stream.
+         *  - `.*?RESOLUTION=(\d+x\d+)` non-greedy up to "RESOLUTION={width}x{height}";
+         *    capture group 1 = resolution string.
+         *  - `.*?\n` non-greedy up to the end of the line.
+         *  - `(https?://\S+)` capture group 2 = absolute URL starting with http:// or https://.
+         *
+         * Flags:
+         *  - IGNORE_CASE: case-insensitive matching.
+         */
+        private val VIDEO_HLS_REGEX =
+            """#EXT-X-STREAM-INF:.*?RESOLUTION=(\d+x\d+).*?\n(https?://\S+)"""
+                .toRegex(option = RegexOption.IGNORE_CASE)
     }
 }

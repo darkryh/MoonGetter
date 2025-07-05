@@ -1,24 +1,25 @@
 package com.ead.project.moongetter.domain.custom_servers.test.las_estrellas
 
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
 
 class LasEstrellas(
     url :String,
-    client : OkHttpClient,
+    client : HttpClient,
     headers : HashMap<String,String>,
     configData: Configuration.Data
 ) : Server(url,client,headers,configData) {
 
-    val regex = """"contentUrl"\s*:\s*"([^"]+)"""".toRegex()
-    val regexParams = """[?&]mcpid=([^&]+).*?[&]mcpOrigin=([^&]+)""".toRegex()
-    val regexStream = """#EXT-X-STREAM-INF:.*?RESOLUTION=(\d+x\d+).*?\n(https?://[^\s]+)""".toRegex()
+    private val regex = """"contentUrl"\s*:\s*"([^"]+)"""".toRegex()
+    private val regexParams = """[?&]mcpid=([^&]+).*?&mcpOrigin=([^&]+)""".toRegex()
+    private val regexStream = """#EXT-X-STREAM-INF:.*?RESOLUTION=(\d+x\d+).*?\n(https?://\S+)""".toRegex()
 
     override val headers: HashMap<String, String> = headers.also {
         it["Referer"] = url
@@ -27,22 +28,17 @@ class LasEstrellas(
 
     override suspend fun onExtract(): List<Video> {
         var response = client
-            .newCall(GET())
-            .await()
+            .GET()
 
-        if (!response.isSuccessful) throw InvalidServerException(
+        if (!response.status.isSuccess()) throw InvalidServerException(
             Resources.unsuccessfulResponse(name),
             Error.UNSUCCESSFUL_RESPONSE,
-            response.code
+            response.status.value
         )
 
-        var responseBody = response.body?.string().toString()
+        var responseBody = response.bodyAsText()
 
-        response = client
-            .newCall(
-                GET(url = "https://auth.univision.com/verify-auth")
-            )
-            .await()
+        client.GET(requestUrl = "https://auth.univision.com/verify-auth")
 
         url = regex.find(responseBody)?.groups?.get(1)?.value.toString()
 
@@ -52,18 +48,15 @@ class LasEstrellas(
         val mcpOrigin = data?.groups?.get(2)?.value
 
         response = client
-            .newCall(
-                GET(
-                    url = "https://auth.univision.com/api/v3/video-auth/url-signature-token-by-id",
-                    queryParameters = mapOf(
-                        "mcpid" to mcpid.toString(),
-                        "mcpOrigin" to mcpOrigin.toString()
-                    )
+            .GET(
+                requestUrl = "https://auth.univision.com/api/v3/video-auth/url-signature-token-by-id",
+                queryParams = mapOf(
+                    "mcpid" to mcpid.toString(),
+                    "mcpOrigin" to mcpOrigin.toString()
                 )
             )
-            .await()
 
-        responseBody = response.body?.string().toString()
+        responseBody = response.bodyAsText()
 
         return regexStream.findAll(responseBody)
             .map { matchResult ->

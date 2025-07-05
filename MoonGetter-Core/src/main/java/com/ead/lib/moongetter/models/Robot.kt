@@ -1,7 +1,7 @@
 package com.ead.lib.moongetter.models
 
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.CompletableDeferred
-import okhttp3.OkHttpClient
 
 interface Robot {
 
@@ -13,7 +13,7 @@ interface Robot {
 
     suspend fun loadUrl(url: String) : Unit?
 
-    suspend fun getInterceptionUrl(url: String, verificationRegex: Regex, endingRegex: Regex,jsCode : String? = null,client: OkHttpClient,configData: Configuration.Data) : String?
+    suspend fun getInterceptionUrl(url: String, verificationRegex: Regex, endingRegex: Regex,jsCode : String? = null,client: HttpClient,configData: Configuration.Data) : String?
 
     fun requestDeferredResource() : CompletableDeferred<Request?>
 

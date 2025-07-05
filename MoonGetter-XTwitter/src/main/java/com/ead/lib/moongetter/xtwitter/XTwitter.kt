@@ -1,24 +1,24 @@
-@file:Suppress("RestrictedApi")
+@file:Suppress("RestrictedApi","VisibleForTests")
 
 package com.ead.lib.moongetter.xtwitter
 
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.targetUrl
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import kotlin.collections.ifEmpty
-import kotlin.collections.map
+import io.ktor.client.HttpClient
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class XTwitter(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -29,21 +29,16 @@ class XTwitter(
 
     override suspend fun onExtract(): List<Video> {
         val response = client
-            .configBuilder()
-            .newCall(
-                POST(
-                    url = targetUrl,
-                    formBody = FormBody.Builder()
-                        .add("URL", url)
-                        .build(),
-                )
+            .POST(
+                requestUrl = targetUrl,
+                body = XTwitterBody(url),
+                asFormUrlEncoded = true
             )
-            .await()
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
         return PatternManager.findMultipleMatches(
-            string = response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE),
+            string = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
             regex = """<td>.*?<a\s+[^>]*?href=['"]([^'"]+)['"].*?>.*?</a>.*?</td>"""
         )
             .filter { it != "#" }
@@ -62,3 +57,9 @@ class XTwitter(
             }
     }
 }
+
+
+@Serializable
+data class XTwitterBody(
+    @SerialName("URL") val url : String
+)

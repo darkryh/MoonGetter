@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.ead.lib.moongetter.robot
 
 import com.ead.lib.moongetter.core.Resources
@@ -6,11 +8,11 @@ import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
 
 open class ServerJwPlayer(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : ServerRobot(url, client, headers, configData) {

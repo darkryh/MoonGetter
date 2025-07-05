@@ -1,18 +1,19 @@
 package com.ead.project.moongetter.domain.custom_servers.sendvid_modified
 
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
 
 class SenvidModified(
     url :String,
-    client : OkHttpClient,
+    client : HttpClient,
     headers : HashMap<String,String>,
     configData: Configuration.Data
 ) : Server(url,client,headers,configData) {
@@ -27,20 +28,19 @@ class SenvidModified(
 
     override suspend fun onExtract(): List<Video> {
         val response = client
-            .newCall(GET())
-            .await()
+            .GET()
 
-        if (!response.isSuccessful) throw InvalidServerException(
+        if (!response.status.isSuccess()) throw InvalidServerException(
             Resources.unsuccessfulResponse(name),
             Error.UNSUCCESSFUL_RESPONSE,
-            response.code
+            response.status.value
         )
 
         return listOf(
             Video(
                 quality = DEFAULT,
                 url = PatternManager.singleMatch(
-                    string = response.body?.string().toString(),
+                    string = response.bodyAsText(),
                     regex = "<source src=\"(.*?)\""
                 ) ?: throw InvalidServerException(
                     Resources.expectedResponseNotFound(name),

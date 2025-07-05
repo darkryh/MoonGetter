@@ -1,25 +1,25 @@
-@file:Suppress("RestrictedApi")
+@file:Suppress("RestrictedApi","VisibleForTests")
 
 package com.ead.lib.moongetter.hexload
 
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.core.system.extensions.await
 import com.ead.lib.moongetter.core.system.extensions.replaceDomainWith
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.JsonObject
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.targetUrl
 import com.ead.lib.moongetter.utils.Values.targetUrl2
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
 
 class Hexload(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -29,39 +29,26 @@ class Hexload(
 
     override suspend fun onExtract(): List<Video> {
         var response = client
-            .configBuilder()
-            .newCall(GET())
-            .await()
+            .GET()
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
         val dataPattern = """data:\s*\{\s*(.*?)\s*\}""".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val dataContent = dataPattern.find((response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)))?.groupValues?.get(1)
+        val dataContent = dataPattern.find((response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }))?.groupValues?.get(1)
 
         response = client
-            .configBuilder()
-            .newCall(
-                POST(
-                    url = targetUrl2,
-                    headers = hashMapOf("Content-Type" to "application/x-www-form-urlencoded"),
-                    formBody = PatternManager.findMultipleMatchesAsPairs(
-                        string = dataContent.toString(),
-                        regex = """(\w+):\s*['"]([^'"]+)['"]"""
-                    ).ifEmpty { throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND) }
-                        .let { bodyParams ->
-                            val formBody = FormBody.Builder()
-
-                            bodyParams.forEach { (key, value) ->  formBody.add(key, value) }
-
-                            formBody.build()
-                        }
-                )
+            .POST(
+                requestUrl = targetUrl2,
+                overrideHeaders = hashMapOf("Content-Type" to "application/x-www-form-urlencoded"),
+                body = PatternManager.findMultipleMatchesAsPairs(
+                    string = dataContent.toString(),
+                    regex = """(\w+):\s*['"]([^'"]+)['"]"""
+                ).ifEmpty { throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND) }
             )
-            .execute()
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
-        val responseBody = response.body?.string() ?: throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)
+        val responseBody = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
         return listOf(
             Video(

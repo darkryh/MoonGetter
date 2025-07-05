@@ -4,27 +4,36 @@ package com.ead.lib.moongetter.models
 
 import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import okhttp3.FormBody
-import okhttp3.Headers
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.ead.lib.moongetter.utils.toParameters
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.get
+import io.ktor.client.request.headers
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
+import io.ktor.http.takeFrom
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 
 open class Server(
     /**
      * @param @url the url of the server
      */
-    protected open var url : String,
+    open var url : String,
     /**
      * @param @client the client of okhttp
      */
-    protected open val client : OkHttpClient,
+    protected val client : HttpClient,
     /**
      * @param @headers the headers of the server
      */
-    protected open val headers : HashMap<String,String>,
+    open val headers : HashMap<String,String>,
     /**
      * @param @configurationData to apply configurations of the library
      */
@@ -79,6 +88,17 @@ open class Server(
     internal fun setVideos(videos: List<Video>) = this._videos.addAll(videos)
 
 
+    init {
+        // Apply default timeout settings to the client
+        client.config {
+            install(HttpTimeout) {
+                requestTimeoutMillis = configData.timeout
+                connectTimeoutMillis = configData.timeout
+                socketTimeoutMillis = configData.timeout
+            }
+        }
+    }
+
 
     /**
      * onExtract function when the solving or scraping process is getting handle
@@ -104,174 +124,72 @@ open class Server(
      *
      * }
      */
-    @Throws(InvalidServerException::class,IOException::class, RuntimeException::class,
-        IllegalArgumentException::class)
+    @Throws(InvalidServerException::class,IOException::class, RuntimeException::class, IllegalArgumentException::class)
     open suspend fun onExtract() : List<Video> { return emptyList() }
 
 
     /**
-     * @return the client of okhttp with configurations from the builder
+     * Perform a GET request.
+     * @param requestUrl optional override path or full URL
+     * @param overrideHeaders headers to merge with base headers
+     * @param queryParams query parameters to append
+     * @return response body deserialized as [HttpResponse]
      */
-    protected fun OkHttpClient.configBuilder() : OkHttpClient {
-        return newBuilder()
-            .let { builder ->
-                /**
-                 * set the connection timeout
-                 */
-                builder
-                    .connectTimeout(
-                        configData.timeout,
-                        TimeUnit.MILLISECONDS
-                    )
-
-                /**
-                 * set the read timeout
-                 */
-                builder.writeTimeout(
-                    configData.timeout,
-                    TimeUnit.MILLISECONDS)
-
-                /**
-                 * set the read timeout
-                 */
-                builder.readTimeout(
-                    configData.timeout,
-                    TimeUnit.MILLISECONDS
-                )
-            }
-            .build()
-    }
-
-    /**
-     * Creates and returns an OkHttp GET request.
-     *
-     * This function allows combining base server headers with optional custom headers,
-     * overriding headers if needed, and dynamically appending query parameters to the URL.
-     *
-     * @param url Optional. If provided, overrides the server's base URL for this request.
-     * @param headers Optional. Additional headers to include alongside the server's base headers.
-     * @param overrideHeaders Optional. If provided and not in testing mode, completely replaces all headers.
-     * @param queryParameters Optional. Query parameters to append to the URL in a safe and structured way.
-     * @param isTesting Optional. If true, overrideHeaders will be ignored even if provided.
-     *
-     * @return Configured OkHttp [Request] object ready to be executed.
-     */
-    protected fun GET(
-        url: String? = null,
-        headers: HashMap<String, String>? = null,
-        overrideHeaders: Headers? = null,
-        queryParameters: Map<String, String>? = null,
-        isTesting: Boolean = false
-    ): Request {
-        return Request.Builder().let { builder ->
-
-            // Combine server-level headers with optional per-request headers
-            val headersCombination = if (headers != null) {
-                this@Server.headers + headers
-            } else {
+    protected suspend fun HttpClient.GET(
+        requestUrl: String? = null,
+        overrideHeaders: Map<String, String>? = null,
+        queryParams: Map<String, String>? = null
+    ): HttpResponse = withContext(Dispatchers.IO) {
+        get {
+            headers {
                 this@Server.headers
-            }
+                    .filterKeys { it !in forbiddenHeaders }
+                    .forEach { (key, value) -> set(key, value) }
 
-            // Build the final URL including query parameters if provided
-            val finalUrl = (url ?: this.url).let { baseUrl ->
-                if (queryParameters.isNullOrEmpty()) {
-                    baseUrl
-                } else {
-                    val httpUrlBuilder = url?.toHttpUrlOrNull()?.newBuilder()
-                    queryParameters.forEach { (key, value) ->
-                        httpUrlBuilder?.addQueryParameter(key, value)
-                    }
-                    httpUrlBuilder?.build().toString()
+                overrideHeaders?.filterKeys { it !in forbiddenHeaders }?.forEach { (key, value) ->
+                    set(key, value)
                 }
             }
+            url {
+                val url = requestUrl ?: this@Server.url
 
-            // Set the URL into the request builder
-            builder.url(finalUrl)
+                takeFrom(url)
 
-            // If overrideHeaders is provided and not testing, apply them directly
-            if (overrideHeaders != null && !isTesting) {
-                return@let builder.also { it.headers(overrideHeaders) }
+                queryParams?.forEach { (key, value) -> parameters[key] = value }
             }
-
-            // Otherwise, map and add all combined headers
-            builder.headers(
-                Headers.Builder().let { headersBuilder ->
-                    headersCombination.forEach { (key, value) ->
-                        headersBuilder.add(key, value)
-                    }
-                    headersBuilder
-                }.build()
-            )
-        }.build()
+        }
     }
 
-
     /**
-     * @return the request of okhttp core dependency
-     * with POST method and combine headers from the builder
+     * Perform a POST form request.
+     * @param requestUrl optional override url or full URL
+     * @param overrideHeaders headers to merge
+     * @return response body deserialized as [HttpResponse]
      */
-    protected fun POST(
-        url : String? = null,
-        headers : HashMap<String,String>? = null,
-        formBody: FormBody
-    )
-    : Request {
-
-
-        /**
-         * request that prefab some basic operations
-         * that most of servers do
-         */
-        return Request
-            .Builder()
-            .let { builder ->
-
-
-                /**
-                 * combine headers in case the POST operations demands
-                 */
-                val headersCombination = if (headers != null) {
-                    this@Server.headers + headers
-                } else {
-                    this@Server.headers
-                }
-
-
-                /**
-                 * set url in case POST operations demands
-                 * in other case use the url from the server
-                 */
-                builder.url(url ?: this.url)
-
-
-                /**
-                 * Do the combining operation
-                 */
-                builder.headers(
-                    Headers
-                        .Builder()
-                        .let { headersBuilder ->
-
-
-                            /**
-                             * Mapping the headers hashmap into
-                             * okhttp headers
-                             */
-                            headersCombination.forEach { (key, value) ->
-                                headersBuilder.add(key, value)
-                            }
-                            headersBuilder
-                        }
-                        .build()
-                )
-
-
-                /**
-                 * add the FormBody from the parameter
-                 */
-                builder.post(formBody)
+    suspend inline fun <reified T : Any> HttpClient.POST(
+        requestUrl: String? = null,
+        overrideHeaders: Map<String, String>? = null,
+        body: T,
+        asFormUrlEncoded: Boolean = false
+    ): HttpResponse = withContext(Dispatchers.IO) {
+        post {
+            headers {
+                this@Server.headers.forEach { (key, value) -> set(key, value) }
+                overrideHeaders?.forEach { (key, value) -> set(key, value) }
             }
-            .build()
+
+            if (asFormUrlEncoded) {
+                contentType(ContentType.Application.FormUrlEncoded)
+                setBody(FormDataContent(toParameters(body)))
+            } else {
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }
+
+            url {
+                takeFrom(requestUrl ?: this@Server.url)
+            }
+        }
     }
 
     companion object {
@@ -286,6 +204,13 @@ open class Server(
          * Default name of video result
          */
         const val DEFAULT = "Default"
+
+        val forbiddenHeaders = setOf(
+            HttpHeaders.TransferEncoding,
+            HttpHeaders.ContentLength,
+            HttpHeaders.Host,
+            HttpHeaders.Connection
+        )
     }
 
 

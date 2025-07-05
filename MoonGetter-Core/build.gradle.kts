@@ -37,8 +37,12 @@ publishing {
     }
 }
 
+
 dependencies {
-    api(libs.okhttp)
+    api(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     api(libs.moshi)
     api(libs.moshi.kotlin)

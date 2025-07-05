@@ -2,16 +2,17 @@ package com.ead.lib.moongetter.pixeldrain
 
 import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.models.Configuration
-import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.http.isSuccess
 
 class Pixeldrain(
     url : String,
-    client: OkHttpClient,
+    client: HttpClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -25,11 +26,9 @@ class Pixeldrain(
         url = "https://pixeldrain.com/api/file/$id?download"
 
         val response = client
-            .configBuilder()
-            .newCall(GET())
-            .execute()
+            .GET()
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
 
         return listOf(
             Video(

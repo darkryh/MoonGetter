@@ -4,13 +4,13 @@ import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.utils.PatternManager
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
 
 internal fun Array<Server.Factory>.onFactory(
     url: String,
     headers: HashMap<String, String>,
     configData: Configuration.Data,
-    client: OkHttpClient,
+    client: HttpClient,
     robot: Robot?
 ): Server? {
     return singleOrNull { expectedServerFactory ->
@@ -23,7 +23,7 @@ internal fun Array<Server.Factory>.onFactory(
         serverFactory.belongedClass.let { `class` ->
             val constructor = `class`.getDeclaredConstructor(
                 String::class.java,
-                OkHttpClient::class.java,
+                HttpClient::class.java,
                 HashMap::class.java,
                 Configuration.Data::class.java
             )
