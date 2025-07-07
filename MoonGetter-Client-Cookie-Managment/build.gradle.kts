@@ -5,11 +5,11 @@ val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
 val javaVirtualMachineTarget = JvmTarget.fromTarget(javaStringVersion)
 
+
 plugins {
     id("java-library")
     id("maven-publish")
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 java {
@@ -31,28 +31,12 @@ publishing {
             }
 
             groupId = "com.ead.lib"
-            artifactId = "moongetter-core"
+            artifactId = "moongetter-client-cookie-managment"
             version = moonGetterVersion
         }
     }
 }
 
-
 dependencies {
-    api(project(":MoonGetter-Client"))
-
-    api(libs.moshi)
-    api(libs.moshi.kotlin)
-    api(libs.kotlinx.serialization.json)
-
-    api(libs.kotlinx.coroutines.core)
-    implementation(kotlin("reflect"))
-    
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.mock.web.server)
-    
-    api("dev.datlag.jsunpacker:jsunpacker:1.0.2") {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-    }
+    implementation(libs.ktor.client.core)
 }

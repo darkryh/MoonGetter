@@ -11,17 +11,15 @@ import androidx.annotation.RequiresApi
 import com.ead.lib.moongetter.android.robot.core.extensions.defaultConfiguration
 import com.ead.lib.moongetter.android.robot.core.model.RobotView
 import com.ead.lib.moongetter.android.robot.utils.Thread.onUi
-import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
+import com.ead.lib.moongetter.client.request.HttpMethod
+import com.ead.lib.moongetter.client.response.Response
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server.Companion.FORBIDDEN
 import com.ead.lib.moongetter.models.Server.Companion.NOT_FOUND
 import com.ead.lib.moongetter.utils.HttpUtil
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.isSuccess
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,6 +27,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import com.ead.lib.moongetter.client.request.Request as ClientRequest
 
 /**
  * [RobotForAndroid] class as robot option for android devices.
@@ -144,7 +143,7 @@ class RobotForAndroid(
         url: String,
         verificationRegex: Regex,
         endingRegex: Regex,jsCode : String?,
-        client: HttpClient,
+        client: MoonClient,
         configData: Configuration.Data
     ) : String?  {
         while (_robotView == null) delay(100)
@@ -162,15 +161,15 @@ class RobotForAndroid(
                     robotView.evaluateJavascript(code) {}
                 }
 
-                val response : HttpResponse = runBlocking { client.get { url(url) } }
+                val response : Response = runBlocking { client.request<String>(ClientRequest(url = url, method = HttpMethod.GET)) }
 
                 when {
-                    response.status.isSuccess() -> {
+                    response.isSuccess -> {
                         isResultFounded = true
                         continuation.resume(null)
                     }
                     else -> {
-                        val code = response.status.value
+                        val code = response.statusCode
 
                         if ((code == FORBIDDEN || code == NOT_FOUND) && !isResultFounded) {
                             isResultFounded = true

@@ -77,6 +77,11 @@ dependencies {
 
     implementation(project(":MoonGetter-Core"))
     implementation(project(":MoonGetter-Core-Robot"))
+    implementation(project(":MoonGetter-Client-Ktor"))
+    implementation(project(":MoonGetter-Client-OkHttp"))
+    implementation(project(":MoonGetter-Client-Cookie-Java-NET"))
+
+    implementation(libs.ktor.client.cio)
 
     implementation(project(":MoonGetter-Android-Robot"))
 

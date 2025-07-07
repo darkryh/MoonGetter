@@ -5,257 +5,258 @@
 [![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 [![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 
-**MoonGetter** is a powerful and versatile Kotlin library designed for stream extraction and file downloads. It empowers developers with the following features:
-
-- **Custom server integration**: Easily add and configure your own extraction logic to suit unique requirements.
-- **Kotlin coroutines**: Leverage asynchronous, non-blocking operations for improved performance and responsiveness.
-- **Advanced error handling**: Streamline debugging with robust custom exceptions tailored to specific scenarios.
----
-
-## Compatibility Table
-
-| Feature                | Android | Kotlin | KMP |
-|------------------------|:-------:|:------:|:---:|
-| Core Library           |    ✅    |   ✅    |  ⏳  |
-| Robot Servers API      |    ✅    |   ⏳    |  ⏳  |
-| Server Implementations |    ✅    |   ✅    |  ⏳  |
-
-> **Legend**:  
-> ✅ - Supported  
-> ⏳ - In progress
+**MoonGetter** is a powerful and versatile Kotlin-first library focused on stream extraction and video hosting download logic. It supports Android, is progressively expanding into Kotlin Multiplatform (KMP), and allows seamless custom server integration.
 
 ---
 
-## Supported Servers
+## ✅ Features
 
-1. **Google Drive**
-2. **Mediafire**
-3. **Streamtape**
-4. **PixelDrain**
-5. **Okru**
-6. **StreamWish**
-7. **Voe**
-8. **Senvid**
-9. **Vihide**
-10. **Hexload**
-11. **YourUpload**
-12. **Facebook**
-13. **XTwitter**
-14. **LuluStream**
-15. **Mp4Upload**
-16. **Uqload**
-17. **Mixdrop**
-18. **Doodstream**
+- **Custom server integration** — Build and plug in your own streaming providers.
+- **Coroutine-based architecture** — Async-first, highly scalable extraction logic.
+- **Transparent HTTP client injection** — Works with both OkHttp and Ktor.
+- **Custom error types** — Intuitive error flow through `InvalidServerException` and `Error` enums.
+- **Flexible cookie management** — Transparent for OkHttp, configurable for Ktor.
 
 ---
 
-## Robot Servers
+## 🔄 Compatibility Table
 
-> **Note**: These servers require the `moongetter-core-robot` dependency and the respective platform Robot API. For Android, use the `moongetter-android-robot` library. General Kotlin support is under development.
+| Feature                | Android | Kotlin | Kotlin Multiplatform |
+|------------------------|:-------:|:------:|:--------------------:|
+| Core Library           |    ✅    |   ✅    |       ⏳ (Planned)       |
+| Robot Servers API      |    ✅    |   ⚠️    |       ⏳ (Planned)    |
+| Server Implementations |    ✅    |   ✅    |       ⏳ (Planned)    |
 
-1. **Fireload[Deprecated]**
-2. **Vidguard**
-3. **1CloudFile**
-4. **Filemoon**
-
-### TO-DO Servers
-
-1. **GoodStream**
-2. **Gofile**
-3. **Abyss**
+> ✅ = Supported / ⚠️ = Limited / ⏳ = In development
 
 ---
 
-## Installation (Gradle)
+## 🌐 Supported Servers (Core)
 
-Add JitPack to your repositories:
+> ✅ Actively maintained / 💥 Deprecated
 
-```groovy
+- ✅ Google Drive
+- ✅ Mediafire
+- ✅ Streamtape
+- ✅ PixelDrain
+- ✅ Okru
+- ✅ StreamWish
+- 💥 Voe *(Deprecated)*
+- ✅ Senvid
+- ✅ Vihide
+- ✅ Hexload
+- ✅ YourUpload
+- ✅ Facebook
+- ✅ XTwitter
+- ✅ LuluStream
+- ✅ Mp4Upload
+- ✅ Uqload
+- ✅ Mixdrop
+- ✅ Doodstream
+- ✅ Vidguard *(now part of core servers, no longer a robot)*
+- ✅ Filemoon
 
+---
+
+## 🤖 Robot Servers *(Optional)*
+
+> These require the `moongetter-core-robot` and a platform Robot API. Currently only Android is supported.
+
+- 💥 Fireload *(Deprecated)*
+- ✅ 1CloudFile
+
+**Coming Soon:** GoodStream, Gofile, Abyss
+
+---
+
+## ☕ Installation (Gradle)
+
+```kotlin
 repositories {
     maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-    // required
+    // Required core logic
     implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
-    // required only if you are using robot servers
-    implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
-    // contains the whole servers, aside from robot servers
+
+    // Choose your HTTP client
+    implementation("com.github.darkryh.MoonGetter:moongetter-client-okhttp:$version") // OkHttp (Default for Android)
+    // OR
+    implementation("com.github.darkryh.MoonGetter:moongetter-client-ktor:$version")   // Ktor (for multiplatform or coroutine preference)
+
+    // Optional: Only for Ktor, cookie manager
+    implementation("com.github.darkryh.MoonGetter:moongetter-client-cookie-java-net:$version")
+
+    // Optional: Full server support
     implementation("com.github.darkryh.MoonGetter:moongetter-servers:$version")
-    // contains the whole robot servers
+
+    // Optional: Robot support (Android only for now)
+    implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
-    
-    // required only if you are using robot servers and using for Android Platform
     implementation("com.github.darkryh.MoonGetter:moongetter-android-robot:$version")
 
-    // Specific server implementations in case of need some of them
+    // Optional: Individual servers
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamwish:$version")
 }
-```  
-# Example of Use Case
+```
+
+---
+
+## 🧐 Client & Cookie Management Integration
+
+| Client Library     | Module                                       | Cookie Management                 | KMP Support        |
+|-------------------|----------------------------------------------|-----------------------------------|--------------------|
+| **OkHttp**         | `moongetter-client-okhttp`                   | ✅ Built-in                        | ⏳ Not Supported    |
+| **Ktor**           | `moongetter-client-ktor`                     | ⚠️ Manual setup required           | ✅ Experimental     |
+| **JavaNetCookieManager** | `moongetter-client-cookie-java-net`    | ✅ (Only for Ktor, optional)       | ⏳ Planned         |
+
+> ✅ = Supported / ⚠️ = Manual setup / ⏳ = Coming soon
+
+**Note**:
+- **OkHttp** has **built-in cookie support**, no setup needed.
+- **Ktor** requires you to explicitly inject cookie management (e.g., `JavaNetCookieManagement`).
+
+Example with Ktor:
+```kotlin
+MoonGetter.Builder()
+    .setClient(
+        KtorMoonClient(
+            engineFactory = CIO,
+            cookieManagement = JavaNetCookieManagement()
+        )
+    )
+```
+
+Example with OkHttp:
+```kotlin
+MoonGetter.Builder()
+    .setClient(
+        OkHttpClient()
+    )
+```
+
+---
+
+## 🚀 Example Usage
+
+### ViewModel with coroutine logic:
 ```kotlin
 class MyViewModel : ViewModel() {
 
-    private val engine : Engine = Engine.Builder()
+    private val engine = Engine.Builder()
         .onCore(
             engines = arrayOf(
                 Mp4UploadFactory,
                 FilemoonFactory,
                 StreamtapeFactory,
                 StreamwishFactory,
-                //YourCustomServerFactory recommended use object
+                // CustomServerFactory (recommended to use `object`)
             )
         )
-        // Use this only if you want to use Robot-Servers
         .onRobot(
             AndroidRobot
                 .Builder()
-                .onContext(
-                    context = /*context*/ passed in some way DI recommended
-                )
+                .onContext(/* appContext */)
                 .build()
-            // Note for the moment the library just provide an AndroidRobot Api
-            // for android platform, still todo for Kotlin in General
         )
         .build()
 
     fun getMediaStreams(url: String) = viewModelScope.launch(Dispatchers.IO) {
         try {
-
-            val server : Server? = MoonGetter
+            val server = MoonGetter
                 .Builder()
-                .setTimeout(8000)
-                .setEngine(engine)
-                .setHeaders(
-                    mapOf(
-                        "User-Agent" to "Mozilla/5.0"
+                .setClient(
+                    KtorMoonClient(
+                        engineFactory = CIO,
+                        cookieManagement = JavaNetCookieManagement()
                     )
                 )
+                .setTimeout(8000)
+                .setEngine(engine)
+                .setHeaders(mapOf("User-Agent" to "Mozilla/5.0"))
                 .get(url)
-            
-            val streamsResult = server.videos
 
-        }
-        catch (e : InvalidServerException) { 
-            e.printStackTrace()
-        }
-        catch (e : IllegalArgumentException) {
-            e.printStackTrace()
-        }
-        catch (e : RuntimeException) {
-            e.printStackTrace()
-        }
-        catch (e : IOException) {
+            val streams = server?.videos
+        } catch (e: InvalidServerException) {
+            Log.e("MoonGetter", "Invalid: ${e.message}", e)
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 }
 ```
 
-# Example to add Your Own Custom Server
+---
 
-### Creating your CustomServer Class
+## 🛠 Add Your Own Custom Server
+
+### Custom Server Class
 ```kotlin
-import com.ead.lib.moongetter.models.Server
-import com.ead.lib.moongetter.models.Video
-
 class CustomServer(
-    url :String,
-    client : OkHttpClient,
-    headers : HashMap<String,String>,
+    url: String,
+    client: MoonClient,
+    headers: HashMap<String, String>,
     configData: Configuration.Data
-) : Server(url,client,headers,configData) {
+) : Server(url, client, headers, configData) {
 
-    private val urlRegex =  "Regex example this is not really necesary".toRegex()
+    private val urlRegex =  """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""".toRegex()
 
-    override var url: String = urlRegex.find(url)?.groupValues?.get(1) ?:
-    throw InvalidServerException(Resources.invalidProcessInExpectedUrlEntry(name), Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY)
+    override var url: String = urlRegex.find(url)?.groupValues?.get(1)
+        ?: throw InvalidServerException(
+            Resources.invalidProcessInExpectedUrlEntry(name),
+            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY
+        )
 
     override suspend fun onExtract(): List<Video> {
-        val response = client
-            .newCall(GET())
-            .await()
+        val response = client.GET()
 
-        if (!response.isSuccessful) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.code)
+        if (!response.isSuccess) throw InvalidServerException(
+            Resources.unsuccessfulResponse(name),
+            Error.UNSUCCESSFUL_RESPONSE,
+            response.statusCode
+        )
 
         return listOf(
             Video(
                 quality = DEFAULT,
                 url = PatternManager.singleMatch(
-                    string =  response.body?.string().toString(),
-                    regex =  "<source src=\"(.*?)\""
-                ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+                    string = response.body.asString(),
+                    regex = "<source src=\"(.*?)\""
+                ) ?: throw InvalidServerException(
+                    Resources.expectedResponseNotFound(name),
+                    Error.EXPECTED_RESPONSE_NOT_FOUND
+                )
             )
         )
     }
 }
 ```
 
-### Creating your CustomServerFactory
-You have to provide an object typed as Server.Factory
+### Custom Server Factory
 ```kotlin
 object CustomServerFactory : Server.Factory {
-    override val belongedClass: Class<out Server> = CustomServer::class.java
-    override val pattern: String = """your regex to identify"""
+    override val belongedClass = CustomServer::class.java
+    override val pattern = "your regex here"
 }
 ```
 
-### Integrating your CustomServer into MoonGetter
-You have to provide a an object typed as Server.Factory
-```kotlin
-class MyViewModel : ViewModel() {
+---
 
-    private val engine : Engine = Engine.Builder()
-        .onCore(
-            engines = arrayOf(
-                CustomServerFactory,
-                /**
-                 * others custom or supported servers OkruFactory,FilemoonFactory, etc
-                 */
-            )
-        )
-        .build()
+## 🧪 Requests
 
-    fun getMediaStreams(url: String) = viewModelScope.launch(Dispatchers.IO) {
-        try {
+- `get(url: String)`: Retrieves a `Server?` for the given URL.
+- `get(urls: List<String>)`: Retrieves a `List<Server>` for multiple URLs.
+- `getUntilFindResource(urls: List<String>)`: Stops at the first valid `Server` found.
 
-            val server : Server? = MoonGetter
-                .Builder()
-                .setEngine(engine)
-                .get(url)
+---
 
-            val streamsResult = server.videos
+## 🤝 Want to Collaborate?
+If you'd like to contribute or propose a new feature, feel free to reach out via [X / Twitter](https://x.com/Darkryh) @Darkryh or open a PR/request.
 
-        }
-        catch (e : InvalidServerException) {
-            e.printStackTrace()
-        }
-        catch (e : IllegalArgumentException) {
-            e.printStackTrace()
-        }
-        catch (e : RuntimeException) {
-            e.printStackTrace()
-        }
-        catch (e : IOException) {
-            e.printStackTrace()
-        }
-    }
-}
-```
-# Parameters
+---
 
-- **url**: URL to connect to and get a nullable server.
-- **urls**: URLs to connect to and get a server list or a nullable server.
-
-# Requests
-
-- **get(url : String)**: Makes a request to get a nullable server from the `url` parameter.
-- **get(urls : List<String>)**: Makes a request to get a list of servers from the `urls` parameter.
-- **getUntilFindResource()**: From the `urls` parameter, makes requests to find the first possible server and stops when one is found. If none is found, returns null.
-
-# Want to collaborate
-if you want to help or collaborate, feel free to contact me on X account @Darkryh or just make a request.
+MoonGetter is in active development to expand KMP support. Swift/iOS support is **coming soon**.

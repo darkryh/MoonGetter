@@ -3,6 +3,9 @@ package com.ead.project.moongetter.app
 import com.ead.lib.moongetter.MoonGetter
 import com.ead.lib.moongetter.abyss.factory.AbyssFactory
 import com.ead.lib.moongetter.android.robot.AndroidRobot
+import com.ead.lib.moongetter.client.cookie.java.net.JavaNetCookieManagement
+import com.ead.lib.moongetter.client.ktor.KtorMoonClient
+import com.ead.lib.moongetter.client.okhttp.OkHttpClient
 import com.ead.lib.moongetter.doodstream.factory.DoodstreamFactory
 import com.ead.lib.moongetter.facebook.factory.FacebookFactory
 import com.ead.lib.moongetter.filemoon.factory.FilemoonFactory
@@ -32,6 +35,7 @@ import com.ead.lib.moongetter.yourupload.factory.YourUploadFactory
 import com.ead.project.moongetter.domain.custom_servers.sendvid_modified.factory.SenvidModifiedFactory
 import com.ead.project.moongetter.domain.custom_servers.test.las_estrellas.factory.LasEstrellasFactory
 import com.ead.project.moongetter.presentation.main.MainViewModel
+import io.ktor.client.engine.cio.CIO
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -88,10 +92,11 @@ val appModule = module {
     single<Factory.Builder> {
         MoonGetter
             .Builder()
-            .setTimeout(12000)
-            .setEngine(
-                engine = get(),
+            .setClient(
+                client = OkHttpClient()
             )
+            .setTimeout(timeoutMillis = 12000)
+            .setEngine(engine = get())
     }
     viewModel<MainViewModel> {
         MainViewModel(

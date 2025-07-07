@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.models
+package com.ead.lib.moongetter.client.models
 
 class Configuration {
     data class Data(
