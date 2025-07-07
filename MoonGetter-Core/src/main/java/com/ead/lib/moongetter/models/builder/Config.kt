@@ -1,72 +1,62 @@
 package com.ead.lib.moongetter.models.builder
 
-import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
 
+/**
+ * Configuration holder class for network operations such as timeouts, client, and engines.
+ */
 class Config(
-    builder : Builder
+    val client: MoonClient?,
+    val configData: Configuration.Data,
+    val factory: Factory.Builder
 ) {
 
     /**
-     * The config set on the builder
+     * Builder class for constructing [Config] with a fluent builder pattern.
      */
-    @get:JvmName("configData") val configData: Configuration.Data = builder.configData
+    class Builder {
 
-
-    /**
-     * The factory of the server to apply the configurations.
-     */
-    @get:JvmName("factory") val factory: Factory.Builder = builder.factory
-
-    class Builder() {
+        var client: MoonClient? = null
+        var configData: Configuration.Data = Configuration.Data()
+        var factory: Factory.Builder = Factory.Builder()
 
         /**
-         * Internal variable to store the timeout of the server to connect to.
+         * Sets the timeout configuration.
+         *
+         * @param timeoutMillis Timeout value in milliseconds.
+         * @return Self reference for chaining.
          */
-        internal var configData : Configuration.Data = Configuration.Data()
-
-
-        /**
-         * Internal variable to store the factory of the server to apply the configurations.
-         */
-        internal var factory : Factory.Builder = Factory.Builder()
-
-
-        /**
-         * Setter to provide timeout configurations.
-         */
-        fun setTimeout(timeoutMillis : Long) = apply {
-            this.configData = this.configData.copy(timeout = timeoutMillis )
+        fun setTimeout(timeoutMillis: Long) = apply {
+            this.configData = this.configData.copy(timeout = timeoutMillis)
         }
 
-
         /**
-         * Setter to provide the engines customs or supported server
+         * Injects the engine to handle resource resolution and scraping logic.
+         *
+         * @param engine The engine to be used.
+         * @return A [Factory.Builder] instance pre-configured.
          */
-        fun setEngine(engine : Engine) : Factory.Builder {
-
-
-            /**
-             * Injects the config set on the builder
-             */
+        fun setEngine(engine: Engine): Factory.Builder {
             factory.configData = this.configData
-
-
-            /**
-             * Injects the factory of the server to apply the configurations.
-             */
             factory.engine = engine
-
-
-            /**
-             * Returns the factory of the server to apply the configurations.
-             */
+            factory.client = client
+            factory.client?.initConfigurationData(this.configData)
             return factory
         }
 
-
-        internal constructor(config : Config) : this() {
+        /**
+         * Copies a [Config] instance into the builder.
+         */
+        constructor(config: Config) {
+            this.client = config.client
             this.configData = config.configData
             this.factory = config.factory
         }
+
+        /**
+         * Default constructor.
+         */
+        constructor()
     }
 }

@@ -1,6 +1,6 @@
 package com.ead.lib.moongetter
 
-import com.ead.lib.moongetter.models.builder.Config
+import com.ead.lib.moongetter.models.builder.Client
 import com.ead.lib.moongetter.models.builder.Initializer
 
 /**
@@ -22,7 +22,7 @@ open class MoonGetter {
          *
          * The Request.Builder object.
          */
-        fun Builder() : Config.Builder {
+        fun Builder() : Client.Builder {
             return Initializer.Builder()
                 .initialize()
         }

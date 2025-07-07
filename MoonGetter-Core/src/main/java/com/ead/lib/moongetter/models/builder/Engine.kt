@@ -3,79 +3,77 @@ package com.ead.lib.moongetter.models.builder
 import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server
 
+/**
+ * Represents an engine that handles how the library communicates with streaming sources.
+ * This includes the list of server factories and an optional robot interface to simulate browser behavior.
+ */
 class Engine(
-    builder : Builder
+    val servers: Array<Server.Factory>,
+    val robot: Robot?
 ) {
 
     /**
-     * The list of servers to connect to when the programmer provide his own servers.
+     * Builder for configuring and constructing [Engine] instances.
      */
-    @get:JvmName("servers") val servers: Array<Server.Factory> = builder.servers
-
-    /**
-     * The robot to handle browser operations.
-     */
-    @get:JvmName("robot") val robot: Robot? = builder.robot
-
-
-    class Builder() {
-
+    class Builder {
 
         /**
-         * Internal variable to store the list of servers to connect to when the programmer provide his own servers.
+         * Internal array of server factories provided by the user.
          */
-        internal var servers : Array<Server.Factory> = emptyArray()
+        internal var servers: Array<Server.Factory> = emptyArray()
 
         /**
-         * Internal variable to store the robot to handle browser operations.
+         * Optional robot interface for handling headless browser automation.
          */
-        internal var robot : Robot? = null
-
+        internal var robot: Robot? = null
 
         /**
-         * Setter for the programmer to engine servers.
+         * Sets the array of engine server factories that will be used to resolve streaming sources.
          *
-         * example:
+         * Example usage:
+         * ```kotlin
+         * onCore(arrayOf(OkruFactory(), FacebookFactory(), CustomFactory()))
+         * ```
          *
-         *
-         * onEngine(
-         *
-         * arrayOf(
-         *
-         *      OkruFactory : Server.Factory,
-         *      FacebookFactory : Server.Factory,
-         *      XTwitterFactory : Server.Factory,
-         *      CustomServerFactory : Server.Factory
-         *
-         *      )
-         *
-         * )
-         *
-         * provide the configuration to implement your own or supported servers.
+         * @param engines An array of server factories.
+         * @return Self reference for chaining.
          */
-        fun onCore(engines : Array<Server.Factory>) = apply {
+        fun onCore(engines: Array<Server.Factory>) = apply {
             this.servers = engines
         }
 
         /**
-         * Setter for the programmer to provide robot interface
+         * Sets the robot interface to control headless browsing or DOM interactions if needed.
+         *
+         * @param robot The robot implementation or null.
+         * @return Self reference for chaining.
          */
-        fun onRobot(robot : Robot?) = apply {
+        fun onRobot(robot: Robot?) = apply {
             this.robot = robot
         }
 
-
         /**
-         * Build the engine with the programmer configuration.
+         * Builds and returns an [Engine] with the current configuration.
          */
-        fun build() = Engine(this)
-
+        fun build(): Engine = Engine(this)
 
         /**
-         * Internal constructor that behave as a builder pattern.
+         * Internal constructor used to copy an existing engine configuration.
          */
         internal constructor(engine: Engine) : this() {
             this.servers = engine.servers
+            this.robot = engine.robot
         }
+
+        /** Default constructor. */
+        constructor()
     }
-}
+
+    /**
+     * Secondary constructor for internal use to accept a builder instance.
+     */
+    constructor(builder: Builder) : this(
+        servers = builder.servers,
+        robot = builder.robot
+    )
+} // End of Engine class

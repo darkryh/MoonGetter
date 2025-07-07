@@ -51,6 +51,10 @@ include(":MoonGetter-Servers")
 include(":MoonGetter-Servers-Robot")
 
 include(":MoonGetter-Android-Robot")
+
 include(":MoonGetter-Client")
 include(":MoonGetter-Client-OkHttp")
 include(":MoonGetter-Client-Ktor")
+
+include(":MoonGetter-Client-Cookie-Managment")
+include(":MoonGetter-Client-Cookie-Java-NET")

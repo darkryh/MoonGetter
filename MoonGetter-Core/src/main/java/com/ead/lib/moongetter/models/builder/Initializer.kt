@@ -1,39 +1,39 @@
 package com.ead.lib.moongetter.models.builder
 
+/**
+ * Entry point for initializing the MoonGetter library.
+ * Uses a builder pattern to construct a customizable connection setup.
+ */
 class Initializer(
-    builder : Builder
+    val client: Client.Builder
 ) {
 
     /**
-     * The request configuration of the connection.
+     * Builder class for constructing [Initializer] instances.
+     * Allows client injection and connection setup.
      */
-    @get:JvmName("config") val config: Config.Builder = builder.config
+    class Builder {
 
-    class Builder() {
-
-
-        /**
-         * Internal variable to store the request configuration of the connection.
-         */
-        internal var config : Config.Builder = Config.Builder()
-
-
+        /** Internal storage for the request configuration builder instance. */
+        var client: Client.Builder
 
         /**
-         * Initializes a new Request.Builder object with the provided context.
-         *
-         * Params:
-         *
-         * context - The context of the application.
-         *
-         * Returns:
-         *
-         * The Request.Builder object.
+         * Default constructor. Initializes an empty client builder.
          */
-        fun initialize() : Config.Builder { return config }
-
-        internal constructor(initializer: Initializer) : this() {
-            this.config = initializer.config
+        constructor() {
+            client = Client.Builder()
         }
+
+        /**
+         * Secondary constructor. Initializes the builder from an existing [Initializer].
+         */
+        constructor(initializer: Initializer) {
+            client = initializer.client
+        }
+
+        /**
+         * Returns the [Client.Builder] for further configuration.
+         */
+        fun initialize(): Client.Builder = client
     }
 }

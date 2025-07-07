@@ -1,7 +1,7 @@
 package com.ead.lib.moongetter.core
 
 import com.ead.lib.moongetter.client.MoonClient
-import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.error.Error
@@ -17,7 +17,7 @@ import java.io.IOException
  */
 internal object MoonFactory {
 
-    private val moonClient by lazy { MoonClient() }
+    private var _moonClientInstance : MoonClient?= null
 
     /**
      * Identify the server from a url
@@ -129,10 +129,14 @@ internal object MoonFactory {
         /**
          * @param configData that's get configurations set in the MoonGetter Builder
          */
-        configData: Configuration.Data
+        configData: Configuration.Data,
+        /**
+         * @param client that's provided in the MoonGetter Builder
+         */
+        client: MoonClient,
         /**
          * return a nullable server
-         */,
+         */
     ) : Server? {
 
 
@@ -146,7 +150,7 @@ internal object MoonFactory {
             url = url,
             headers = headers,
             configData = configData,
-            client = moonClient.httpClient,
+            client = getSingleton(client),
             robot = robot
         )
 
@@ -213,7 +217,11 @@ internal object MoonFactory {
         /**
          * @param configData that's get configurations set in the MoonGetter Builder
          */
-        configData: Configuration.Data
+        configData: Configuration.Data,
+        /**
+         * @param client that's provided in the MoonGetter Builder
+         */
+        client: MoonClient,
         /**
          * return a list of servers
          */
@@ -235,7 +243,7 @@ internal object MoonFactory {
                     /**
                      * create the server using [create]
                      */
-                    val server = create(url, serversFactory, robot, headers, configData)
+                    val server = create(url, serversFactory, robot, headers, configData, getSingleton(client))
 
                     /**
                      * In case of null return to next cycle
@@ -297,7 +305,11 @@ internal object MoonFactory {
         /**
          * @param configData that's get configurations set in the MoonGetter Builder
          */
-        configData: Configuration.Data
+        configData: Configuration.Data,
+        /**
+         * @param client that's provided in the MoonGetter Builder
+         */
+        client: MoonClient,
         /**
          * return a nullable server
          */
@@ -313,7 +325,7 @@ internal object MoonFactory {
                 /**
                  * create the server using [create]
                  */
-                val server = create(url, serversFactory, robot, headers, configData)
+                val server = create(url, serversFactory, robot, headers, configData, getSingleton(client))
                 /**
                  * if resource is founded return the server
                  */
@@ -346,5 +358,10 @@ internal object MoonFactory {
          * return null if none of the servers injected are founded
          */
         return null
+    }
+
+
+    private fun getSingleton(client: MoonClient) : MoonClient {
+        return _moonClientInstance ?: client.also { _moonClientInstance = it }
     }
 }

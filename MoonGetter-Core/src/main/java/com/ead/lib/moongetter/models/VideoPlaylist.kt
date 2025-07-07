@@ -1,13 +1,12 @@
 package com.ead.lib.moongetter.models
 
-import io.ktor.http.Headers
 import java.net.URI
 
 @Suppress("unused_parameter")
 data class VideoPlaylist(val url: String,
                          val quality: String,
                          var videoUrl: String?,
-                         val headers: Headers? = null,
+                         val headers: HashMap<String, String>? = null,
                          val subtitleTracks: List<Track> = emptyList(),
                          val audioTracks: List<Track> = emptyList()
 ) {
@@ -15,5 +14,5 @@ data class VideoPlaylist(val url: String,
                 quality: String,
                 videoUrl: String?,
                 uri: URI? = null,
-                headers: Headers? = null) : this(url, quality, videoUrl, headers)
+                headers: HashMap<String, String>? = null) : this(url, quality, videoUrl, headers)
 }

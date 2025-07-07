@@ -4,6 +4,8 @@ object Resources {
 
     const val NO_PARAMETERS_TO_WORK: String = "No parameters to work"
 
+    const val CLIENT_NOT_PROVIDED: String = "Client not provided"
+
     const val ENGINES_NOT_PROVIDED: String = "Engines hans´t provided"
 
     const val NOT_SERVERS_FOUND: String = "Not server's found"
@@ -15,7 +17,6 @@ object Resources {
     fun invalidProcessInExpectedUrlEntry(name : String): String {
         return "Invalid process in expected url entry: $name"
     }
-
 
     fun emptyOrNullResponse(name : String): String {
         return "Empty or null response: $name"
