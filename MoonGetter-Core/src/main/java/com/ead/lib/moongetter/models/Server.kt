@@ -2,23 +2,17 @@
 
 package com.ead.lib.moongetter.models
 
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
+import com.ead.lib.moongetter.client.request.HttpMethod
+import com.ead.lib.moongetter.client.request.Request
+import com.ead.lib.moongetter.client.response.Response
 import com.ead.lib.moongetter.core.Pending
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import com.ead.lib.moongetter.utils.toParameters
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.request.forms.FormDataContent
-import io.ktor.client.request.get
-import io.ktor.client.request.headers
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.contentType
-import io.ktor.http.takeFrom
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.serializer
 import java.io.IOException
 
 open class Server(
@@ -29,7 +23,7 @@ open class Server(
     /**
      * @param @client the client of okhttp
      */
-    protected val client : HttpClient,
+    protected val client : MoonClient,
     /**
      * @param @headers the headers of the server
      */
@@ -88,18 +82,6 @@ open class Server(
     internal fun setVideos(videos: List<Video>) = this._videos.addAll(videos)
 
 
-    init {
-        // Apply default timeout settings to the client
-        client.config {
-            install(HttpTimeout) {
-                requestTimeoutMillis = configData.timeout
-                connectTimeoutMillis = configData.timeout
-                socketTimeoutMillis = configData.timeout
-            }
-        }
-    }
-
-
     /**
      * onExtract function when the solving or scraping process is getting handle
      *
@@ -133,63 +115,53 @@ open class Server(
      * @param requestUrl optional override path or full URL
      * @param overrideHeaders headers to merge with base headers
      * @param queryParams query parameters to append
-     * @return response body deserialized as [HttpResponse]
+     * @return response body deserialized as [Response]
      */
-    protected suspend fun HttpClient.GET(
+    protected suspend fun MoonClient.GET(
         requestUrl: String? = null,
         overrideHeaders: Map<String, String>? = null,
         queryParams: Map<String, String>? = null
-    ): HttpResponse = withContext(Dispatchers.IO) {
-        get {
-            headers {
-                this@Server.headers
-                    .filterKeys { it !in forbiddenHeaders }
-                    .forEach { (key, value) -> set(key, value) }
-
-                overrideHeaders?.filterKeys { it !in forbiddenHeaders }?.forEach { (key, value) ->
-                    set(key, value)
-                }
-            }
-            url {
-                val url = requestUrl ?: this@Server.url
-
-                takeFrom(url)
-
-                queryParams?.forEach { (key, value) -> parameters[key] = value }
-            }
-        }
+    ): Response = withContext(Dispatchers.IO) {
+        this@GET.request<String>(
+            Request(
+                method = HttpMethod.GET,
+                url = requestUrl ?: this@Server.url,
+                headers = headers.let { headers ->
+                    if (overrideHeaders == null) headers
+                    else headers + overrideHeaders
+                },
+                queryParams = queryParams ?: emptyMap(),
+                asFormUrlEncoded = false
+            )
+        )
     }
 
     /**
      * Perform a POST form request.
      * @param requestUrl optional override url or full URL
      * @param overrideHeaders headers to merge
-     * @return response body deserialized as [HttpResponse]
+     * @return response body deserialized as [Response]
      */
-    suspend inline fun <reified T : Any> HttpClient.POST(
+    suspend inline fun <reified T : Any> MoonClient.POST(
         requestUrl: String? = null,
         overrideHeaders: Map<String, String>? = null,
         body: T,
         asFormUrlEncoded: Boolean = false
-    ): HttpResponse = withContext(Dispatchers.IO) {
-        post {
-            headers {
-                this@Server.headers.forEach { (key, value) -> set(key, value) }
-                overrideHeaders?.forEach { (key, value) -> set(key, value) }
-            }
+    ): Response = withContext(Dispatchers.IO) {
+        val serializer: KSerializer<T> = serializer()
 
-            if (asFormUrlEncoded) {
-                contentType(ContentType.Application.FormUrlEncoded)
-                setBody(FormDataContent(toParameters(body)))
-            } else {
-                contentType(ContentType.Application.Json)
-                setBody(body)
-            }
-
-            url {
-                takeFrom(requestUrl ?: this@Server.url)
-            }
-        }
+        this@POST.request(
+            Request(
+                method = HttpMethod.POST,
+                url = requestUrl ?: this@Server.url,
+                headers = headers.let { defaultHeaders ->
+                    overrideHeaders?.let { defaultHeaders + it } ?: defaultHeaders
+                },
+                body = body,
+                asFormUrlEncoded = asFormUrlEncoded,
+                serializer = serializer
+            )
+        )
     }
 
     companion object {
@@ -204,13 +176,6 @@ open class Server(
          * Default name of video result
          */
         const val DEFAULT = "Default"
-
-        val forbiddenHeaders = setOf(
-            HttpHeaders.TransferEncoding,
-            HttpHeaders.ContentLength,
-            HttpHeaders.Host,
-            HttpHeaders.Connection
-        )
     }
 
 

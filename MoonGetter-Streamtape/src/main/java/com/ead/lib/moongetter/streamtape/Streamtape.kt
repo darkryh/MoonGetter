@@ -1,19 +1,17 @@
 package com.ead.lib.moongetter.streamtape
 
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
-import io.ktor.client.HttpClient
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.isSuccess
 
 class Streamtape(
     url : String,
-    client: HttpClient,
+    client: MoonClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -22,9 +20,9 @@ class Streamtape(
         val response = client
             .GET()
 
-        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
+        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
-        val body = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+        val body = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
         return listOf(
             Video(

@@ -1,6 +1,6 @@
 package com.ead.lib.moongetter.mp4upload
 
-import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.Values
 import kotlinx.coroutines.runBlocking

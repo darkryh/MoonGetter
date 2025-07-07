@@ -2,9 +2,10 @@
 
 package com.ead.lib.moongetter.hexload
 
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.core.system.extensions.replaceDomainWith
-import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
@@ -13,13 +14,10 @@ import com.ead.lib.moongetter.utils.JsonObject
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.targetUrl
 import com.ead.lib.moongetter.utils.Values.targetUrl2
-import io.ktor.client.HttpClient
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.isSuccess
 
 class Hexload(
     url : String,
-    client: HttpClient,
+    client: MoonClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -31,10 +29,10 @@ class Hexload(
         var response = client
             .GET()
 
-        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
+        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
         val dataPattern = """data:\s*\{\s*(.*?)\s*\}""".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val dataContent = dataPattern.find((response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }))?.groupValues?.get(1)
+        val dataContent = dataPattern.find((response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }))?.groupValues?.get(1)
 
         response = client
             .POST(
@@ -46,9 +44,9 @@ class Hexload(
                 ).ifEmpty { throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND) }
             )
 
-        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
+        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
-        val responseBody = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+        val responseBody = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
         return listOf(
             Video(

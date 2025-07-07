@@ -1,24 +1,19 @@
 package com.ead.lib.moongetter.doodstream
 
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
-import com.ead.lib.moongetter.utils.toHashMap
 import com.ead.lib.moongetter.utils.toHttpUrl
-import io.ktor.client.HttpClient
-import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.request
-import io.ktor.http.Headers
-import io.ktor.http.isSuccess
 
 
 class Doodstream(
     url : String,
-    client: HttpClient,
+    client: MoonClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
@@ -30,11 +25,11 @@ class Doodstream(
         var response = client
             .GET()
 
-        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
+        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
-        var body = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+        var body = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
-        val host = response.request.url.host
+        val host = response.url.host
 
         val referer = this@Doodstream.url.replace(hostTarget, host)
 
@@ -58,24 +53,22 @@ class Doodstream(
             )
         )
 
-        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
+        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
-        body = response.bodyAsText().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+        body = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
 
         response = client.GET(
-            overrideHeaders = requestHeaders(response.request.headers, host)
+            overrideHeaders = requestHeaders(response.headers, host)
         )
 
-        if (!response.status.isSuccess()) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.status.value)
+        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
         return listOf(
             Video(
                 quality = DEFAULT,
                 url = (body + getRandomBuilderString() + token + (System.currentTimeMillis() / 1000L)),
                 headers = response
-                    .request
                     .headers
-                    .toHashMap()
             )
         )
     }
@@ -87,9 +80,9 @@ class Doodstream(
             .joinToString("")
     }
 
-    private fun requestHeaders(headers: Headers, host: String) : HashMap<String,String> {
+    private fun requestHeaders(headers: Map <String, String>, host: String) : HashMap<String,String> {
         return HashMap(
-            headers.toHashMap()
+            headers
                 .plus("User-Agent" to  "MoonGetter")
                 .plus("Referer" to "https://$host/")
         )

@@ -1,7 +1,8 @@
 package com.ead.project.moongetter.domain.custom_servers.test.las_estrellas
 
+import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.core.Resources
-import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
@@ -12,7 +13,7 @@ import io.ktor.http.isSuccess
 
 class LasEstrellas(
     url :String,
-    client : HttpClient,
+    client : MoonClient,
     headers : HashMap<String,String>,
     configData: Configuration.Data
 ) : Server(url,client,headers,configData) {
@@ -30,13 +31,13 @@ class LasEstrellas(
         var response = client
             .GET()
 
-        if (!response.status.isSuccess()) throw InvalidServerException(
+        if (!response.isSuccess) throw InvalidServerException(
             Resources.unsuccessfulResponse(name),
             Error.UNSUCCESSFUL_RESPONSE,
-            response.status.value
+            response.statusCode
         )
 
-        var responseBody = response.bodyAsText()
+        var responseBody = response.body.asString()
 
         client.GET(requestUrl = "https://auth.univision.com/verify-auth")
 
@@ -56,7 +57,7 @@ class LasEstrellas(
                 )
             )
 
-        responseBody = response.bodyAsText()
+        responseBody = response.body.asString()
 
         return regexStream.findAll(responseBody)
             .map { matchResult ->

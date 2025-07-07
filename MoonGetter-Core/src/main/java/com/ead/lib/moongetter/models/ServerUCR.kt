@@ -1,11 +1,12 @@
 package com.ead.lib.moongetter.models
 
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.utils.HttpUtil
-import io.ktor.client.HttpClient
 
 open class ServerUCR(
     url : String,
-    client: HttpClient,
+    client: MoonClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {

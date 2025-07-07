@@ -1,9 +1,9 @@
 package com.ead.lib.moongetter.robot
 
-import com.ead.lib.moongetter.models.Configuration
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Request
 import com.ead.lib.moongetter.models.Server
-import io.ktor.client.HttpClient
 import kotlinx.coroutines.CompletableDeferred
 
 /**
@@ -11,7 +11,7 @@ import kotlinx.coroutines.CompletableDeferred
  */
 open class ServerRobot(
     url : String,
-    client: HttpClient,
+    client: MoonClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {

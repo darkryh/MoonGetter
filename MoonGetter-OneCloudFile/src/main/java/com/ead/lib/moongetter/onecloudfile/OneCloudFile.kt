@@ -1,18 +1,18 @@
 package com.ead.lib.moongetter.onecloudfile
 
+import com.ead.lib.moongetter.client.MoonClient
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.core.Unstable
-import com.ead.lib.moongetter.models.Configuration
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.robot.ServerRobot
-import io.ktor.client.HttpClient
 
 @Unstable("This server is not stable for waiting download process")
 class OneCloudFile(
     url : String,
-    client: HttpClient,
+    client: MoonClient,
     headers : HashMap<String,String>,
     configData : Configuration.Data,
 ) : ServerRobot(url, client, headers, configData) {

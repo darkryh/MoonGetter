@@ -1,11 +1,9 @@
 package com.ead.lib.moongetter.utils
 
+import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.models.Server.Companion.DEFAULT
 import com.ead.lib.moongetter.models.Video
-import io.ktor.client.HttpClient
-import io.ktor.client.request.request
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.Headers
+import com.ead.lib.moongetter.utils.PlaylistUtils.Companion.VIDEO_HLS_REGEX
 import okio.IOException
 
 /**
@@ -25,8 +23,8 @@ import okio.IOException
  * @property headers     Default set of HTTP headers to send when no override is provided.
  */
 class PlaylistUtils(
-    private val client: HttpClient,
-    private val headers: Headers = emptyHeaders
+    private val client: MoonClient,
+    private val headers: Map<String, String> = emptyMap()
 ) {
 
     /**
@@ -48,8 +46,8 @@ class PlaylistUtils(
     @Throws(IOException::class)
     suspend fun extractFromHls(
         playlistUrl: String,
-        headers: Headers? = null,
-        masterHeaders: (Headers) -> Headers = { base -> generateMasterHeaders(base) }
+        headers: Map<String, String>? = null,
+        masterHeaders: (Map<String, String>) -> Map<String, String> = { base -> generateMasterHeaders(base) }
     ): List<Video> {
         return extractFromHlsProvider(playlistUrl, headers, masterHeaders)
     }
@@ -71,8 +69,8 @@ class PlaylistUtils(
      */
     private suspend fun extractFromHlsProvider(
         playlistUrl: String,
-        headers: Headers? = null,
-        masterHeaders: (Headers) -> Headers = { base -> generateMasterHeaders(base) }
+        headers: Map<String, String>? = null,
+        masterHeaders: (Map<String, String>) -> Map<String, String> = { base -> generateMasterHeaders(base) }
     ): List<Video> {
         // 1) Determine headers to send: use override if provided, else default
         val requestHeaders = masterHeaders(headers ?: this.headers)
@@ -81,7 +79,7 @@ class PlaylistUtils(
             Video(
                 quality = DEFAULT,
                 url = playlistUrl,
-                headers = requestHeaders.toHashMap()
+                headers = requestHeaders
             )
         )
 
@@ -124,12 +122,11 @@ class PlaylistUtils(
      * @param baseHeaders   The initial set of headers to modify.
      * @return              A new Headers instance with "Accept: 8" set.
     */
-    private fun generateMasterHeaders(baseHeaders: Headers): Headers =
+    private fun generateMasterHeaders(baseHeaders: Map<String, String>): Map<String, String> =
         HashMap(
             baseHeaders
-                .toHashMap()
                 .plus("Accept" to "*/*")
-        ).toHeaders()
+        )
 
     companion object {
         /**
