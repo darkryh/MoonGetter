@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="MoonGetter-JsUnpacker-Multiplatform">
+  <artifact type="jar" name="MoonGetter-JsUnpacker-Multiplatform-jvm">
     <output-path>$PROJECT_DIR$/kotlin-multiplatform-src/MoonGetter-JsUnpacker-Multiplatform/build/libs</output-path>
-    <root id="archive" name="MoonGetter-JsUnpacker-Multiplatform.jar" />
+    <root id="archive" name="MoonGetter-JsUnpacker-Multiplatform-jvm.jar" />
   </artifact>
 </component>

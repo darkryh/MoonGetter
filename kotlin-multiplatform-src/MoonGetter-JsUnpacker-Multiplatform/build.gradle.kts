@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -5,13 +7,19 @@ plugins {
 
 kotlin {
 
+    jvm {
+        withJava()
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
+    }
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
-        namespace = "com.ead.lib.moongetter.js.unpacker.multiplatform"
-        compileSdk = 36
-        minSdk = 24
+        namespace = "com.ead.lib.moongetter.js.unpacker"
+        compileSdk = 35
+        minSdk = 21
 
         withHostTestBuilder {}
         withDeviceTestBuilder {

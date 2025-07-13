@@ -45,7 +45,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(project(":MoonGetter-JsUnpacker-Multiplatform"))
+            //implementation(project(":MoonGetter-JsUnpacker-Multiplatform"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

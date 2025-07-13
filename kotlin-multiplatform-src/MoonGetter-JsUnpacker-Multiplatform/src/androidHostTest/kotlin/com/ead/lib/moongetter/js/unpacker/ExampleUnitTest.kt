@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.js.unpacker.multiplatform
+package com.ead.lib.moongetter.js.unpacker
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

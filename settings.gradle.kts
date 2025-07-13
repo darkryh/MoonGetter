@@ -48,8 +48,7 @@ include(
 )
 
 include(
-    ":MoonGetter-JsUnpacker",
-    ":MoonGetter-JsUnpacker-Multiplatform"
+    ":MoonGetter-JsUnpacker"
 )
 
 include(
@@ -87,6 +86,8 @@ include(
 )
 
 include(":MoonGetter-Android-Robot")
+
+include(":MoonGetter-JsUnpacker-Multiplatform")
 
 
 project(":MoonGetter-Core").projectDir = file("kotlin-src/MoonGetter-Core")
@@ -134,6 +135,5 @@ project(":MoonGetter-Client-Cookie-Java-NET").projectDir = file("java-src/MoonGe
 project(":MoonGetter-Client-TrustManager-Java-NET").projectDir = file("java-src/MoonGetter-Client-TrustManager-Java-NET")
 
 project(":MoonGetter-Android-Robot").projectDir = file("android-src/MoonGetter-Android-Robot")
-
 
 project(":MoonGetter-JsUnpacker-Multiplatform").projectDir = file("kotlin-multiplatform-src/MoonGetter-JsUnpacker-Multiplatform")

@@ -30,6 +30,10 @@ publishing {
 }
 
 dependencies {
+    api(project(":MoonGetter-JsUnpacker-Multiplatform")) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+    }
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mock.web.server)

@@ -1,4 +1,4 @@
-package com.ead.lib.moongetter.js.unpacker.multiplatform
+package com.ead.lib.moongetter.js.unpacker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,9 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals(
-            "com.ead.lib.moongetter.js.unpacker.multiplatform.test",
-            appContext.packageName
-        )
+        assertEquals("com.ead.lib.moongetter.js.unpacker.test", appContext.packageName)
     }
 }
