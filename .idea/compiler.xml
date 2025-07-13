@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="11">
+      <module name="MoonGetter.MoonGetter-JsUnpacker-Kotlin" target="21" />
+      <module name="MoonGetter.MoonGetter-JsUnpacker-Kotlin.main" target="21" />
+      <module name="MoonGetter.MoonGetter-JsUnpacker-Kotlin.test" target="21" />
+      <module name="MoonGetter.MoonGetter-RegexEngine" target="21" />
+      <module name="MoonGetter.MoonGetter-RegexEngine-Kotlin" target="21" />
+      <module name="MoonGetter.MoonGetter-RegexEngine-Kotlin.main" target="21" />
+      <module name="MoonGetter.MoonGetter-RegexEngine-Kotlin.test" target="21" />
+      <module name="MoonGetter.MoonGetter-RegexEngine.main" target="21" />
+      <module name="MoonGetter.MoonGetter-RegexEngine.test" target="21" />
+      <module name="MoonGetter.shared.desktopMain" target="21" />
+      <module name="MoonGetter.shared.desktopTest" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
