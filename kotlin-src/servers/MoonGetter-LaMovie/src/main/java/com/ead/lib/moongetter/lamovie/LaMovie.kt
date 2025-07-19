@@ -36,7 +36,7 @@ class LaMovie(
         val playlistUrl = PatternManager.singleMatch(
             string = JsUnpacker.unpackAndCombine(
                 response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
-            ).also { println(it) } ?: throw InvalidServerException(Resources.expectedPackedResponseNotFound(name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND),
+            )?: throw InvalidServerException(Resources.expectedPackedResponseNotFound(name), Error.EXPECTED_PACKED_RESPONSE_NOT_FOUND),
             regex = """(https://[^\s"']+\.m3u8(?:\?[^\s"']*)?)""".trimIndent()
         ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
