@@ -2,20 +2,20 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="11">
-      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.jvmMain" target="21" />
-      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.jvmTest" target="21" />
-      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.main" target="21" />
-      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.test" target="21" />
+      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.jvmMain~1" target="21" />
+      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.jvmTest~1" target="21" />
+      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.main~1" target="21" />
+      <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.test~1" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Android-Robot" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Java-NET" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Java-NET.main" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Java-NET.main~1" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Java-NET.test" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Java-NET.test~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Managment.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Managment.test~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Ktor.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Ktor.test~1" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Managment.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Cookie-Managment.test" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Ktor.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client-Ktor.test" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-OkHttp" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-OkHttp.main" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-OkHttp.main~1" target="21" />
@@ -26,14 +26,14 @@
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-TrustManager-Java-NET.main~1" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-TrustManager-Java-NET.test" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Client-TrustManager-Java-NET.test~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client-TrustManager.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client-TrustManager.test~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Client.test~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Core-Robot.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Core-Robot.test~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Core.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Core.test~1" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client-TrustManager.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client-TrustManager.test" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Client.test" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Core-Robot.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Core-Robot.test" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Core.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Core.test" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Doodstream" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Doodstream.main" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Doodstream.test" target="21" />
@@ -58,8 +58,8 @@
       <module name="kotlin-src.MoonGetter.MoonGetter-Hexload" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Hexload.main" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Hexload.test" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-JsUnpacker.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-JsUnpacker.test~1" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-JsUnpacker.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-JsUnpacker.test" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Lulustream" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Lulustream.main" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Lulustream.test" target="21" />
@@ -84,10 +84,10 @@
       <module name="kotlin-src.MoonGetter.MoonGetter-Senvid" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Senvid.main" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Senvid.test" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Servers-Robot.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Servers-Robot.test~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Servers.main~1" target="21" />
-      <module name="kotlin-src.MoonGetter.MoonGetter-Servers.test~1" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Servers-Robot.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Servers-Robot.test" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Servers.main" target="21" />
+      <module name="kotlin-src.MoonGetter.MoonGetter-Servers.test" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Streamtape" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Streamtape.main" target="21" />
       <module name="kotlin-src.MoonGetter.MoonGetter-Streamtape.test" target="21" />
@@ -150,6 +150,8 @@
       <module name="MoonGetter.MoonGetter-Servers.test" target="21" />
       <module name="MoonGetter.shared.desktopMain" target="21" />
       <module name="MoonGetter.shared.desktopTest" target="21" />
+      <module name="servers.MoonGetter.MoonGetter-LaMovie.main" target="21" />
+      <module name="servers.MoonGetter.MoonGetter-LaMovie.test" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

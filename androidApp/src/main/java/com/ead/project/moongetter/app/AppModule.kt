@@ -14,6 +14,7 @@ import com.ead.lib.moongetter.gofile.factory.GofileFactory
 import com.ead.lib.moongetter.goodstream.factory.GoodStreamFactory
 import com.ead.lib.moongetter.googledrive.factory.GoogleDriveFactory
 import com.ead.lib.moongetter.hexload.factory.HexloadFactory
+import com.ead.lib.moongetter.lamovie.factory.LaMovieFactory
 import com.ead.lib.moongetter.lulustream.factory.LulustreamFactory
 import com.ead.lib.moongetter.mediafire.factory.MediafireFactory
 import com.ead.lib.moongetter.mixdrop.factory.MixdropFactory
@@ -62,6 +63,7 @@ val appModule = module {
                     GoodStreamFactory,
                     GoogleDriveFactory,
                     HexloadFactory,
+                    LaMovieFactory,
                     LulustreamFactory,
                     MediafireFactory,
                     MixdropFactory,

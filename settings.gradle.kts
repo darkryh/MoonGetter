@@ -66,6 +66,7 @@ include(
     ":MoonGetter-Goodstream",
     ":MoonGetter-GoogleDrive",
     ":MoonGetter-Hexload",
+    ":MoonGetter-LaMovie",
     ":MoonGetter-Lulustream",
     ":MoonGetter-Mediafire",
     ":MoonGetter-Mixdrop",
@@ -111,6 +112,7 @@ project(":MoonGetter-Gofile").projectDir = file("kotlin-src/servers/MoonGetter-G
 project(":MoonGetter-Goodstream").projectDir = file("kotlin-src/servers/MoonGetter-Goodstream")
 project(":MoonGetter-GoogleDrive").projectDir = file("kotlin-src/servers/MoonGetter-GoogleDrive")
 project(":MoonGetter-Hexload").projectDir = file("kotlin-src/servers/MoonGetter-Hexload")
+project(":MoonGetter-LaMovie",).projectDir = file("kotlin-src/servers/MoonGetter-LaMovie")
 project(":MoonGetter-Lulustream").projectDir = file("kotlin-src/servers/MoonGetter-Lulustream")
 project(":MoonGetter-Mediafire").projectDir = file("kotlin-src/servers/MoonGetter-Mediafire")
 project(":MoonGetter-Mixdrop").projectDir = file("kotlin-src/servers/MoonGetter-Mixdrop")

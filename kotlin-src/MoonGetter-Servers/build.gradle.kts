@@ -35,7 +35,8 @@ dependencies {
     val modules = arrayOf(
         ":MoonGetter-Abyss", ":MoonGetter-Doodstream", ":MoonGetter-Facebook",
         ":MoonGetter-Filemoon",":MoonGetter-Goodstream", ":MoonGetter-GoogleDrive",
-        ":MoonGetter-Hexload",":MoonGetter-Lulustream",":MoonGetter-Mediafire",
+        ":MoonGetter-Hexload",":MoonGetter-Lulustream", ":MoonGetter-LaMovie",
+        ":MoonGetter-Mediafire",
         ":MoonGetter-Mixdrop", ":MoonGetter-Mp4Upload",":MoonGetter-Okru",
         ":MoonGetter-Pixeldrain", ":MoonGetter-Senvid", ":MoonGetter-Streamtape",
         ":MoonGetter-Streamwish", ":MoonGetter-Uqload", ":MoonGetter-Vihide",

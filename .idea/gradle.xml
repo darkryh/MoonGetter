@@ -36,6 +36,7 @@
             <option value="$PROJECT_DIR$/kotlin-src/servers/MoonGetter-Goodstream" />
             <option value="$PROJECT_DIR$/kotlin-src/servers/MoonGetter-GoogleDrive" />
             <option value="$PROJECT_DIR$/kotlin-src/servers/MoonGetter-Hexload" />
+            <option value="$PROJECT_DIR$/kotlin-src/servers/MoonGetter-LaMovie" />
             <option value="$PROJECT_DIR$/kotlin-src/servers/MoonGetter-Lulustream" />
             <option value="$PROJECT_DIR$/kotlin-src/servers/MoonGetter-Mediafire" />
             <option value="$PROJECT_DIR$/kotlin-src/servers/MoonGetter-Mixdrop" />
