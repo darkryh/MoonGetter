@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-okru">
+    <output-path>$PROJECT_DIR$/moongetter-okru/build/libs</output-path>
+    <root id="archive" name="moongetter-okru.jar">
+      <element id="module-output" name="MoonGetter.moongetter-okru.androidMain" />
+    </root>
+  </artifact>
+</component>

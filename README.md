@@ -89,14 +89,14 @@ dependencies {
     implementation("com.github.darkryh.MoonGetter:moongetter-client-cookie-java-net:$version")
 
     // Optional: Full server support
-    implementation("com.github.darkryh.MoonGetter:moongetter-servers:$version")
+    implementation("com.github.darkryh.MoonGetter:moongetter-server:$version")
 
     // Optional: Robot support (Android only for now)
     implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
-    implementation("com.github.darkryh.MoonGetter:moongetter-servers-robot:$version")
+    implementation("com.github.darkryh.MoonGetter:moongetter-server-robot:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-android-robot:$version")
 
-    // Optional: Individual servers
+    // Optional: Individual server
     implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
     implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")

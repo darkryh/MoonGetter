@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MoonGetter-Uqload-Multiplatform">
+    <output-path>$PROJECT_DIR$/MoonGetter-Uqload-Multiplatform/build/libs</output-path>
+    <root id="archive" name="MoonGetter-Uqload-Multiplatform.jar">
+      <element id="module-output" name="MoonGetter.MoonGetter-Uqload-Multiplatform.androidMain" />
+    </root>
+  </artifact>
+</component>

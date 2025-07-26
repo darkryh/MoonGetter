@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MoonGetter-Core-Robot-Multiplatform">
+    <output-path>$PROJECT_DIR$/kotlin-multiplatform-src/MoonGetter-Core-Robot-Multiplatform/build/libs</output-path>
+    <root id="archive" name="MoonGetter-Core-Robot-Multiplatform.jar">
+      <element id="module-output" name="MoonGetter-Core-Robot-Multiplatform.MoonGetter.MoonGetter-Core-Robot-Multiplatform.androidMain" />
+    </root>
+  </artifact>
+</component>

@@ -87,7 +87,7 @@ class MainViewModel(
                                 _event.emit(Notify(Error("Server error, try another time")))
                             }
                             MoonGetterError.REQUEST_TIMEOUT -> {
-                                _event.emit(Notify(Error("Request timeout, check internet connexion")))
+                                _event.emit(Notify(Error("Request timeout, check internet connection")))
                             }
                             MoonGetterError.UNAUTHORIZED -> {
                                 _event.emit(Notify(Error("Unauthorized request")))

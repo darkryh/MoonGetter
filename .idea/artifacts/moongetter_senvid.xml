@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-senvid">
+    <output-path>$PROJECT_DIR$/moongetter-senvid/build/libs</output-path>
+    <root id="archive" name="moongetter-senvid.jar">
+      <element id="module-output" name="MoonGetter.moongetter-senvid.androidMain" />
+    </root>
+  </artifact>
+</component>

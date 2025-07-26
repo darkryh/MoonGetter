@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MoonGetter-GoogleDrive-Multiplatform">
+    <output-path>$PROJECT_DIR$/MoonGetter-GoogleDrive-Multiplatform/build/libs</output-path>
+    <root id="archive" name="MoonGetter-GoogleDrive-Multiplatform.jar">
+      <element id="module-output" name="MoonGetter.MoonGetter-GoogleDrive-Multiplatform.androidMain" />
+    </root>
+  </artifact>
+</component>

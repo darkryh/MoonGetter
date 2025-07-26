@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="11">
+    <bytecodeTargetLevel target="21">
       <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.jvmMain~1" target="21" />
       <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.jvmTest~1" target="21" />
       <module name="kotlin-multiplatform-src.MoonGetter.MoonGetter-JsUnpacker-Multiplatform.main~1" target="21" />
@@ -118,36 +118,15 @@
       <module name="kotlin.MoonGetter.MoonGetter-Abyss" target="21" />
       <module name="kotlin.MoonGetter.MoonGetter-Abyss.main" target="21" />
       <module name="kotlin.MoonGetter.MoonGetter-Abyss.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Abyss.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Abyss.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Client-Cookie-Managment.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Client-Cookie-Managment.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Client-Ktor.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Client-Ktor.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Client-TrustManager.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Client-TrustManager.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Client.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Client.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Core-Robot.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Core-Robot.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Core.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Core.test" target="21" />
       <module name="MoonGetter.MoonGetter-JsUnpacker-Kotlin" target="21" />
       <module name="MoonGetter.MoonGetter-JsUnpacker-Kotlin.main" target="21" />
       <module name="MoonGetter.MoonGetter-JsUnpacker-Kotlin.test" target="21" />
-      <module name="MoonGetter.MoonGetter-JsUnpacker-Multiplatform" target="21" />
-      <module name="MoonGetter.MoonGetter-JsUnpacker.main" target="21" />
-      <module name="MoonGetter.MoonGetter-JsUnpacker.test" target="21" />
       <module name="MoonGetter.MoonGetter-RegexEngine" target="21" />
       <module name="MoonGetter.MoonGetter-RegexEngine-Kotlin" target="21" />
       <module name="MoonGetter.MoonGetter-RegexEngine-Kotlin.main" target="21" />
       <module name="MoonGetter.MoonGetter-RegexEngine-Kotlin.test" target="21" />
       <module name="MoonGetter.MoonGetter-RegexEngine.main" target="21" />
       <module name="MoonGetter.MoonGetter-RegexEngine.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Servers-Robot.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Servers-Robot.test" target="21" />
-      <module name="MoonGetter.MoonGetter-Servers.main" target="21" />
-      <module name="MoonGetter.MoonGetter-Servers.test" target="21" />
       <module name="MoonGetter.shared.desktopMain" target="21" />
       <module name="MoonGetter.shared.desktopTest" target="21" />
       <module name="servers.MoonGetter.MoonGetter-LaMovie.main" target="21" />

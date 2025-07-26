@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-goodstream">
+    <output-path>$PROJECT_DIR$/moongetter-goodstream/build/libs</output-path>
+    <root id="archive" name="moongetter-goodstream.jar">
+      <element id="module-output" name="MoonGetter.moongetter-goodstream.androidMain" />
+    </root>
+  </artifact>
+</component>

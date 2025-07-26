@@ -1,47 +1,49 @@
 package com.ead.project.moongetter
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import moongetter.composeapp.generated.resources.Res
-import moongetter.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ead.project.moongetter.presentation.main.MainScreen
+import com.ead.project.moongetter.presentation.main.MainViewModel
+import com.ead.project.moongetter.presentation.main.event.MainEvent
+import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { "Hello, KMP" }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+        val snackbarHostState = remember { SnackbarHostState() }
+        val viewModel = koinViewModel<MainViewModel>()
+
+        LaunchedEffect(Unit) {
+            viewModel.event.collectLatest { event ->
+                when (event) {
+                    is MainEvent.Notify -> {
+                        snackbarHostState.showSnackbar(
+                            message = event.message.data,
+                            duration = SnackbarDuration.Indefinite,
+                            withDismissAction = true
+                        )
+                    }
                 }
             }
         }
+
+        val mainScreen = viewModel.state.collectAsStateWithLifecycle()
+
+        MainScreen(
+            modifier = Modifier.fillMaxSize(),
+            snackbarHostState = snackbarHostState,
+            intent = viewModel::onIntent,
+            state = mainScreen.value
+        )
     }
 }

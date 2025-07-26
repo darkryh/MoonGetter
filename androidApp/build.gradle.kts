@@ -73,19 +73,19 @@ dependencies {
     implementation(libs.koin.android)
     testImplementation(libs.koin.test)
 
-    implementation(project(":Media3Player"))
-
-    implementation(project(":MoonGetter-Core"))
-    implementation(project(":MoonGetter-Core-Robot"))
-    implementation(project(":MoonGetter-Client-Ktor"))
-    implementation(project(":MoonGetter-Client-OkHttp"))
-    implementation(project(":MoonGetter-Client-Cookie-Java-NET"))
-    implementation(project(":MoonGetter-Client-TrustManager-Java-NET"))
-
     implementation(libs.ktor.client.cio)
 
-    implementation(project(":MoonGetter-Android-Robot"))
+    implementation(project(":Media3Player"))
+    implementation(project(":moongetter-core"))
+    implementation(project(":moongetter-core-robot"))
+    implementation(project(":moongetter-client-okhttp"))
 
-    implementation(project(":MoonGetter-Servers"))
-    implementation(project(":MoonGetter-Servers-Robot"))
+    implementation(project(":moongetter-client-cookie-java-net"))
+    implementation(project(":moongetter-client-trustmanager-java-net"))
+
+    implementation(project(":moongetter-android-robot"))
+
+    implementation(project(":moongetter-client-ktor"))
+    implementation(project(":moongetter-server-bundle"))
+    implementation(project(":moongetter-server-robot-bundle"))
 }

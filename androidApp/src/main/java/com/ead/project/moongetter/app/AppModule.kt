@@ -1,7 +1,6 @@
 package com.ead.project.moongetter.app
 
 import com.ead.lib.moongetter.MoonGetter
-import com.ead.lib.moongetter.abyss.factory.AbyssFactory
 import com.ead.lib.moongetter.android.robot.AndroidRobot
 import com.ead.lib.moongetter.client.cookie.java.net.JavaNetCookieManagement
 import com.ead.lib.moongetter.client.ktor.KtorMoonClient
@@ -9,8 +8,6 @@ import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonClientTrustM
 import com.ead.lib.moongetter.doodstream.factory.DoodstreamFactory
 import com.ead.lib.moongetter.facebook.factory.FacebookFactory
 import com.ead.lib.moongetter.filemoon.factory.FilemoonFactory
-import com.ead.lib.moongetter.fireload.factory.FireloadFactory
-import com.ead.lib.moongetter.gofile.factory.GofileFactory
 import com.ead.lib.moongetter.goodstream.factory.GoodStreamFactory
 import com.ead.lib.moongetter.googledrive.factory.GoogleDriveFactory
 import com.ead.lib.moongetter.hexload.factory.HexloadFactory
@@ -28,7 +25,6 @@ import com.ead.lib.moongetter.senvid.factory.SenvidFactory
 import com.ead.lib.moongetter.streamtape.factory.StreamtapeFactory
 import com.ead.lib.moongetter.streamwish.factory.StreamwishFactory
 import com.ead.lib.moongetter.uqload.factory.UqloadFactory
-import com.ead.lib.moongetter.vidguard.factory.VidguardFactory
 import com.ead.lib.moongetter.vihide.factory.VihideFactory
 import com.ead.lib.moongetter.vk.factory.VKFactory
 import com.ead.lib.moongetter.voe.factory.VoeFactory
@@ -54,12 +50,10 @@ val appModule = module {
                     /**
                      * DefaultServerFactory
                      */
-                    AbyssFactory,
                     DoodstreamFactory,
                     FacebookFactory,
                     FilemoonFactory,
-                    FireloadFactory,
-                    GofileFactory,
+                    //FireloadFactory,
                     GoodStreamFactory,
                     GoogleDriveFactory,
                     HexloadFactory,
@@ -76,7 +70,7 @@ val appModule = module {
                     StreamwishFactory,
                     UqloadFactory,
                     VKFactory,
-                    VidguardFactory,
+                    //VidguardFactory,
                     VihideFactory,
                     VoeFactory,
                     XTwitterFactory,

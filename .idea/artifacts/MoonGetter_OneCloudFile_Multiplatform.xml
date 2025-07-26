@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MoonGetter-OneCloudFile-Multiplatform">
+    <output-path>$PROJECT_DIR$/MoonGetter-OneCloudFile-Multiplatform/build/libs</output-path>
+    <root id="archive" name="MoonGetter-OneCloudFile-Multiplatform.jar">
+      <element id="module-output" name="MoonGetter.MoonGetter-OneCloudFile-Multiplatform.androidMain" />
+    </root>
+  </artifact>
+</component>

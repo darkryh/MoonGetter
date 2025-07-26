@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-hexload">
+    <output-path>$PROJECT_DIR$/moongetter-hexload/build/libs</output-path>
+    <root id="archive" name="moongetter-hexload.jar">
+      <element id="module-output" name="MoonGetter.moongetter-hexload.androidMain" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-core">
+    <output-path>$PROJECT_DIR$/kotlin-src/moongetter-core/build/libs</output-path>
+    <root id="archive" name="moongetter-core.jar">
+      <element id="module-output" name="moongetter-core.MoonGetter.moongetter-core.androidMain" />
+    </root>
+  </artifact>
+</component>

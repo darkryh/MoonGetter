@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MoonGetter-Client-TrustManager-Multiplatform">
+    <output-path>$PROJECT_DIR$/kotlin-multiplatform-src/MoonGetter-Client-TrustManager-Multiplatform/build/libs</output-path>
+    <root id="archive" name="MoonGetter-Client-TrustManager-Multiplatform.jar">
+      <element id="module-output" name="MoonGetter-Client-TrustManager-Multiplatform.MoonGetter.MoonGetter-Client-TrustManager-Multiplatform.androidMain" />
+    </root>
+  </artifact>
+</component>

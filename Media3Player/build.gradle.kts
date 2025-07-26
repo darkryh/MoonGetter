@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":moongetter-core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -67,5 +67,4 @@ dependencies {
     implementation (libs.androidx.media3.exoplayer)
     implementation (libs.androidx.media3.ui)
     implementation (libs.androidx.media3.exoplayer.hls)
-    implementation(project(":MoonGetter-Core"))
 }

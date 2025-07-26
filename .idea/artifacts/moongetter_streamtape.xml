@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-streamtape">
+    <output-path>$PROJECT_DIR$/moongetter-streamtape/build/libs</output-path>
+    <root id="archive" name="moongetter-streamtape.jar">
+      <element id="module-output" name="MoonGetter.moongetter-streamtape.androidMain" />
+    </root>
+  </artifact>
+</component>

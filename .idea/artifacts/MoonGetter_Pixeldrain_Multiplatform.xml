@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MoonGetter-Pixeldrain-Multiplatform">
+    <output-path>$PROJECT_DIR$/MoonGetter-Pixeldrain-Multiplatform/build/libs</output-path>
+    <root id="archive" name="MoonGetter-Pixeldrain-Multiplatform.jar">
+      <element id="module-output" name="MoonGetter.MoonGetter-Pixeldrain-Multiplatform.androidMain" />
+    </root>
+  </artifact>
+</component>

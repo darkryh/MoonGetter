@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MoonGetter-Client-Cookie-Managment-Multiplatform">
+    <output-path>$PROJECT_DIR$/kotlin-multiplatform-src/MoonGetter-Client-Cookie-Managment-Multiplatform/build/libs</output-path>
+    <root id="archive" name="MoonGetter-Client-Cookie-Managment-Multiplatform.jar">
+      <element id="module-output" name="MoonGetter-Client-Cookie-Managment-Multiplatform.MoonGetter.MoonGetter-Client-Cookie-Managment-Multiplatform.androidMain" />
+    </root>
+  </artifact>
+</component>
