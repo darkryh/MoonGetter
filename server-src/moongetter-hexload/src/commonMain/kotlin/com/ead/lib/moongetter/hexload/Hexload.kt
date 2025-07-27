@@ -31,7 +31,7 @@ class Hexload(
 
         if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
-        val dataPattern = """data:\s*\{\s*(.*?)\s*\}""".toRegex(RegexOption.DOT_MATCHES_ALL)
+        val dataPattern = """data:\s*\{\s*(.*?)\s*\}""".toRegex(RegexOption.MULTILINE)
         val dataContent = dataPattern.find((response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }))?.groupValues?.get(1)
 
         response = client
