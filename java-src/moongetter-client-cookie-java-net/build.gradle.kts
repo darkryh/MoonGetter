@@ -11,6 +11,11 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
 }
 
+java {
+    sourceCompatibility = JavaVersion.toVersion(javaStringVersion)
+    targetCompatibility = JavaVersion.toVersion(javaStringVersion)
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = javaVirtualMachineTarget

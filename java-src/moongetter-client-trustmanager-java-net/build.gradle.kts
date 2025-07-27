@@ -10,6 +10,11 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+java {
+    sourceCompatibility = JavaVersion.toVersion(javaStringVersion)
+    targetCompatibility = JavaVersion.toVersion(javaStringVersion)
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = javaVirtualMachineTarget

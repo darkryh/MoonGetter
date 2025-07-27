@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
 val compileLibSdkVersion : String by project
@@ -39,9 +41,6 @@ android {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
     }
-    kotlinOptions {
-        jvmTarget = javaStringVersion
-    }
     buildFeatures {
         compose = true
     }
@@ -49,6 +48,12 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.fromTarget(javaStringVersion))
     }
 }
 
