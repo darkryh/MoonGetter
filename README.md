@@ -1,6 +1,6 @@
+[![Sonatype Central](https://img.shields.io/maven-central/v/io.github.darkryh.moongetter/moongetter-core?label=Sonatype%20Central)](https://central.sonatype.com/artifact/io.github.darkryh.moongetter/moongetter-core/2.0.0-alpha01)
 # MoonGetter for Kotlin
 
-[![Sonatype Central](https://img.shields.io/maven-central/v/io.github.darkryh.moongetter/moongetter-core?label=Sonatype%20Central)](https://central.sonatype.com/artifact/io.github.darkryh.moongetter/moongetter-core/2.0.0-alpha01)
 [![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 [![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 
