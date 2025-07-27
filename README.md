@@ -4,7 +4,7 @@
 [![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 [![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 
-**MoonGetter** is a robust, Kotlin-first library engineered for seamless stream extraction and video hosting download logic. It offers comprehensive support for Android, is actively expanding into **Kotlin Multiplatform (KMP)**, and features flexible custom server integration.
+**MoonGetter** MoonGetter is a robust, Kotlin-first library engineered for seamless stream extraction and video hosting download logic. It offers comprehensive support for Android and is now fully Kotlin Multiplatform (KMP) ready, featuring flexible custom server integration.
 
 ---
 
