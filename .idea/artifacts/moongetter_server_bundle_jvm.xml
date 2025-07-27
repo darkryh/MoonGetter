@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-server-bundle-jvm">
+    <output-path>$PROJECT_DIR$/moongetter-server-bundle/build/libs</output-path>
+    <root id="archive" name="moongetter-server-bundle-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-server-bundle.jvmMain" />
+    </root>
+  </artifact>
+</component>

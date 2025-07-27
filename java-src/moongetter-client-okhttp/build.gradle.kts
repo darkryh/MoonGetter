@@ -16,13 +16,11 @@ kotlin {
     }
 }
 
+
 publishing {
     publications {
-        register<MavenPublication>("release") {
-            afterEvaluate {
-                from(components["java"])
-            }
-
+        create<MavenPublication>("release") {
+            from(components["java"])
             groupId = "com.ead.lib"
             artifactId = "moongetter-client-okhttp"
             version = moonGetterVersion
@@ -37,6 +35,4 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.ktor.serialization.kotlinx.json)
     testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.mock.web.server)
 }

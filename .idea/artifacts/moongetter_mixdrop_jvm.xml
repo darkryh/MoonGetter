@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-mixdrop-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-mixdrop/build/libs</output-path>
+    <root id="archive" name="moongetter-mixdrop-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-mixdrop.jvmMain" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-lulustream-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-lulustream/build/libs</output-path>
+    <root id="archive" name="moongetter-lulustream-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-lulustream.jvmMain" />
+    </root>
+  </artifact>
+</component>

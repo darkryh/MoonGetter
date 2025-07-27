@@ -16,7 +16,6 @@ android {
 
     defaultConfig {
         minSdk = libSdkMinVersion.toInt()
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -45,7 +44,6 @@ publishing {
             afterEvaluate {
                 from(components["release"])
             }
-
             groupId = "com.ead.lib"
             artifactId = "moongetter-android-robot"
             version = moonGetterVersion

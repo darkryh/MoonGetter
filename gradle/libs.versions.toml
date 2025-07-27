@@ -1,11 +1,9 @@
 [versions]
 agp = "8.10.0"
-android-compileSdk = "35"
-android-minSdk = "24"
-android-targetSdk = "35"
 activityCompose = "1.10.1"
 commonsText = "1.13.1"
 composeBom = "2025.06.01"
+composeHotReload = "1.0.0-alpha11"
 coreKtx = "1.16.0"
 espressoCore = "3.6.1"
 kotlin = "2.2.0"
@@ -19,8 +17,6 @@ kotlinxCoroutinesCore = "1.10.2"
 material = "1.12.0"
 lifecycleRuntimeKtx = "2.9.1"
 media3Exoplayer = "1.7.1"
-moshi = "1.15.2"
-moshiKotlin = "1.15.2"
 okHttp = "5.0.0"
 rhino = "1.8.0"
 webkit = "1.14.0"
@@ -59,11 +55,11 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktorHttp" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okHttp" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorVersion" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp-jvm", version.ref = "ktorVersion" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktorVersion" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorVersion" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorVersion" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
-moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
-moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mock-web-server = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okHttp" }
@@ -88,3 +84,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }

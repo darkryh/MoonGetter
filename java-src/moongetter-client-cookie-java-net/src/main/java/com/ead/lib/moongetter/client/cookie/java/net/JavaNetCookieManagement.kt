@@ -1,6 +1,6 @@
 package com.ead.lib.moongetter.client.cookie.java.net
 
-import com.ead.lib.moongetter.client.cookie.managment.MoonGetterClientCookieManagement
+import com.ead.lib.moongetter.client.cookie.managment.MoonCookie
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +15,7 @@ class JavaNetCookieManagement(
     private val cookieHandler: CookieHandler = CookieManager().apply {
         setCookiePolicy(CookiePolicy.ACCEPT_NONE)
     }
-) : MoonGetterClientCookieManagement {
+) : MoonCookie.Management {
 
     override suspend fun get(requestUrl: Url): List<Cookie> {
         val uri = URI(requestUrl.toString())

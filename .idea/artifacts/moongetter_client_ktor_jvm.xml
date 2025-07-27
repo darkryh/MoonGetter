@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-client-ktor-jvm">
+    <output-path>$PROJECT_DIR$/kotlin-src/moongetter-client-ktor/build/libs</output-path>
+    <root id="archive" name="moongetter-client-ktor-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-client-ktor.jvmMain" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-mediafire-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-mediafire/build/libs</output-path>
+    <root id="archive" name="moongetter-mediafire-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-mediafire.jvmMain" />
+    </root>
+  </artifact>
+</component>

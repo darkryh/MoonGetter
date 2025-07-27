@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-lamovie-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-lamovie/build/libs</output-path>
+    <root id="archive" name="moongetter-lamovie-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-lamovie.jvmMain" />
+    </root>
+  </artifact>
+</component>

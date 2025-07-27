@@ -1,8 +1,8 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="moongetter-yourupload">
-    <output-path>$PROJECT_DIR$/moongetter-yourupload/build/libs</output-path>
+    <output-path>$PROJECT_DIR$/server-src/moongetter-yourupload/build/libs</output-path>
     <root id="archive" name="moongetter-yourupload.jar">
-      <element id="module-output" name="MoonGetter.moongetter-yourupload.androidMain" />
+      <element id="module-output" name="moongetter-yourupload.MoonGetter.moongetter-yourupload.androidMain" />
     </root>
   </artifact>
 </component>

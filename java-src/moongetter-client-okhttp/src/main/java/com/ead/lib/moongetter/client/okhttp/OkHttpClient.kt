@@ -8,7 +8,7 @@ import com.ead.lib.moongetter.client.request.Request
 import com.ead.lib.moongetter.client.response.Response
 import com.ead.lib.moongetter.client.response.body.ResponseBody
 import com.ead.lib.moongetter.client.response.url.Url
-import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonClientTrustManager
+import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonTrustManager
 import kotlinx.serialization.json.Json
 import okhttp3.Cookie
 import okhttp3.CookieJar
@@ -63,7 +63,7 @@ object OkHttpClient : MoonClient {
             .build()
 
         if (configData.disableSSLValidation) {
-            JavaMoonClientTrustManager.disableCertificationConnections(forceDisable = false)
+            JavaMoonTrustManager.disableCertificationConnections(forceDisable = false)
         }
     }
 

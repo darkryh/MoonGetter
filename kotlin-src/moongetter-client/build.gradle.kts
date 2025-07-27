@@ -1,34 +1,52 @@
-val javaStringVersion: String by project
-val javaVersion = JavaVersion.toVersion(javaStringVersion)
-val compileLibSdkVersion : String by project
-val libSdkMinVersion : String by project
+val moonGetterVersion: String by project
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
+    `maven-publish`
+    signing
+    id("com.vanniktech.maven.publish") version "0.34.0"
+}
+
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
+
+    coordinates(
+        groupId = "com.ead.lib",
+        artifactId = "moongetter-client",
+        version = moonGetterVersion
+    )
+
+    pom {
+        name.set("MoonGetter Client")
+        description.set("Client module for MoonGetter multiplatfrom")
+        url.set("https://github.com/darkryh/MoonGetter")
+
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        scm {
+            url.set("https://github.com/darkryh/MoonGetter")
+            connection.set("scm:git:git://github.com/darkryh/MoonGetter.git")
+            developerConnection.set("scm:git:ssh://github.com/darkryh/MoonGetter.git")
+        }
+
+        developers {
+            developer {
+                id.set("Darkryh")
+                name.set("Xavier Alexander Torres Calderón")
+                email.set("alex_torres-xc@hotmail.com")
+            }
+        }
+    }
 }
 
 kotlin {
     jvm()
-
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
-    androidLibrary {
-        namespace = "com.ead.lib.moongetter.client"
-        compileSdk = compileLibSdkVersion.toInt()
-        minSdk = libSdkMinVersion.toInt()
-
-        withHostTestBuilder {
-        }
-
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
-        }.configure {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
-    }
-
     // For iOS targets, this is also where you should
     // configure native binary output. For more information, see:
     // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
@@ -77,32 +95,5 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
-
-        androidMain {
-            dependencies {
-                // Add Android-specific dependencies here. Note that this source set depends on
-                // commonMain by default and will correctly pull the Android artifacts of any KMP
-                // dependencies declared in commonMain.
-            }
-        }
-
-        getByName("androidDeviceTest") {
-            dependencies {
-                implementation(libs.androidx.runner)
-                implementation(libs.androidx.core)
-                implementation(libs.androidx.junit)
-            }
-        }
-
-        iosMain {
-            dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP’s default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
-            }
-        }
     }
-
 }

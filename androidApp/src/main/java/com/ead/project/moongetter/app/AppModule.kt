@@ -4,7 +4,7 @@ import com.ead.lib.moongetter.MoonGetter
 import com.ead.lib.moongetter.android.robot.AndroidRobot
 import com.ead.lib.moongetter.client.cookie.java.net.JavaNetCookieManagement
 import com.ead.lib.moongetter.client.ktor.KtorMoonClient
-import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonClientTrustManager
+import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonTrustManager
 import com.ead.lib.moongetter.doodstream.factory.DoodstreamFactory
 import com.ead.lib.moongetter.facebook.factory.FacebookFactory
 import com.ead.lib.moongetter.filemoon.factory.FilemoonFactory
@@ -94,7 +94,7 @@ val appModule = module {
                 client = KtorMoonClient(
                     engineFactory = CIO,
                     cookieManagement = JavaNetCookieManagement(),
-                    trustManager = JavaMoonClientTrustManager
+                    trustManager = JavaMoonTrustManager
                 )
             )
             .setTimeout(timeoutMillis = 12000)

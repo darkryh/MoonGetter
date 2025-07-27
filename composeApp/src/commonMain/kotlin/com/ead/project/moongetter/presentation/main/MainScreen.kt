@@ -41,6 +41,7 @@ import com.ead.project.moongetter.presentation.main.intent.MainIntent
 import com.ead.project.moongetter.presentation.main.intent.NetworkIntent
 import com.ead.project.moongetter.presentation.main.intent.TextIntent
 import com.ead.project.moongetter.presentation.main.state.MainState
+import com.ead.project.moongetter.presentation.player.Player
 import com.ead.project.moongetter.presentation.theme.MoonGetterTheme
 import moongetter.composeapp.generated.resources.Res
 import moongetter.composeapp.generated.resources.compose_multiplatform
@@ -213,10 +214,10 @@ fun MainScreen(
 
             if (!state.isLoading) {
                 state.selectedStream?.let {
-                    /*Player(
+                    Player(
                         modifier = Modifier,
                         request = it
-                    )*/
+                    )
                     OptionsResult(
                         modifier = Modifier
                             .fillMaxWidth(),

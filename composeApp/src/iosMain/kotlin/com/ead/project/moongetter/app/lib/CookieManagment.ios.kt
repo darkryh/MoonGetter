@@ -1,6 +1,5 @@
 package com.ead.project.moongetter.app.lib
 
-import com.ead.lib.moongetter.client.cookie.managment.MoonGetterClientCookieManagement
+import com.ead.lib.moongetter.client.cookie.managment.MoonCookie
 
-actual val cookieManagement: MoonGetterClientCookieManagement
-    get() = TODO("Not yet implemented")
+actual val cookieManagement: MoonCookie.Management = MoonCookie.Management.newEmptyFactory()

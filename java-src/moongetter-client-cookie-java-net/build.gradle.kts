@@ -19,11 +19,8 @@ kotlin {
 
 publishing {
     publications {
-        register<MavenPublication>("release") {
-            afterEvaluate {
-                from(components["java"])
-            }
-
+        create<MavenPublication>("release") {
+            from(components["java"])
             groupId = "com.ead.lib"
             artifactId = "moongetter-client-cookie-java-net"
             version = moonGetterVersion
@@ -36,6 +33,4 @@ dependencies {
     implementation(project(":moongetter-client-cookie-managment"))
 
     testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.mock.web.server)
 }

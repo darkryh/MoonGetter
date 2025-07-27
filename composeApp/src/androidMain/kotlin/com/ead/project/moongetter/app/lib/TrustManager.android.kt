@@ -1,6 +1,6 @@
 package com.ead.project.moongetter.app.lib
 
-import com.ead.lib.moongetter.client.trust.manager.MoonClientTrustManager
-import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonClientTrustManager
+import com.ead.lib.moongetter.client.trust.manager.MoonTrust
+import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonTrustManager
 
-actual val trustManager: MoonClientTrustManager get() = JavaMoonClientTrustManager
+actual val trustManager: MoonTrust.Manager get() = JavaMoonTrustManager

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-xtwitter-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-xtwitter/build/libs</output-path>
+    <root id="archive" name="moongetter-xtwitter-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-xtwitter.jvmMain" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-onecloudfile-jvm">
+    <output-path>$PROJECT_DIR$/server-robot-src/moongetter-onecloudfile/build/libs</output-path>
+    <root id="archive" name="moongetter-onecloudfile-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-onecloudfile.jvmMain" />
+    </root>
+  </artifact>
+</component>

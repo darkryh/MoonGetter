@@ -18,11 +18,8 @@ kotlin {
 
 publishing {
     publications {
-        register<MavenPublication>("release") {
-            afterEvaluate {
-                from(components["java"])
-            }
-
+        create<MavenPublication>("release") {
+            from(components["java"])
             groupId = "com.ead.lib"
             artifactId = "moongetter-client-trustmanager-java-net"
             version = moonGetterVersion

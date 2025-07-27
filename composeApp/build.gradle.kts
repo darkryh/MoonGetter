@@ -1,11 +1,12 @@
-import org.gradle.kotlin.dsl.implementation
-import org.gradle.kotlin.dsl.project
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
+val compileLibSdkVersion : String by project
+val libSdkMinVersion : String by project
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -37,16 +38,23 @@ kotlin {
         }
     }
 
+    jvm("desktop")
+
     sourceSets {
+        val desktopMain by getting
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
 
-            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.okhttp)
+
+            implementation (libs.androidx.media3.exoplayer)
+            implementation (libs.androidx.media3.ui)
+            implementation (libs.androidx.media3.exoplayer.hls)
 
             implementation(project(":moongetter-client-cookie-java-net"))
             implementation(project(":moongetter-client-trustmanager-java-net"))
-            implementation(project(":moongetter-android-robot"))
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -57,7 +65,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-
             implementation(compose.materialIconsExtended)
 
             implementation(project(":moongetter-core"))
@@ -77,17 +84,28 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutinesSwing)
+
+            implementation(libs.ktor.client.cio)
+            implementation(project(":moongetter-client-cookie-java-net"))
+            implementation(project(":moongetter-client-trustmanager-java-net"))
+        }
     }
 }
 
 android {
     namespace = "com.ead.project.moongetter"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = compileLibSdkVersion.toInt()
 
     defaultConfig {
         applicationId = "com.ead.project.moongetter"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = libSdkMinVersion.toInt()
+        targetSdk = compileLibSdkVersion.toInt()
         versionCode = 2
         versionName = "1.1"
     }
@@ -111,16 +129,17 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(compose.uiTooling)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+compose.desktop {
+    application {
+        mainClass = "com.ead.project.moongetter.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.ead.project.moongetter"
+            packageVersion = "1.0.0"
+        }
+    }
 }

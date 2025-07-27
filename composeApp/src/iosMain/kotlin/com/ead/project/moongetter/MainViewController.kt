@@ -5,7 +5,6 @@ import com.ead.project.moongetter.app.initializeKoin
 
 fun MainViewController() = run {
     initializeKoin()
-    
     ComposeUIViewController {
         App()
     }

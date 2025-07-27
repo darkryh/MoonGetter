@@ -1,8 +1,8 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="moongetter-voe">
-    <output-path>$PROJECT_DIR$/moongetter-voe/build/libs</output-path>
+    <output-path>$PROJECT_DIR$/server-src/moongetter-voe/build/libs</output-path>
     <root id="archive" name="moongetter-voe.jar">
-      <element id="module-output" name="MoonGetter.moongetter-voe.androidMain" />
+      <element id="module-output" name="moongetter-voe.MoonGetter.moongetter-voe.androidMain" />
     </root>
   </artifact>
 </component>

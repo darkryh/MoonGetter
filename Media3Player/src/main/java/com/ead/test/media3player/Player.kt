@@ -36,7 +36,6 @@ fun Player(
     modifier: Modifier = Modifier,
     request: Request
 ) {
-
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 

@@ -1,7 +1,7 @@
 package com.ead.lib.moongetter.client.ktor
 
 import com.ead.lib.moongetter.client.MoonClient
-import com.ead.lib.moongetter.client.cookie.managment.MoonGetterClientCookieManagement
+import com.ead.lib.moongetter.client.cookie.managment.MoonCookie
 import com.ead.lib.moongetter.client.ktor.util.toHashMap
 import com.ead.lib.moongetter.client.ktor.util.toParameters
 import com.ead.lib.moongetter.client.models.Configuration
@@ -10,7 +10,7 @@ import com.ead.lib.moongetter.client.request.Request
 import com.ead.lib.moongetter.client.response.Response
 import com.ead.lib.moongetter.client.response.body.ResponseBody
 import com.ead.lib.moongetter.client.response.url.Url
-import com.ead.lib.moongetter.client.trust.manager.MoonClientTrustManager
+import com.ead.lib.moongetter.client.trust.manager.MoonTrust
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngineConfig
 import io.ktor.client.engine.HttpClientEngineFactory
@@ -35,8 +35,8 @@ import io.ktor.http.HttpMethod as KtorHttpMethod
 
 class KtorMoonClient<out T : HttpClientEngineConfig>(
     engineFactory: HttpClientEngineFactory<T>,
-    cookieManagement: MoonGetterClientCookieManagement,
-    private val trustManager: MoonClientTrustManager,
+    cookieManagement: MoonCookie.Management,
+    private val trustManager: MoonTrust.Manager,
     private val engineConfigBuilder: (T.() -> Unit)? = null
 ) : MoonClient {
 
@@ -57,9 +57,7 @@ class KtorMoonClient<out T : HttpClientEngineConfig>(
                     override suspend fun addCookie(
                         requestUrl: io.ktor.http.Url,
                         cookie: Cookie
-                    ) {
-                        cookieManagement.addCookie(requestUrl, cookie)
-                    }
+                    ) { cookieManagement.addCookie(requestUrl, cookie) }
 
                     override fun close() = cookieManagement.close()
                 }

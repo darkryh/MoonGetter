@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-googledrive-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-googledrive/build/libs</output-path>
+    <root id="archive" name="moongetter-googledrive-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-googledrive.jvmMain" />
+    </root>
+  </artifact>
+</component>

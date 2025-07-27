@@ -1,8 +1,8 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="moongetter-doodstream">
-    <output-path>$PROJECT_DIR$/moongetter-doodstream/build/libs</output-path>
+    <output-path>$PROJECT_DIR$/server-src/moongetter-doodstream/build/libs</output-path>
     <root id="archive" name="moongetter-doodstream.jar">
-      <element id="module-output" name="MoonGetter.moongetter-doodstream.androidMain" />
+      <element id="module-output" name="moongetter-doodstream.MoonGetter.moongetter-doodstream.androidMain" />
     </root>
   </artifact>
 </component>

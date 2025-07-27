@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-facebook-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-facebook/build/libs</output-path>
+    <root id="archive" name="moongetter-facebook-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-facebook.jvmMain" />
+    </root>
+  </artifact>
+</component>

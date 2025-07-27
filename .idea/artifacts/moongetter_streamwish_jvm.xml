@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="moongetter-streamwish-jvm">
+    <output-path>$PROJECT_DIR$/server-src/moongetter-streamwish/build/libs</output-path>
+    <root id="archive" name="moongetter-streamwish-jvm.jar">
+      <element id="module-output" name="MoonGetter.moongetter-streamwish.jvmMain" />
+    </root>
+  </artifact>
+</component>
