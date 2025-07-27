@@ -96,6 +96,8 @@ kotlin {
                     ":moongetter-yourupload", ":moongetter-vidguard", ":moongetter-vk"
                 )
 
+                api(project(":moongetter-core"))
+
                 modules.forEach { module ->
                     api(project(module))
                 }

@@ -86,6 +86,8 @@ kotlin {
                 // Add KMP dependencies here
                 val modules = arrayOf(":moongetter-fireload",":moongetter-onecloudfile")
 
+                api(project(":moongetter-core"))
+
                 modules.forEach { module ->
                     api(project(module))
                 }
