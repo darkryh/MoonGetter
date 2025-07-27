@@ -12,7 +12,7 @@ mavenPublishing {
     signAllPublications()
 
     coordinates(
-        groupId = "com.ead.lib",
+        groupId = "com.ead.lib.moongetter",
         artifactId = "moongetter-doodstream",
         version = moonGetterVersion
     )

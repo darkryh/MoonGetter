@@ -25,7 +25,7 @@ publishing {
     publications {
         create<MavenPublication>("release") {
             from(components["java"])
-            groupId = "com.ead.lib"
+            groupId = "com.ead.lib.moongetter"
             artifactId = "moongetter-client-trustmanager-java-net"
             version = moonGetterVersion
         }
