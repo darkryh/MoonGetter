@@ -81,11 +81,6 @@ repositories {
 This section outlines the `dependencies` block specifically for integrating **MoonGetter modules** within a **Kotlin Multiplatform (KMP)** project structure. It focuses solely on MoonGetter-related dependencies, showing their placement for common shared code, Android-specific configurations, and iOS (Darwin) targets.
 
 ```kotlin
-# Kotlin Multiplatform Project Dependencies (MoonGetter Modules Only)
-
-This section outlines the `dependencies` block specifically for integrating **MoonGetter modules** within a **Kotlin Multiplatform (KMP)** project structure. It focuses solely on MoonGetter-related dependencies, showing their placement for common shared code, Android-specific configurations, iOS (Darwin) targets, and Desktop (JVM) targets.
-```
-```kotlin
 dependencies {
     // --- Common Main (Shared KMP Logic) ---
     commonMain.dependencies {
