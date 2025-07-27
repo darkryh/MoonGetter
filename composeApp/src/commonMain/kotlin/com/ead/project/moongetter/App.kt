@@ -13,11 +13,9 @@ import com.ead.project.moongetter.presentation.main.MainScreen
 import com.ead.project.moongetter.presentation.main.MainViewModel
 import com.ead.project.moongetter.presentation.main.event.MainEvent
 import kotlinx.coroutines.flow.collectLatest
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-@Preview
 fun App() {
     MaterialTheme {
         val snackbarHostState = remember { SnackbarHostState() }

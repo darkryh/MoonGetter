@@ -46,7 +46,6 @@ import com.ead.project.moongetter.presentation.theme.MoonGetterTheme
 import moongetter.composeapp.generated.resources.Res
 import moongetter.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -230,8 +229,6 @@ fun MainScreen(
     }
 }
 
-
-@Preview()
 @Composable
 fun MainScreenPreview() {
     MoonGetterTheme {

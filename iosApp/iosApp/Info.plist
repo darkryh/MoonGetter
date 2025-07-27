@@ -4,13 +4,5 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-	<key>CFBundleName</key>
-	<string>MoonGetter</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.ead.project.moongetter</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
 </dict>
 </plist>

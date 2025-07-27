@@ -13,7 +13,6 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TextField(
@@ -52,7 +51,6 @@ fun TextField(
 }
 
 @Composable
-@Preview()
 fun TextFieldPreview() {
     TextField(
         modifier = Modifier

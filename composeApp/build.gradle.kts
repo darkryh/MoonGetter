@@ -35,7 +35,7 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             xcf.add(this)
-            freeCompilerArgs += listOf("-Xbinary=bundleId=com.ead.project.moongetter")
+            binaryOption("bundleId", "com.ead.project.moongetter.MoonGetter")
         }
     }
 
@@ -45,9 +45,7 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
             implementation(libs.ktor.client.okhttp)
 
             implementation (libs.androidx.media3.exoplayer)
@@ -63,9 +61,10 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
             implementation(compose.materialIconsExtended)
 
             implementation(project(":moongetter-core"))
@@ -75,12 +74,12 @@ kotlin {
             implementation(project(":moongetter-server-bundle"))
             implementation(project(":moongetter-server-robot-bundle"))
 
-            val koin_version = "4.0.3"
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koin_version"))
+            val koinVersion = "4.0.3"
+            implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koinVersion"))
             implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose:${koin_version}")
-            implementation("io.insert-koin:koin-compose-viewmodel:${koin_version}")
-            implementation("io.insert-koin:koin-compose-viewmodel-navigation:${koin_version}")
+            implementation("io.insert-koin:koin-compose:${koinVersion}")
+            implementation("io.insert-koin:koin-compose-viewmodel:${koinVersion}")
+            implementation("io.insert-koin:koin-compose-viewmodel-navigation:${koinVersion}")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

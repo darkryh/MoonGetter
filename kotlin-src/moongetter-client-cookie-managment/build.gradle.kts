@@ -94,11 +94,5 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
-
-        jvmMain {
-            dependencies {
-                implementation(libs.kotlin.stdlib)
-            }
-        }
     }
 }
