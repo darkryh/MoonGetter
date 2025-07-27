@@ -26,7 +26,7 @@ publishing {
     publications {
         create<MavenPublication>("release") {
             from(components["java"])
-            groupId = "com.ead.lib.moongetter"
+            groupId = "io.github.darkryh.moongetter"
             artifactId = "moongetter-client-cookie-java-net"
             version = moonGetterVersion
         }

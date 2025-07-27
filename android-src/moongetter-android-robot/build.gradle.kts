@@ -55,7 +55,7 @@ publishing {
             afterEvaluate {
                 from(components["release"])
             }
-            groupId = "com.ead.lib.moongetter"
+            groupId = "io.github.darkryh.moongetter"
             artifactId = "moongetter-android-robot"
             version = moonGetterVersion
         }

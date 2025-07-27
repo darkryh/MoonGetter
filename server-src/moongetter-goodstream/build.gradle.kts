@@ -12,7 +12,7 @@ mavenPublishing {
     signAllPublications()
 
     coordinates(
-        groupId = "com.ead.lib.moongetter",
+        groupId = "io.github.darkryh.moongetter",
         artifactId = "moongetter-goodstream",
         version = moonGetterVersion
     )
