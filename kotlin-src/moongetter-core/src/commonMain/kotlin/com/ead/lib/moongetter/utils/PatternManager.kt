@@ -60,7 +60,7 @@ object PatternManager {
      * @return A list of key-value [Pair]s extracted from each match.
      */
     fun findMultipleMatchesAsPairs(string: String, regex: String): List<Pair<String, String>> {
-        return Regex(regex, RegexOption.DOT_MATCHES_ALL)
+        return Regex(regex, RegexOption.MULTILINE)
             .findAll(string)
             .mapNotNull { match: MatchResult ->
                 val key = match.groups.elementAtOrNull(1)?.value

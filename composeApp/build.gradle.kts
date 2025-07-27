@@ -35,6 +35,7 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             xcf.add(this)
+            freeCompilerArgs += listOf("-Xbinary=bundleId=com.ead.project.moongetter")
         }
     }
 
@@ -126,10 +127,6 @@ android {
     buildFeatures {
         compose = true
     }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {
