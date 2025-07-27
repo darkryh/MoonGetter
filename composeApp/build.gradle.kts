@@ -34,8 +34,9 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+
+            binaryOption("bundleId", "com.ead.project.moongetter.iosApp")
             xcf.add(this)
-            binaryOption("bundleId", "com.ead.project.moongetter.MoonGetter")
         }
     }
 
@@ -96,6 +97,14 @@ kotlin {
             implementation(project(":moongetter-client-trustmanager-java-net"))
         }
     }
+}
+
+tasks.withType<PublishToMavenRepository>().configureEach {
+    enabled = false
+}
+
+tasks.withType<PublishToMavenLocal>().configureEach {
+    enabled = false
 }
 
 android {
