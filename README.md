@@ -1,33 +1,32 @@
-[![](https://jitpack.io/v/darkryh/MoonGetter.svg)](https://jitpack.io/#darkryh/MoonGetter)
-
 # MoonGetter for Kotlin
 
+[![Sonatype Central](https://img.shields.io/maven-central/v/io.github.darkryh.moongetter/moongetter-core?label=Sonatype%20Central)](https://central.sonatype.com/artifact/io.github.darkryh.moongetter/moongetter-core/2.0.0-alpha01)
 [![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 [![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
 
-**MoonGetter** is a powerful and versatile Kotlin-first library focused on stream extraction and video hosting download logic. It supports Android, is progressively expanding into Kotlin Multiplatform (KMP), and allows seamless custom server integration.
+**MoonGetter** is a robust, Kotlin-first library engineered for seamless stream extraction and video hosting download logic. It offers comprehensive support for Android, is actively expanding into **Kotlin Multiplatform (KMP)**, and features flexible custom server integration.
 
 ---
 
 ## ✅ Features
 
-- **Custom server integration** — Build and plug in your own streaming providers.
-- **Coroutine-based architecture** — Async-first, highly scalable extraction logic.
-- **Transparent HTTP client injection** — Works with both OkHttp and Ktor.
-- **Custom error types** — Intuitive error flow through `InvalidServerException` and `Error` enums.
-- **Flexible cookie management** — Transparent for OkHttp, configurable for Ktor.
+-   **Custom Server Integration** — Easily build and integrate your own streaming providers.
+-   **Coroutine-based Architecture** — Async-first design for highly scalable extraction logic.
+-   **Transparent HTTP Client Injection** — Works seamlessly with both OkHttp and Ktor.
+-   **Custom Error Types** — Intuitive error handling via `InvalidServerException` and descriptive `Error` enums.
+-   **Flexible Cookie Management** — Automatic for OkHttp, configurable for Ktor.
 
 ---
 
 ## 🔄 Compatibility Table
 
-| Feature                | Android | Kotlin | Kotlin Multiplatform |
-|------------------------|:-------:|:------:|:--------------------:|
-| Core Library           |    ✅    |   ✅    |       ⏳ (Planned)       |
-| Robot Servers API      |    ✅    |   ⚠️    |       ⏳ (Planned)    |
-| Server Implementations |    ✅    |   ✅    |       ⏳ (Planned)    |
+| Feature                | Android | JVM    | Kotlin Multiplatform |
+| :--------------------- | :-----: | :----: | :------------------: |
+| Core Library           |   ✅    |   ✅   |          ✅          |
+| Robot Servers API      |   ✅    |   ✅   |    ⏳ (Planned)      |
+| Server Implementations |   ✅    |   ✅   |          ✅          |
 
-> ✅ = Supported / ⚠️ = Limited / ⏳ = In development
+> ✅ = Supported / ⏳ = In development / JVM refers to non-Android Kotlin projects.
 
 ---
 
@@ -35,35 +34,35 @@
 
 > ✅ Actively maintained / 💥 Deprecated
 
-- ✅ Google Drive
-- ✅ Mediafire
-- ✅ Streamtape
-- ✅ PixelDrain
-- ✅ Okru
-- ✅ StreamWish
-- 💥 Voe *(Deprecated)*
-- ✅ Senvid
-- ✅ Vihide
-- ✅ Hexload
-- ✅ YourUpload
-- ✅ Facebook
-- ✅ XTwitter
-- ✅ LuluStream
-- ✅ Mp4Upload
-- ✅ Uqload
-- ✅ Mixdrop
-- ✅ Doodstream
-- ✅ Vidguard *(now part of core servers, no longer a robot)*
-- ✅ Filemoon
+-   ✅ Google Drive
+-   ✅ Mediafire
+-   ✅ Streamtape
+-   ✅ PixelDrain
+-   ✅ Okru
+-   ✅ StreamWish
+-   💥 Voe *(Deprecated)*
+-   ✅ Senvid
+-   ✅ Vihide
+-   ✅ Hexload
+-   ✅ YourUpload
+-   ✅ Facebook
+-   ✅ XTwitter
+-   ✅ LuluStream
+-   ✅ Mp4Upload
+-   ✅ Uqload
+-   ✅ Mixdrop
+-   ✅ Doodstream
+-   ✅ Vidguard
+-   ✅ Filemoon
 
 ---
 
 ## 🤖 Robot Servers *(Optional)*
 
-> These require the `moongetter-core-robot` and a platform Robot API. Currently only Android is supported.
+> These require the `moongetter-core-robot` module and a platform-specific Robot API.
 
-- 💥 Fireload *(Deprecated)*
-- ✅ 1CloudFile
+-   💥 Fireload *(Deprecated)*
+-   ✅ 1CloudFile
 
 **Coming Soon:** GoodStream, Gofile, Abyss
 
@@ -72,35 +71,45 @@
 ## ☕ Installation (Gradle)
 
 ```kotlin
+// For stable releases, use Maven Central
 repositories {
-    maven { url = uri("https://jitpack.io") }
+    mavenCentral()
 }
+
+// For snapshot versions or specific alpha releases, you might need JitPack
+// repositories {
+//    maven { url = uri("[https://jitpack.io](https://jitpack.io)") }
+// }
 
 dependencies {
     // Required core logic
-    implementation("com.github.darkryh.MoonGetter:moongetter-core:$version")
+    implementation("io.github.darkryh.moongetter:moongetter-core:2.0.0-alpha01")
 
-    // Choose your HTTP client
-    implementation("com.github.darkryh.MoonGetter:moongetter-client-okhttp:$version") // OkHttp (Default for Android)
+    // Choose your HTTP client. Pick one based on your target platform and preference.
+    implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:2.0.0-alpha01") // Recommended for Android/JVM
     // OR
-    implementation("com.github.darkryh.MoonGetter:moongetter-client-ktor:$version")   // Ktor (for multiplatform or coroutine preference)
+    implementation("io.github.darkryh.moongetter:moongetter-client-ktor:2.0.0-alpha01")   // Recommended for KMP (Android, iOS, JVM, JS, etc.)
 
-    // Optional: Only for Ktor, cookie manager
-    implementation("com.github.darkryh.MoonGetter:moongetter-client-cookie-java-net:$version")
+    // Optional: Cookie manager for Ktor client
+    // For JVM/Android:
+    implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01")
+    // For iOS (Kotlin/Native): (Add a specific dependency for iOS cookie management if available, or manage manually)
+    // implementation("io.github.darkryh.moongetter:moongetter-client-cookie-ios:2.0.0-alpha01") // Example, replace with actual module if it exists
 
-    // Optional: Full server support
-    implementation("com.github.darkryh.MoonGetter:moongetter-server:$version")
+    // Optional: Full server support (includes all common servers)
+    implementation("io.github.darkryh.moongetter:moongetter-server:2.0.0-alpha01")
 
-    // Optional: Robot support (Android only for now)
-    implementation("com.github.darkryh.MoonGetter:moongetter-core-robot:$version")
-    implementation("com.github.darkryh.MoonGetter:moongetter-server-robot:$version")
-    implementation("com.github.darkryh.MoonGetter:moongetter-android-robot:$version")
+    // Optional: Robot support (Android/JVM for now)
+    implementation("io.github.darkryh.moongetter:moongetter-core-robot:2.0.0-alpha01")
+    implementation("io.github.darkryh.moongetter:moongetter-server-robot:2.0.0-alpha01")
+    implementation("io.github.darkryh.moongetter:moongetter-android-robot:2.0.0-alpha01") // For Android-specific robot implementations
 
-    // Optional: Individual server
-    implementation("com.github.darkryh.MoonGetter:moongetter-mp4upload:$version")
-    implementation("com.github.darkryh.MoonGetter:moongetter-filemoon:$version")
-    implementation("com.github.darkryh.MoonGetter:moongetter-streamtape:$version")
-    implementation("com.github.darkryh.MoonGetter:moongetter-streamwish:$version")
+    // Optional: Individual server (useful for smaller builds or specific needs)
+    implementation("io.github.darkryh.moongetter:moongetter-mp4upload:2.0.0-alpha01")
+    implementation("io.github.darkryh.moongetter:moongetter-filemoon:2.0.0-alpha01")
+    implementation("io.github.darkryh.moongetter:moongetter-streamtape:2.0.0-alpha01")
+    implementation("io.github.darkryh.moongetter:moongetter-streamwish:2.0.0-alpha01")
+    // Add other individual servers as needed
 }
 ```
 
@@ -135,7 +144,7 @@ Example with OkHttp:
 ```kotlin
 MoonGetter.Builder()
     .setClient(
-        OkHttpClient()
+        OkHttpClient
     )
 ```
 
@@ -156,12 +165,6 @@ class MyViewModel : ViewModel() {
                 StreamwishFactory,
                 // CustomServerFactory (recommended to use `object`)
             )
-        )
-        .onRobot(
-            AndroidRobot
-                .Builder()
-                .onContext(/* appContext */)
-                .build()
         )
         .build()
 
@@ -239,8 +242,30 @@ class CustomServer(
 ### Custom Server Factory
 ```kotlin
 object CustomServerFactory : Server.Factory {
-    override val belongedClass = CustomServer::class.java
-    override val pattern = "your regex here"
+    override val serverName: String = "MyCustomServer" // Must match the serverName in CustomServer
+    override val pattern: String = """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""" // Your regex pattern for URLs this server handles
+
+    /**
+     * Creates a new [CustomServer] instance configured to handle the given URL.
+     *
+     * @param url The URL to be processed by the server.
+     * @param headers HTTP headers to be used during requests.
+     * @param configData Configuration data required for server setup.
+     * @param client The HTTP client used to perform network operations.
+     *
+     * @return An instance of [CustomServer] ready to process the URL.
+     */
+    override fun create(
+        url: String,
+        headers: HashMap<String, String>,
+        configData: Configuration.Data,
+        client: MoonClient
+    ): Server = CustomServer(
+        url = url,
+        client = client,
+        headers = headers,
+        configData = configData
+    )
 }
 ```
 
