@@ -87,91 +87,44 @@ This section outlines the `dependencies` block specifically for integrating **Mo
 ```
 ```kotlin
 dependencies {
-    // --- Common Main (Shared KMP Logic for MoonGetter) ---
-    // These MoonGetter modules are compiled for all targets (Android, iOS, Desktop JVM, etc.)
-    // and contain the core shared logic of the library.
+    // --- Common Main (Shared KMP Logic) ---
     commonMain.dependencies {
-        // Required core logic for MoonGetter
         implementation("io.github.darkryh.moongetter:moongetter-core:2.0.0-alpha01")
-
-        // MoonGetter Ktor Client - Recommended for Multiplatform compatibility.
-        // This module provides the abstract Ktor client interface that MoonGetter uses.
         implementation("io.github.darkryh.moongetter:moongetter-client-ktor:2.0.0-alpha01")
-
-        // Optional: Full server support bundle (includes comprehensive server implementations)
         implementation("io.github.darkryh.moongetter:moongetter-server-bundle:2.0.0-alpha01")
-
-        // Optional: Core Robot support (if your robot logic has common components for all targets)
         implementation("io.github.darkryh.moongetter:moongetter-core-robot:2.0.0-alpha01")
-        // Optional: Robot server bundle (if your robot server implementations are common across targets)
-        implementation("io.github.darkryh.moongetter:moongetter-server-bundle-robot:2.0.0-alpha01")
-
-        // Optional: Individual server modules (use these instead of `moongetter-server` for selective support)
+        implementation("io.github.darkryh.moongetter:moongetter-server-robot-bundle:2.0.0-alpha01")
+        // Optional: Individual server modules (instead of bundles)
         // implementation("io.github.darkryh.moongetter:moongetter-mp4upload:2.0.0-alpha01")
-        // implementation("io.github.darkryh.moongetter:moongetter-filemoon:2.0.0-alpha01")
-        // implementation("io.github.darkryh.moongetter:moongetter-streamtape:2.0.0-alpha01")
-        // implementation("io.github.darkryh.moongetter:moongetter-streamwish:2.0.0-alpha01")
-        // Add other individual server modules as needed
     }
 
-    // --- Android Specific MoonGetter Dependencies ---
-    // These dependencies are only applied when building for the Android platform.
+    // --- Android Specific ---
     androidMain.dependencies {
-        // Choose ONE of the following HTTP clients for Android:
-
-        // Option 1: MoonGetter OkHttp Client (recommended for Android due to its robustness)
-        implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:2.0.0-alpha01")
-        // Note: OkHttp has built-in cookie handling.
-        // If you need specific JavaNet cookie/trust management with OkHttp, you can still add them:
-        // implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01")
-        // implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01")
-
+        // Choose ONE HTTP client:
+        implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:2.0.0-alpha01") // Option 1: MoonGetter OkHttp Client
         // OR
+        // implementation("io.ktor:ktor-client-okhttp:2.3.12") // Option 2: Ktor with OkHttp engine
 
-        // Option 2: Ktor Client with OkHttp engine (if you prefer Ktor's API but want OkHttp's backing)
-        // You would typically use the `moongetter-client-ktor` from `commonMain` and
-        // explicitly add the Ktor OkHttp engine here for Android:
-        // implementation("io.ktor:ktor-client-okhttp:2.3.12") // Use the actual Ktor version from your libs.versions.toml
-        // If using Ktor client, and you need explicit JavaNet-based cookie/trust management:
-        // implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01")
-        // implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01")
-
-
-        // Android-specific Robot API implementations (e.g., for WebView-based extraction on Android)
-        implementation("io.github.darkryh.moongetter:moongetter-android-robot:2.0.0-alpha01")
+        implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01") // Required: Cookie management if using ktor
+        implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01") // Required: Trust management if using ktor
+        implementation("io.github.darkryh.moongetter:moongetter-android-robot:2.0.0-alpha01") // Android Robot APIs
     }
 
-    // --- iOS Specific MoonGetter Dependencies (Kotlin/Native - Darwin) ---
-    // These dependencies are only applied when building for iOS targets (iosX64, iosArm64, iosSimulatorArm64).
+    // --- iOS Specific ---
     iosMain.dependencies {
-        // REQUIRED: Ktor's Darwin engine is essential for the `moongetter-client-ktor` (from commonMain)
-        // to perform actual network requests on iOS. It provides the concrete implementation
-        // that connects to Apple's native networking APIs (NSURLSession).
-        implementation("io.ktor:ktor-client-darwin:2.3.12") // Use the actual Ktor version from your libs.versions.toml
-        // Note: Ktor's Darwin engine generally handles cookies via Foundation's URLSession,
-        // so separate MoonGetter cookie/trust managers are usually not explicitly added here.
+        // REQUIRED: Ktor's Darwin engine for network requests on iOS.
+        implementation("io.ktor:ktor-client-darwin:2.3.12")
     }
 
-    // --- Desktop (JVM) Specific MoonGetter Dependencies ---
-    // These dependencies are only applied when building for desktop JVM applications.
+    // --- Desktop (JVM) Specific ---
     desktopMain.dependencies {
-        // Choose ONE of the following HTTP clients for Desktop JVM:
-
-        // Option 1: Ktor Client with CIO engine (recommended for KMP desktop targets for consistency with Ktor common API)
-        // The `moongetter-client-ktor` from `commonMain` will use Ktor's CIO engine for Desktop JVM.
-        implementation("io.ktor:ktor-client-cio:2.3.12") // Use the actual Ktor version from your libs.versions.toml
-        // If using Ktor client, and you need explicit JavaNet-based cookie/trust management:
-        implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01")
-        implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01")
-
+        // Choose ONE HTTP client:
+        implementation("io.ktor:ktor-client-cio:2.3.12") // Option 1: Ktor with CIO engine
         // OR
+        // implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:2.0.0-alpha01") // Option 2: MoonGetter OkHttp Client
 
-        // Option 2: MoonGetter OkHttp Client (if you prefer OkHttp directly for desktop JVM)
-        // implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:2.0.0-alpha01")
-        // Note: OkHttp has built-in cookie handling.
-        // If you need specific JavaNet cookie/trust management with OkHttp, you can still add them:
-        // implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01")
-        // implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01")
+        implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01") // Required: Cookie management if using ktor
+        implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01") // Required: Trust management if using ktor
     }
 }
 ```
@@ -182,51 +135,26 @@ This section outlines the `dependencies` block for integrating **MoonGetter modu
 
 ```kotlin
 dependencies {
-    // --- Core MoonGetter Library ---
-    // The main logic for stream extraction.
+    // --- Core & Server Support ---
     implementation("io.github.darkryh.moongetter:moongetter-core:2.0.0-alpha01")
-
-    // --- HTTP Client for MoonGetter ---
-    // You have flexibility in choosing your HTTP client for JVM projects:
-
-    // Option 1 (Recommended for simplicity): MoonGetter's dedicated OkHttp client.
-    // OkHttp is a robust and widely used HTTP client for JVM, including Android.
-    // It has built-in cookie management.
-    implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:2.0.0-alpha01")
-
-    // Option 2: MoonGetter's Ktor client with a specific Ktor engine.
-    // Use this if you prefer Ktor's API style. You will also need to add a Ktor engine.
-    // implementation("io.github.darkryh.moongetter:moongetter-client-ktor:2.0.0-alpha01")
-    // Choose one Ktor engine:
-    // For general JVM/Android:
-    // implementation("io.ktor:ktor-client-okhttp:2.3.12") // Use OkHttp as Ktor's backing
-    // OR
-    // implementation("io.ktor:ktor-client-cio:2.3.12") // Use Ktor's native CIO engine (often good for desktop JVM)
-
-    // Optional: Cookie manager for Ktor client or explicit JavaNet handling with OkHttp.
-    // If using Ktor, this is often needed for explicit cookie management.
-    // If using OkHttp, this can be added for JavaNet-based cookie management if preferred.
-    implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01")
-
-    // Optional: Trust Manager for JavaNet (for custom SSL certificate trust, if needed)
-    implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01")
-
-    // --- Server Support ---
-    // Optional: Full server support bundle (includes all common streaming server implementations)
     implementation("io.github.darkryh.moongetter:moongetter-server-bundle:2.0.0-alpha01")
-
-    // Optional: Robot support for Android/JVM
     implementation("io.github.darkryh.moongetter:moongetter-core-robot:2.0.0-alpha01")
-    implementation("io.github.darkryh.moongetter:moongetter-server-bundle-robot:2.0.0-alpha01")
-    // This is specifically for Android-related robot API implementations.
-    implementation("io.github.darkryh.moongetter:moongetter-android-robot:2.0.0-alpha01")
-
-    // Optional: Individual server modules (use these instead of `moongetter-server` for selective support)
+    implementation("io.github.darkryh.moongetter:moongetter-server-robot-bundle:2.0.0-alpha01")
+    // Optional: Individual server modules
     // implementation("io.github.darkryh.moongetter:moongetter-mp4upload:2.0.0-alpha01")
-    // implementation("io.github.darkryh.moongetter:moongetter-filemoon:2.0.0-alpha01")
-    // implementation("io.github.darkryh.moongetter:moongetter-streamtape:2.0.0-alpha01")
-    // implementation("io.github.darkryh.moongetter:moongetter-streamwish:2.0.0-alpha01")
-    // Add any other individual server dependencies as needed
+
+    // --- HTTP Client & Utilities ---
+    // Choose your client:
+    implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:2.0.0-alpha01") // Option 1: OkHttp (recommended)
+    // OR
+    // implementation("io.github.darkryh.moongetter:moongetter-client-ktor:2.0.0-alpha01") // Option 2: Ktor
+    // + Ktor engine (e.g., "io.ktor:ktor-client-okhttp:2.3.12" or "io.ktor:ktor-client-cio:2.3.12")
+
+    implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:2.0.0-alpha01") // Required: Cookie management if using ktor
+    implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:2.0.0-alpha01") // Required: Trust management if using ktor
+
+    // Android-specific Robot (only for Android projects)
+    implementation("io.github.darkryh.moongetter:moongetter-android-robot:2.0.0-alpha01")
 }
 ```
 
