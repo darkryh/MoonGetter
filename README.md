@@ -20,11 +20,11 @@
 
 ## 🔄 Compatibility Table
 
-| Feature                | Android | JVM    | Kotlin Multiplatform |
-| :--------------------- | :-----: | :----: | :------------------: |
-| Core Library           |   ✅    |   ✅   |          ✅          |
-| Robot Servers API      |   ✅    |   ✅   |    ⏳ (Planned)      |
-| Server Implementations |   ✅    |   ✅   |          ✅          |
+| Feature                | Android |    JVM     | Kotlin Multiplatform |
+| :--------------------- | :-----: |:----------:| :------------------: |
+| Core Library           |   ✅    |     ✅      |          ✅          |
+| Robot Servers API      |   ✅    | ⏳(desktop) |    ⏳ (Planned)      |
+| Server Implementations |   ✅    |     ✅      |          ✅          |
 
 > ✅ = Supported / ⏳ = In development / JVM refers to non-Android Kotlin projects.
 
@@ -174,8 +174,9 @@ Example with Ktor:
 MoonGetter.Builder()
     .setClient(
         KtorMoonClient(
-            engineFactory = CIO,
-            cookieManagement = JavaNetCookieManagement()
+            engineFactory = CIO, //on iOS Darwin
+            cookieManagement = JavaNetCookieManagement(), //on iOS MoonCookie.Management.newEmptyFactory()
+            trustManager = JavaMoonTrustManager // on iOS MoonTrust.Manager.newEmptyFactory()
         )
     )
 ```
@@ -285,17 +286,8 @@ class CustomServer(
 object CustomServerFactory : Server.Factory {
     override val serverName: String = "MyCustomServer" // Must match the serverName in CustomServer
     override val pattern: String = """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""" // Your regex pattern for URLs this server handles
-
-    /**
-     * Creates a new [CustomServer] instance configured to handle the given URL.
-     *
-     * @param url The URL to be processed by the server.
-     * @param headers HTTP headers to be used during requests.
-     * @param configData Configuration data required for server setup.
-     * @param client The HTTP client used to perform network operations.
-     *
-     * @return An instance of [CustomServer] ready to process the URL.
-     */
+    
+    //instance function since kmp doesnt support reflection
     override fun create(
         url: String,
         headers: HashMap<String, String>,
