@@ -11,6 +11,8 @@ import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.Values.targetUrl
+import io.ktor.utils.io.charsets.Charsets
+import kotlin.io.encoding.Base64
 
 class Mediafire(
     url : String,
@@ -29,13 +31,16 @@ class Mediafire(
 
         if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
+
         return listOf(
             Video(
                 quality = DEFAULT,
-                url = PatternManager.singleMatch(
-                    string = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
-                    regex = "(?<=href=\")(https://download\\d+\\.mediafire\\.com/[\\w\\-]+/[\\w\\-]+/[\\w\\-\\.]+)"
-                ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+                url = Base64.decode(
+                    PatternManager.singleMatch(
+                        string = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
+                        regex = """aria-label\s*=\s*"Download file"[^>]*?data-scrambled-url\s*=\s*"([^"]+)""""
+                    ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+                ).decodeToString()
             )
         )
     }

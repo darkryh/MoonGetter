@@ -54,6 +54,7 @@
 -   ✅ Doodstream
 -   ✅ Vidguard
 -   ✅ Filemoon
+-   ✅ VK
 
 ---
 
