@@ -25,7 +25,9 @@ class Pixeldrain(
         url = "https://pixeldrain.com/api/file/$id?download"
 
         val response = client
-            .GET()
+            .GET(
+                isResponseBodyNeeded = false
+            )
 
         if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 

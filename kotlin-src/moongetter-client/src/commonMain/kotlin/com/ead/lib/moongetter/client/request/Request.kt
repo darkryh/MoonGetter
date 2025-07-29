@@ -9,5 +9,6 @@ data class Request<T>(
     val queryParams: Map<String, String> = emptyMap(),
     val body: T? = null,
     val serializer: KSerializer<T>? = null,
-    val asFormUrlEncoded: Boolean = false
+    val asFormUrlEncoded: Boolean = false,
+    val isResponseBodyNeeded : Boolean = true
 )

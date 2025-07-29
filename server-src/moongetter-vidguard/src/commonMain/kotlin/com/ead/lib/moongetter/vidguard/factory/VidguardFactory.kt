@@ -6,7 +6,7 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.vidguard.Vidguard
 
 /**
- * Factory responsible for creating instances of the [com.ead.lib.moongetter.vidguard.Vidguard] server.
+ * Factory responsible for creating instances of the [Vidguard] server.
  *
  * This factory defines a regex pattern to detect Vidguard URLs and
  * creates server instances configured to handle those URLs.
@@ -26,14 +26,14 @@ object VidguardFactory : Server.Factory {
     override val pattern: String = "https?://(?:listeamed|vembed)\\.(?:com|net)/(?:e|d)/\\S+"
 
     /**
-     * Creates a new [com.ead.lib.moongetter.vidguard.Vidguard] server instance configured for the specified URL.
+     * Creates a new [Vidguard] server instance configured for the specified URL.
      *
      * @param url The target URL to process.
      * @param headers Optional HTTP headers for requests.
      * @param configData Configuration data needed by the server.
      * @param client HTTP client used for network communication.
      *
-     * @return A configured [com.ead.lib.moongetter.vidguard.Vidguard] server instance ready to handle the URL.
+     * @return A configured [Vidguard] server instance ready to handle the URL.
      */
     override fun create(
         url: String,

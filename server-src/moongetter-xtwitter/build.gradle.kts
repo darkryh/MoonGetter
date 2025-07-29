@@ -2,6 +2,7 @@ val moonGetterVersion: String by project
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
     `maven-publish`
     signing
     id("com.vanniktech.maven.publish") version "0.34.0"

@@ -121,7 +121,8 @@ open class Server(
     protected suspend fun MoonClient.GET(
         requestUrl: String? = null,
         overrideHeaders: Map<String, String>? = null,
-        queryParams: Map<String, String>? = null
+        queryParams: Map<String, String>? = null,
+        isResponseBodyNeeded: Boolean = true
     ): Response = withContext(Dispatchers.IO) {
         try {
             this@GET.request<String>(
@@ -133,7 +134,8 @@ open class Server(
                         else headers + overrideHeaders
                     },
                     queryParams = queryParams ?: emptyMap(),
-                    asFormUrlEncoded = false
+                    asFormUrlEncoded = false,
+                    isResponseBodyNeeded = isResponseBodyNeeded
                 )
             )
         }
@@ -153,7 +155,8 @@ open class Server(
         requestUrl: String? = null,
         overrideHeaders: Map<String, String>? = null,
         body: T,
-        asFormUrlEncoded: Boolean = false
+        asFormUrlEncoded: Boolean = false,
+        isResponseBodyNeeded : Boolean = true
     ): Response = withContext(Dispatchers.IO) {
         try {
             val serializer: KSerializer<T> = serializer()
@@ -167,12 +170,18 @@ open class Server(
                     },
                     body = body,
                     asFormUrlEncoded = asFormUrlEncoded,
-                    serializer = serializer
+                    serializer = serializer,
+                    isResponseBodyNeeded = isResponseBodyNeeded
                 )
             )
         }
         catch (e : HttpRequestTimeoutException) {
             e.printStackTrace()
+            throw InvalidServerException("error", Error.TIMEOUT_ERROR)
+        }
+        catch (e : Exception) {
+            e.printStackTrace()
+            println(e.message.toString())
             throw InvalidServerException("error", Error.TIMEOUT_ERROR)
         }
     }

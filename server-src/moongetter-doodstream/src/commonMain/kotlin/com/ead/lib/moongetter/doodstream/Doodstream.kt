@@ -22,9 +22,13 @@ class Doodstream(
 
     private val hostTarget = url.toHttpUrl().host
 
+    override val headers: HashMap<String, String> = headers.also {
+        it["Origin"] = url
+        it["Referer"] = "/$url"
+    }
+
     @OptIn(ExperimentalTime::class)
     override suspend fun onExtract(): List<Video> {
-
         var response = client
             .GET()
 

@@ -48,6 +48,8 @@ class Vidguard(
             patternFlag = RegexOption.MULTILINE
         ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
+        println(data)
+
         val stream = PatternManager.singleMatch(
             string = executeRunnableScript(data),
             regex = "\"stream\"\\s*:\\s*\"([^\"]+)\""

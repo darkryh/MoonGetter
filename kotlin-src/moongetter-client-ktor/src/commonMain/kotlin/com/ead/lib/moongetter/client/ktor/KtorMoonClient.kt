@@ -100,7 +100,7 @@ class KtorMoonClient<out T : HttpClientEngineConfig>(
             }
 
             method = when (request.method) {
-                HttpMethod.GET -> KtorHttpMethod.Get
+                HttpMethod.GET -> if (request.isResponseBodyNeeded) KtorHttpMethod.Get else KtorHttpMethod.Head
                 HttpMethod.POST -> KtorHttpMethod.Post
             }
 
@@ -124,7 +124,7 @@ class KtorMoonClient<out T : HttpClientEngineConfig>(
             }
         }
 
-        val bodyAsString = response.bodyAsText()
+        val bodyAsString = if (request.isResponseBodyNeeded) response.bodyAsText() else byteArrayOf().decodeToString()
 
         return object : Response {
             override val statusCode: Int = response.status.value

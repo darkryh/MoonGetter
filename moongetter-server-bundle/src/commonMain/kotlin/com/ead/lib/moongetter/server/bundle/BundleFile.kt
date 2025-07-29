@@ -17,6 +17,7 @@ import com.ead.lib.moongetter.senvid.factory.SenvidFactory
 import com.ead.lib.moongetter.streamtape.factory.StreamtapeFactory
 import com.ead.lib.moongetter.streamwish.factory.StreamwishFactory
 import com.ead.lib.moongetter.uqload.factory.UqloadFactory
+import com.ead.lib.moongetter.vidguard.factory.VidguardFactory
 import com.ead.lib.moongetter.vihide.factory.VihideFactory
 import com.ead.lib.moongetter.vk.factory.VKFactory
 import com.ead.lib.moongetter.voe.factory.VoeFactory
@@ -48,5 +49,6 @@ val serverBundle = arrayOf(
     VihideFactory,
     VoeFactory,
     XTwitterFactory,
+    VidguardFactory,
     YourUploadFactory
 )
