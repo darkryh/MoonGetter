@@ -19,6 +19,8 @@ import com.ead.lib.moongetter.okru.factory.OkruFactory
 import com.ead.lib.moongetter.onecloudfile.factory.OneCloudFileFactory
 import com.ead.lib.moongetter.pixeldrain.factory.PixeldrainFactory
 import com.ead.lib.moongetter.senvid.factory.SenvidFactory
+import com.ead.lib.moongetter.server.bundle.serverBundle
+import com.ead.lib.moongetter.server.robot.bundle.serverRobotBundle
 import com.ead.lib.moongetter.streamtape.factory.StreamtapeFactory
 import com.ead.lib.moongetter.streamwish.factory.StreamwishFactory
 import com.ead.lib.moongetter.uqload.factory.UqloadFactory
@@ -46,36 +48,8 @@ val appModule = module {
                      * CustomServerFactory
                      */
                     SenvidModifiedFactory,
-                    LasEstrellasFactory,
-                    /**
-                     * DefaultServerFactory
-                     */
-                    DoodstreamFactory,
-                    FacebookFactory,
-                    FilemoonFactory,
-                    //FireloadFactory,
-                    GoodStreamFactory,
-                    GoogleDriveFactory,
-                    HexloadFactory,
-                    LaMovieFactory,
-                    LulustreamFactory,
-                    MediafireFactory,
-                    MixdropFactory,
-                    Mp4UploadFactory,
-                    OkruFactory,
-                    OneCloudFileFactory,
-                    PixeldrainFactory,
-                    SenvidFactory,
-                    StreamtapeFactory,
-                    StreamwishFactory,
-                    UqloadFactory,
-                    VKFactory,
-                    //VidguardFactory,
-                    VihideFactory,
-                    VoeFactory,
-                    XTwitterFactory,
-                    YourUploadFactory
-                )
+                    LasEstrellasFactory
+                ) + serverBundle + serverRobotBundle
             )
             .build()
     }

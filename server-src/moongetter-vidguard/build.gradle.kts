@@ -60,18 +60,21 @@ kotlin {
     iosX64 {
         binaries.framework {
             baseName = xcfName
+            freeCompilerArgs += listOf("-Xnative-threads")
         }
     }
 
     iosArm64 {
         binaries.framework {
             baseName = xcfName
+            freeCompilerArgs += listOf("-Xnative-threads")
         }
     }
 
     iosSimulatorArm64 {
         binaries.framework {
             baseName = xcfName
+            freeCompilerArgs += listOf("-Xnative-threads")
         }
     }
 
@@ -92,6 +95,12 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                implementation(libs.mozilla.rhino)
             }
         }
     }

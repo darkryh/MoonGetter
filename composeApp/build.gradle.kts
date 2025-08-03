@@ -87,6 +87,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation("network.chaintech:compose-multiplatform-media-player:1.0.42")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -95,6 +96,9 @@ kotlin {
             implementation(libs.ktor.client.cio)
             implementation(project(":moongetter-client-cookie-java-net"))
             implementation(project(":moongetter-client-trustmanager-java-net"))
+
+            implementation("network.chaintech:compose-multiplatform-media-player:1.0.42")
+            implementation("org.jogamp.gluegen:gluegen-rt:2.5.0")
         }
     }
 }

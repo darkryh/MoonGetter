@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+    id("com.vanniktech.maven.publish") version "0.34.0" apply false
 }

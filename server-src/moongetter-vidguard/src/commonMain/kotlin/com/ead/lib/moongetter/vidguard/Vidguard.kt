@@ -5,21 +5,22 @@ import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.PatternManager
 import com.ead.lib.moongetter.utils.PlaylistUtils
 import com.ead.lib.moongetter.utils.Values.targetUrl
-import com.ead.lib.moongetter.models.error.Error
-import com.ead.lib.moongetter.utils.PatternManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.ead.lib.moongetter.utils.runWithStackSize
+import com.ead.lib.moongetter.vidguard.factory.util.decodeObstructionData
+import com.ead.lib.moongetter.vidguard.factory.util.executeRunnableScript
 
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 class Vidguard(
     url: String,
     client: MoonClient,
     headers : HashMap<String,String>,
     configData: Configuration.Data
-) : Server(url,client,headers,configData) {
-
+) : Server(url, client, headers, configData) {
     private val playlistUtils by lazy { PlaylistUtils(client, headers) }
 
     override val headers: HashMap<String, String> = headers.also {
@@ -42,13 +43,13 @@ class Vidguard(
             response.statusCode
         )
 
-        val data = PatternManager.singleMatch(
-            string =  response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
-            regex = """<script\b[^>]*>((?:(?!<\/script>).)*?eval(?:(?!<\/script>).)*)<\/script>""",
-            patternFlag = RegexOption.MULTILINE
-        ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
-
-        println(data)
+        val data = runWithStackSize(1 * 1024 * 1024) {
+            PatternManager.singleMatch(
+                string =  response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
+                regex = """<script\b[^>]*>((?:(?!<\/script>).)*?eval(?:(?!<\/script>).)*)<\/script>""",
+                patternFlag = RegexOption.MULTILINE
+            ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+        }
 
         val stream = PatternManager.singleMatch(
             string = executeRunnableScript(data),
@@ -56,68 +57,8 @@ class Vidguard(
         ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
 
-        val playListUrl = ""
+        val playListUrl = decodeObstructionData(stream)
 
         return playlistUtils.extractFromHls(playListUrl)
     }
-
-    private suspend fun executeRunnableScript(scriptCode: String): String = withContext(Dispatchers.Main) {
-        return@withContext ""
-        /*val result: String
-        val rhinoContext = Context.enter()
-
-        try {
-
-            rhinoContext.initSafeStandardObjects()
-            rhinoContext.isInterpretedMode = true
-
-            val executorScriptable: Scriptable = rhinoContext.initSafeStandardObjects()
-            executorScriptable.put("window", executorScriptable, executorScriptable)
-
-            rhinoContext.evaluateString(
-                executorScriptable,
-                scriptCode,
-                "JavaScript",
-                1,
-                null
-            )
-
-            val svgObject = executorScriptable.get("svg", executorScriptable)
-
-            result = if (svgObject is NativeObject) {
-                NativeJSON.stringify(Context.getCurrentContext(), executorScriptable, svgObject, null, null).toString()
-            } else {
-                Context.toString(svgObject)
-            }
-        } finally {
-            Context.exit()
-        }
-
-        result*/
-    }
-
-    /*private fun decodeObstructionData(url: String): String {
-        val obstructedData = url.split("sig=")[1].split("&")[0]
-        val finalData = obstructedData.chunked(2)
-            .joinToString("") { (Integer.parseInt(it, 16) xor 2).toChar().toString() }
-            .let {
-                val padding = when (it.length % 4) { 2 -> "==" 3 -> "=" else -> "" }
-                @OptIn(ExperimentalEncodingApi::class)
-                String(Base64.decode((it + padding).toByteArray(Charsets.UTF_8)))
-            }
-            .dropLast(5)
-            .reversed()
-            .toCharArray()
-            .apply {
-                for (i in indices step 2) {
-                    if (i + 1 < size) {
-                        this[i] = this[i + 1].also { this[i + 1] = this[i] }
-                    }
-                }
-            }
-            .concatToString()
-            .dropLast(5)
-
-        return url.replace(obstructedData, finalData)
-    }*/
 }

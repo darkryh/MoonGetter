@@ -1,10 +1,14 @@
 package com.ead.project.moongetter.presentation.player
 
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.UIKitView
+import chaintech.videoplayer.host.MediaPlayerHost
+import chaintech.videoplayer.ui.video.VideoPlayerComposable
 import com.ead.lib.moongetter.models.Request
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -29,6 +33,24 @@ actual fun Player(
     modifier: Modifier,
     request: Request
 ) {
+    val playerHost = remember {
+        MediaPlayerHost(
+            mediaUrl = request.url,
+            headers = request.headers
+        )
+    }
+
+    VideoPlayerComposable(
+        modifier = modifier
+            .aspectRatio(16f / 9f),
+        playerHost = playerHost
+    )
+}
+
+
+@OptIn(ExperimentalForeignApi::class)
+@Composable
+private fun unused(request: Request) {
     UIKitView(
         factory = {
             val view = UIView().apply {
@@ -43,13 +65,10 @@ actual fun Player(
             player.play()
             view
         },
-        update = { view ->
-        },
-        modifier = modifier
-            .size(300.dp, 200.dp)
+        update = { view ->},
+        modifier = Modifier.size(300.dp, 200.dp)
     )
 }
-
 
 private fun createPlayerFromRequest(request: Request): Pair<AVPlayer, AVPlayerLayer> {
     val url = NSURL.URLWithString(request.url) ?: error("Invalid URL")

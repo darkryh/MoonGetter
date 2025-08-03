@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 val javaStringVersion: String by project
 val javaVersion = JavaVersion.toVersion(javaStringVersion)
 val compileLibSdkVersion : String by project
@@ -7,6 +9,12 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin)
     alias(libs.plugins.compose.compiler)
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(javaStringVersion)
+    }
 }
 
 android {
@@ -38,9 +46,6 @@ android {
     compileOptions {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
-    }
-    kotlinOptions {
-        jvmTarget = javaStringVersion
     }
 }
 
