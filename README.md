@@ -77,7 +77,7 @@ repositories {
     mavenCentral()
 }
 ```
-## Kotlin Multiplatform Project Dependencies (MoonGetter Modules Only)
+## Kotlin Multiplatform Project Dependencies
 
 This section outlines the `dependencies` block specifically for integrating **MoonGetter modules** within a **Kotlin Multiplatform (KMP)** project structure. It focuses solely on MoonGetter-related dependencies, showing their placement for common shared code, Android-specific configurations, and iOS (Darwin) targets.
 
@@ -125,7 +125,7 @@ dependencies {
 }
 ```
 
-## Java/Kotlin JVM Project Dependencies (MoonGetter Integration Example)
+## Java/Kotlin JVM Project Dependencies
 
 This section outlines the `dependencies` block for integrating **MoonGetter modules** into a standard **Java or Kotlin JVM project**. This includes typical Android applications or standalone desktop JVM applications that **do not use Kotlin Multiplatform**.
 
