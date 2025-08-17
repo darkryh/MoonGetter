@@ -169,6 +169,7 @@ dependencies {
 **Note**:
 - **OkHttp** has **built-in cookie support**, no setup needed.
 - **Ktor** requires you to explicitly inject cookie management (e.g., `JavaNetCookieManagement`).
+
   Example Initialization:
 ```kotlin
 MoonGetter.start(
@@ -244,6 +245,7 @@ class MyViewModel : ViewModel() {
                 
                 
             val server : Server = MoonGetter.get(url) // returns server
+            val serverNullable : Server? = MoonGetter.getOrNull(url) // returns server or null, in this case there's no need wrap in try catch
 
             val streams = server?.videos
         } catch (e: InvalidServerException) {
@@ -324,7 +326,7 @@ object CustomServerFactory : Server.Factory {
 
 ---
 
-## 🧪 MoonGetter – Server Retrieval API
+### 🧪 MoonGetter – Server Retrieval API
 
 The `MoonGetter` object provides several methods to resolve [Server] instances from URLs.  
 Before using any of these functions, you **must initialize** the library with [`start(factory: Factory.Builder)`](#).  
@@ -332,7 +334,7 @@ If it is not initialized, the methods will throw [InvalidServerException] with e
 
 ---
 
-### 🔹 `suspend fun get(url: String): Server`
+#### 🔹 `suspend fun get(url: String): Server`
 Resolves a single [Server] for the given URL.  
 Unlike the `getOrNull` variant, this method **throws an exception** if resolution fails.
 
@@ -348,7 +350,7 @@ Unlike the `getOrNull` variant, this method **throws an exception** if resolutio
 
 ---
 
-### 🔹 `suspend fun getOrNull(url: String): Server?`
+#### 🔹 `suspend fun getOrNull(url: String): Server?`
 Safe variant of [`get(url)`](#suspend-fun-geturl-string-server).  
 Instead of throwing when no server can be resolved, it returns `null`.  
 ⚠️ **Special case**: if the library has not been initialized, [InvalidServerException] is re-thrown to signal improper API usage.
@@ -364,7 +366,7 @@ Instead of throwing when no server can be resolved, it returns `null`.
 
 ---
 
-### 🔹 `suspend fun get(urls: List<String>): List<Server>`
+#### 🔹 `suspend fun get(urls: List<String>): List<Server>`
 Resolves multiple [Server] instances in one call, keeping the same order as the input URLs.  
 All returned elements are **non-null**.
 
@@ -380,7 +382,7 @@ All returned elements are **non-null**.
 
 ---
 
-### 🔹 `suspend fun getUntilFindResource(urls: List<String>): Server`
+#### 🔹 `suspend fun getUntilFindResource(urls: List<String>): Server`
 Sequentially checks a list of URLs until the **first valid [Server]** is found.  
 If no valid server is found, it throws an exception.
 
@@ -396,7 +398,7 @@ If no valid server is found, it throws an exception.
 
 ---
 
-### 🔹 `suspend fun getUntilFindResourceOrNull(urls: List<String>): Server?`
+#### 🔹 `suspend fun getUntilFindResourceOrNull(urls: List<String>): Server?`
 Safe variant of [`getUntilFindResource(urls)`](#suspend-fun-getuntilfindresourceurls-liststring-server).  
 Instead of throwing when no valid server is found, it returns `null`.  
 ⚠️ As with `getOrNull`, [InvalidServerException] is still thrown if the factory has not been initialized.
