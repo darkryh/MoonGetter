@@ -7,6 +7,7 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.builder.Factory
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * MoonGetter is the central access point for retrieving `Server` instances.
@@ -90,7 +91,7 @@ object MoonGetter {
      *                                or if no valid server can be created for the given URL.
      * @throws RuntimeException For any unexpected runtime errors during resolution.
      */
-    @Throws(InvalidServerException::class, RuntimeException::class)
+    @Throws(InvalidServerException::class, CancellationException::class, RuntimeException::class)
     suspend fun get(url: String): Server {
         return (instance ?: throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED))
             .get(url = url)
@@ -107,7 +108,7 @@ object MoonGetter {
      *                                Unlike other cases, this exception is re-thrown
      *                                to signal improper usage of the API.
      */
-    @Throws(InvalidServerException::class)
+    @Throws(InvalidServerException::class, CancellationException::class)
     suspend fun getOrNull(url: String): Server? {
         return try {
             instance?.get(url = url)
@@ -130,7 +131,7 @@ object MoonGetter {
      *                                or if no valid server can be created for the given URL.
      * @throws RuntimeException For any unexpected runtime errors during resolution.
      */
-    @Throws(InvalidServerException::class, RuntimeException::class)
+    @Throws(InvalidServerException::class, CancellationException::class, RuntimeException::class)
     @ExperimentalFeature
     suspend fun get(urls: List<String>) : List<Server> {
         return (instance ?: throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED))
@@ -148,7 +149,7 @@ object MoonGetter {
      *                                or if no valid server can be found among the provided URLs.
      * @throws RuntimeException For any unexpected runtime errors during resolution.
      */
-    @Throws(InvalidServerException::class, RuntimeException::class)
+    @Throws(InvalidServerException::class, CancellationException::class,  RuntimeException::class)
     suspend fun getUntilFindResource(urls: List<String>): Server {
         return (instance ?: throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED))
             .getUntilFindResource(urls = urls)
@@ -165,7 +166,7 @@ object MoonGetter {
      *                                This exception is re-thrown to signal improper usage
      *                                of the API configuration.
      */
-    @Throws(InvalidServerException::class)
+    @Throws(InvalidServerException::class, CancellationException::class)
     suspend fun getUntilFindResourceOrNull(urls: List<String>): Server? {
         return try {
             instance?.getUntilFindResource(urls = urls)
