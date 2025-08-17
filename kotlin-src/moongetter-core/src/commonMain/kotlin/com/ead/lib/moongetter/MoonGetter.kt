@@ -130,8 +130,8 @@ object MoonGetter {
      *                                or if no valid server can be created for the given URL.
      * @throws RuntimeException For any unexpected runtime errors during resolution.
      */
-    @OptIn(ExperimentalFeature::class)
     @Throws(InvalidServerException::class, RuntimeException::class)
+    @ExperimentalFeature
     suspend fun get(urls: List<String>) : List<Server> {
         return (instance ?: throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED))
             .get(urls = urls)
