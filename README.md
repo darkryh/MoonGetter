@@ -169,10 +169,26 @@ dependencies {
 **Note**:
 - **OkHttp** has **built-in cookie support**, no setup needed.
 - **Ktor** requires you to explicitly inject cookie management (e.g., `JavaNetCookieManagement`).
+  Example Initialization:
+```kotlin
+MoonGetter.start(
+    MoonFactory
+        .Builder()
+        .setClient(
+            client = KtorMoonClient(
+                engineFactory = httpClientEngineFactory,
+                cookieManagement = cookieManagement,
+                trustManager = trustManager
+            )
+        )
+        .setTimeout(timeoutMillis = 12000)
+        .setEngine(engine = engine)
+)
+```
 
 Example with Ktor:
 ```kotlin
-MoonGetter.Builder()
+MoonFactory.Builder()
     .setClient(
         KtorMoonClient(
             engineFactory = CIO, //on iOS Darwin
@@ -184,7 +200,7 @@ MoonGetter.Builder()
 
 Example with OkHttp:
 ```kotlin
-MoonGetter.Builder()
+MoonFactory.Builder()
     .setClient(
         OkHttpClient
     )
@@ -212,19 +228,22 @@ class MyViewModel : ViewModel() {
 
     fun getMediaStreams(url: String) = viewModelScope.launch(Dispatchers.IO) {
         try {
-            val server = MoonGetter
-                .Builder()
-                .setClient(
-                    KtorMoonClient(
-                        engineFactory = CIO, //on iOS Darwin
-                        cookieManagement = JavaNetCookieManagement(), //on iOS MoonCookie.Management.newEmptyFactory()
-                        trustManager = JavaMoonTrustManager // on iOS MoonTrust.Manager.newEmptyFactory()
+            MoonGetter.start(
+                MoonFactory
+                    .Builder()
+                    .setClient(
+                        KtorMoonClient(
+                            engineFactory = CIO,//jvm other option Okhttp //on iOS Darwin
+                            cookieManagement = JavaNetCookieManagement(), //on iOS MoonCookie.Management.newEmptyFactory()
+                            trustManager = JavaMoonTrustManager // on iOS MoonTrust.Manager.newEmptyFactory()
+                        )
                     )
-                )
-                .setTimeout(8000)
-                .setEngine(engine)
-                .setHeaders(mapOf("User-Agent" to "Mozilla/5.0"))
-                .get(url)
+                    .setTimeout(8000)
+                    .setEngine(engine)
+            )
+                
+                
+            val server : Server = MoonGetter.get(url) // returns server
 
             val streams = server?.videos
         } catch (e: InvalidServerException) {
@@ -305,11 +324,98 @@ object CustomServerFactory : Server.Factory {
 
 ---
 
-## 🧪 Requests
+## 🧪 MoonGetter – Server Retrieval API
 
-- `get(url: String)`: Retrieves a `Server?` for the given URL.
-- `get(urls: List<String>)`: Retrieves a `List<Server>` for multiple URLs.
-- `getUntilFindResource(urls: List<String>)`: Stops at the first valid `Server` found.
+The `MoonGetter` object provides several methods to resolve [Server] instances from URLs.  
+Before using any of these functions, you **must initialize** the library with [`start(factory: Factory.Builder)`](#).  
+If it is not initialized, the methods will throw [InvalidServerException] with error [Error.CONFIG_NOT_INITIALIZED].
+
+---
+
+### 🔹 `suspend fun get(url: String): Server`
+Resolves a single [Server] for the given URL.  
+Unlike the `getOrNull` variant, this method **throws an exception** if resolution fails.
+
+- **Parameters**
+    - `url: String` → Candidate URL to resolve into a server.
+
+- **Returns**
+    - [Server] → A non-null instance corresponding to the provided URL.
+
+- **Throws**
+    - [InvalidServerException] if the factory is not initialized.
+    - [RuntimeException] for unexpected runtime errors.
+
+---
+
+### 🔹 `suspend fun getOrNull(url: String): Server?`
+Safe variant of [`get(url)`](#suspend-fun-geturl-string-server).  
+Instead of throwing when no server can be resolved, it returns `null`.  
+⚠️ **Special case**: if the library has not been initialized, [InvalidServerException] is re-thrown to signal improper API usage.
+
+- **Parameters**
+    - `url: String`
+
+- **Returns**
+    - [Server]? → A resolved instance if successful, or `null` if none could be found.
+
+- **Throws**
+    - [InvalidServerException] when the factory has not been initialized.
+
+---
+
+### 🔹 `suspend fun get(urls: List<String>): List<Server>`
+Resolves multiple [Server] instances in one call, keeping the same order as the input URLs.  
+All returned elements are **non-null**.
+
+- **Parameters**
+    - `urls: List<String>` → List of candidate URLs.
+
+- **Returns**
+    - `List<Server>` → A list of resolved server instances, one for each input URL.
+
+- **Throws**
+    - [InvalidServerException] if the factory is not initialized.
+    - [RuntimeException] for unexpected runtime errors.
+
+---
+
+### 🔹 `suspend fun getUntilFindResource(urls: List<String>): Server`
+Sequentially checks a list of URLs until the **first valid [Server]** is found.  
+If no valid server is found, it throws an exception.
+
+- **Parameters**
+    - `urls: List<String>`
+
+- **Returns**
+    - [Server] → The first successfully resolved server.
+
+- **Throws**
+    - [InvalidServerException] if the factory is not initialized or no valid server is found.
+    - [RuntimeException] for unexpected runtime errors.
+
+---
+
+### 🔹 `suspend fun getUntilFindResourceOrNull(urls: List<String>): Server?`
+Safe variant of [`getUntilFindResource(urls)`](#suspend-fun-getuntilfindresourceurls-liststring-server).  
+Instead of throwing when no valid server is found, it returns `null`.  
+⚠️ As with `getOrNull`, [InvalidServerException] is still thrown if the factory has not been initialized.
+
+- **Parameters**
+    - `urls: List<String>`
+
+- **Returns**
+    - [Server]? → The first valid server found, or `null` if none could be resolved.
+
+- **Throws**
+    - [InvalidServerException] if the factory has not been initialized.
+
+---
+
+📌 **Key Notes**:
+- `get` variants always return **non-null** and assume successful resolution.
+- `getOrNull` variants return **nullable** for resolution failures, but still throw if the factory was not initialized.
+- `get(urls: List<String>)` always returns a **non-null list with non-null elements**.
 
 ---
 

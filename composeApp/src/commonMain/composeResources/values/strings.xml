@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MoonGetter</string>
+    <string name="play_text_field_hint">Provide url from filemoon, vidguard, streamwish, mxdrop, lulustream, mp4upload etc</string>
+</resources>

@@ -6,7 +6,7 @@ import com.ead.project.moongetter.presentation.util.TextFieldState
 
 data class MainState(
     val targetExtractTextField : TextFieldState = TextFieldState(
-        hint = "Provide url from filemoon, doodstream, etc",
+        hint = "hint sample",
         isHintVisible = true
     ),
     val streamPlaylist: List<Video> = emptyList(),

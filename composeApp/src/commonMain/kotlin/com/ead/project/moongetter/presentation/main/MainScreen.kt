@@ -43,9 +43,14 @@ import com.ead.project.moongetter.presentation.main.intent.TextIntent
 import com.ead.project.moongetter.presentation.main.state.MainState
 import com.ead.project.moongetter.presentation.player.Player
 import com.ead.project.moongetter.presentation.theme.MoonGetterTheme
+import com.ead.project.moongetter.presentation.util.AboutUs.GITHUB
+import com.ead.project.moongetter.presentation.util.IntentUtil
 import moongetter.composeapp.generated.resources.Res
+import moongetter.composeapp.generated.resources.app_name
 import moongetter.composeapp.generated.resources.compose_multiplatform
+import moongetter.composeapp.generated.resources.ic_github
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,26 +69,18 @@ fun MainScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Row(
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Text(text = "MoonGetter")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "A lib for android",
-                            fontSize = 11.sp,
-                        )
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Text(text = stringResource(Res.string.app_name))
                     }
                 },
                 actions = {
                     Spacer(modifier = Modifier.width(16.dp))
-                    IconButton(
-                        onClick = { /*IntentUtil.goIntentTo(, GITHUB)*/ }
-                    ) {
+
+                    IconButton(onClick = { IntentUtil.goIntentTo(GITHUB) }) {
                         Icon(
                             modifier = Modifier
                                 .size(30.dp),
-                            painter = painterResource(Res.drawable.compose_multiplatform),
+                            painter = painterResource(Res.drawable.ic_github),
                             contentDescription = "Search url to extract icon",
                             tint = MaterialTheme.colorScheme.inverseSurface
                         )
@@ -93,20 +90,14 @@ fun MainScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-        ) {
-
+        Column(modifier = Modifier.padding(paddingValues)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        ,
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -116,10 +107,7 @@ fun MainScreen(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
                                 shape = MaterialTheme.shapes.extraLarge
                             )
-                            .padding(
-                                vertical = 16.dp,
-                                horizontal = 16.dp
-                            )
+                            .padding(vertical = 16.dp, horizontal = 16.dp)
 
                     ) {
                         TextField(
@@ -228,6 +216,7 @@ fun MainScreen(
         }
     }
 }
+
 
 @Composable
 fun MainScreenPreview() {

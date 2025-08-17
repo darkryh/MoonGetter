@@ -26,7 +26,7 @@ object DoodstreamFactory : Server.Factory {
      * - https://do123abc.xyz/e/abcdef1234
      * - https://do9xyz.io/e/abcd1234
      */
-    override val pattern: String = """https://do[a-zA-Z0-9]*stream?[a-zA-Z0-9]*\.[a-z]{2,}/e/([a-zA-Z0-9]+)"""
+    override val pattern: String = """https://(?:do[a-zA-Z0-9]*stream?[a-zA-Z0-9]*\.[a-z]{2,}|d-s\.io)/e/([a-zA-Z0-9]+)"""
 
     /**
      * Creates a new [Doodstream] server instance configured to handle the given URL.

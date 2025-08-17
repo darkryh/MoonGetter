@@ -1,6 +1,6 @@
 package com.ead.project.moongetter.app
 
-import com.ead.lib.moongetter.MoonGetter
+import com.ead.lib.moongetter.MoonFactory
 import com.ead.lib.moongetter.android.robot.AndroidRobot
 import com.ead.lib.moongetter.client.cookie.java.net.JavaNetCookieManagement
 import com.ead.lib.moongetter.client.ktor.KtorMoonClient
@@ -37,7 +37,7 @@ val appModule = module {
             .build()
     }
     single<Factory.Builder> {
-        MoonGetter
+        MoonFactory
             .Builder()
             .setClient(
                 client = KtorMoonClient(

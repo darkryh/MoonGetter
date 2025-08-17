@@ -22,7 +22,7 @@ open class Server(
      */
     open var url : String,
     /**
-     * @param @client the client of okhttp
+     * @param @client the client of MoonClient
      */
     protected val client : MoonClient,
     /**
@@ -59,14 +59,6 @@ open class Server(
      * @return true if server has videos, so it means the resource was found
      */
     internal val isResourceFounded get() = videos.isNotEmpty()
-
-
-
-    /**
-     * @return true if the server is pending
-     */
-    internal open val isPending = false
-
 
 
     /**

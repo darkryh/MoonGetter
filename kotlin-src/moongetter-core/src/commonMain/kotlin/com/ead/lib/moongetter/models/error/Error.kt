@@ -1,12 +1,21 @@
 package com.ead.lib.moongetter.models.error
 
 enum class Error {
+    /**
+     * MoonGetter is not initialized
+     */
+    CONFIG_NOT_INITIALIZED,
 
     /**
-     * The parameters implemented server working process not valid or empty
+     * The url is not supported by the server
+     */
+    UNKNOWN_URL_ENTRY,
+
+    /**
+     * the process failed into get the server
      */
 
-    INVALID_PROCESS_IN_EXPECTED_URL_ENTRY,
+    NOT_SERVERS_FOUND,
 
     /**
      * The parameters implemented in Builder are not valid or empty

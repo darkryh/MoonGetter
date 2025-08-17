@@ -87,7 +87,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation("network.chaintech:compose-multiplatform-media-player:1.0.42")
+            implementation("network.chaintech:compose-multiplatform-media-player:1.0.44")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -97,7 +97,7 @@ kotlin {
             implementation(project(":moongetter-client-cookie-java-net"))
             implementation(project(":moongetter-client-trustmanager-java-net"))
 
-            implementation("network.chaintech:compose-multiplatform-media-player:1.0.42")
+            implementation("network.chaintech:compose-multiplatform-media-player:1.0.44")
             implementation("org.jogamp.gluegen:gluegen-rt:2.5.0")
         }
     }
@@ -149,6 +149,16 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.ead.project.moongetter"
             packageVersion = "1.0.0"
+
+            macOS {
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/ic_app_desktop.icns"))
+            }
+            windows {
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/ic_app_desktop.ico"))
+            }
+            linux {
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/ic_app_desktop.png"))
+            }
         }
     }
 }

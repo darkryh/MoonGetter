@@ -2,6 +2,9 @@ package com.ead.lib.moongetter.core
 
 object Resources {
 
+    const val MOON_GETTER_NOT_INITIALIZED = "MoonGetter not initialized"
+    const val UNKNOWN_URL_ENTRY = "Unknown url entry"
+
     const val NO_PARAMETERS_TO_WORK: String = "No parameters to work"
 
     const val CLIENT_NOT_PROVIDED: String = "Client not provided"

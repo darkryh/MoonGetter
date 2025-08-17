@@ -2,8 +2,8 @@ package com.ead.lib.moongetter.core
 
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
-import com.ead.lib.moongetter.core.MoonFactory.create
-import com.ead.lib.moongetter.core.MoonFactory.identifier
+import com.ead.lib.moongetter.core.MoonCoreFactory.create
+import com.ead.lib.moongetter.core.MoonCoreFactory.identifier
 import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.error.Error
@@ -16,7 +16,7 @@ import com.ead.lib.moongetter.utils.Values.restoreValues
  * Server factory object that handle the creation of servers
  * and the identification of the servers from a url
  */
-internal object MoonFactory {
+internal object MoonCoreFactory {
 
     private var _moonClientInstance : MoonClient?= null
 
@@ -134,7 +134,7 @@ internal object MoonFactory {
         /**
          * return a nullable server
          */
-    ) : Server? {
+    ) : Server {
 
 
 
@@ -157,16 +157,10 @@ internal object MoonFactory {
          * If the server is nullable return
          * and don't to extract process
          */
-        val server = serverResult ?: return null.also { restoreValues() }
-
-
-
-        /**
-         * If the server is pending return null
-         */
-        if (server.isPending) return null.also { restoreValues() }
-
-
+        val server = serverResult ?: run {
+            restoreValues()
+            throw InvalidServerException(Resources.UNKNOWN_URL_ENTRY, Error.UNKNOWN_URL_ENTRY)
+        }
 
         /**
          * If the server is deprecated return null
@@ -206,6 +200,9 @@ internal object MoonFactory {
          * @param serversFactory that's provided in the MoonGetter Builder
          */
         serversFactory : Array<Server.Factory>,
+        /**
+         * @param robot that's provided in the MoonGetter Builder
+         */
         robot: Robot?,
         /**
          * @param headers that's provided in the MoonGetter Builder
@@ -245,7 +242,7 @@ internal object MoonFactory {
                     /**
                      * In case of null return to next cycle
                      */
-                    servers.add(server ?: return@forEach)
+                    servers.add(server)
 
                 }
                 /**
@@ -265,13 +262,6 @@ internal object MoonFactory {
                     println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
                 }
             }
-
-            /**
-             * if the servers is empty throw [InvalidServerException]
-             */
-            servers.ifEmpty {
-                throw InvalidServerException(Resources.NOT_SERVERS_FOUND, Error.NO_PARAMETERS_TO_WORK)
-            }
         }
     }
 
@@ -290,6 +280,9 @@ internal object MoonFactory {
         urls : List<String>,
 
         serversFactory : Array<Server.Factory>,
+        /**
+         * @param robot that's provided in the MoonGetter Builder
+         */
         robot: Robot?,
         /**
          * @param headers that's provided in the MoonGetter Builder
@@ -306,7 +299,7 @@ internal object MoonFactory {
         /**
          * return a nullable server
          */
-    ) : Server? {
+    ) : Server {
         /**
          * cycle the injected [urls]
          * and set try catch
@@ -322,7 +315,7 @@ internal object MoonFactory {
                 /**
                  * if resource is founded return the server
                  */
-                if (server?.isResourceFounded == true) return server
+                if (server.isResourceFounded) return server
 
             }
             /**
@@ -346,7 +339,7 @@ internal object MoonFactory {
         /**
          * return null if none of the servers injected are founded
          */
-        return null
+        throw InvalidServerException(Resources.NOT_SERVERS_FOUND, Error.NOT_SERVERS_FOUND)
     }
 
 

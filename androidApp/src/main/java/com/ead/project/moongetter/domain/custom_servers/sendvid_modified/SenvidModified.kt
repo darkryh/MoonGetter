@@ -24,7 +24,7 @@ class SenvidModified(
     override var url: String = urlRegex.find(url)?.groupValues?.get(1) ?:
     throw InvalidServerException(
         Resources.invalidProcessInExpectedUrlEntry(name),
-        Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY
+        Error.UNKNOWN_URL_ENTRY
     )
 
     override suspend fun onExtract(): List<Video> {

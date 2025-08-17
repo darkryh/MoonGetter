@@ -1,8 +1,7 @@
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+
 package com.ead.project.moongetter.presentation.util
 
-object IntentUtil {
-    /*fun goIntentTo(context: Context,url: String) = Intent().apply {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context.startActivity(intent)
-    }*/
+expect object IntentUtil {
+    fun goIntentTo(url: String)
 }

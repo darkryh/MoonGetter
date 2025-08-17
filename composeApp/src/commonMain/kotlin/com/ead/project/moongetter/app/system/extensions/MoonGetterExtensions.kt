@@ -1,8 +1,8 @@
 package com.ead.project.moongetter.app.system.extensions
 
+import com.ead.lib.moongetter.MoonGetter
 import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.models.error.Error
-import com.ead.lib.moongetter.models.builder.Factory
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.project.moongetter.app.network.util.MoonGetterError
 import com.ead.project.moongetter.app.network.util.Result
@@ -10,16 +10,22 @@ import kotlinx.coroutines.delay
 
 const val DelayValue = 500L
 
-suspend inline fun <reified T> Factory.Builder.onGetResult(url : String) : Result<T,MoonGetterError> {
+suspend inline fun <reified T> MoonGetter.onGetResult(url : String) : Result<T,MoonGetterError> {
     return try {
-        val  result = get(url) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL).also { delay(DelayValue) }
+        val  result = get(url)
         Result.Success(
             result as T
         )
     }
     catch (e : InvalidServerException) {
         return when(e.error) {
-            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY -> {
+            Error.CONFIG_NOT_INITIALIZED -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.UNKNOWN_URL_ENTRY -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.NOT_SERVERS_FOUND -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
             Error.INVALID_BUILDER_PARAMETERS -> {
@@ -61,16 +67,22 @@ suspend inline fun <reified T> Factory.Builder.onGetResult(url : String) : Resul
     }
 }
 
-suspend inline fun <reified T> Factory.Builder.onGetUntilFindResult(urls : List<String>) : Result<T,MoonGetterError> {
+suspend inline fun <reified T> MoonGetter.onGetUntilFindResult(urls : List<String>) : Result<T,MoonGetterError> {
     return try {
-        val  result = getUntilFindResource(urls) ?: return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL).also { delay(DelayValue) }
+        val  result = getUntilFindResource(urls)
         Result.Success(
             result as T
         )
     }
     catch (e : InvalidServerException) {
         return when(e.error) {
-            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY -> {
+            Error.CONFIG_NOT_INITIALIZED -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.UNKNOWN_URL_ENTRY -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.NOT_SERVERS_FOUND -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
             Error.INVALID_BUILDER_PARAMETERS -> {
@@ -114,7 +126,7 @@ suspend inline fun <reified T> Factory.Builder.onGetUntilFindResult(urls : List<
 
 
 @ExperimentalFeature
-suspend inline fun <reified T> Factory.Builder.onGetResults(urls : List<String>) : Result<T,MoonGetterError> {
+suspend inline fun <reified T> MoonGetter.onGetResults(urls : List<String>) : Result<T,MoonGetterError> {
     return try {
         val  result = get(urls).ifEmpty { return Result.Error(MoonGetterError.NOT_RECOGNIZED_URL).also { delay(DelayValue) } }
         Result.Success(
@@ -123,7 +135,13 @@ suspend inline fun <reified T> Factory.Builder.onGetResults(urls : List<String>)
     }
     catch (e : InvalidServerException) {
         return when(e.error) {
-            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY -> {
+            Error.CONFIG_NOT_INITIALIZED -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.UNKNOWN_URL_ENTRY -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.NOT_SERVERS_FOUND -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
             Error.INVALID_BUILDER_PARAMETERS -> {
