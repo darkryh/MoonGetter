@@ -50,7 +50,6 @@ class Hexload(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = JsonObject
                     .fromJson(responseBody)
                     .getJSONObject("result")

@@ -44,7 +44,7 @@ open class Server(
     /**
      * @return the name of the server
      */
-    protected val name : String = this::class.simpleName ?: "Unknown"
+    val name : String = this::class.simpleName ?: "Unknown"
 
 
 

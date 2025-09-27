@@ -31,10 +31,8 @@ class Mediafire(
 
         if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
 
-
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = Base64.decode(
                     PatternManager.singleMatch(
                         string = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },

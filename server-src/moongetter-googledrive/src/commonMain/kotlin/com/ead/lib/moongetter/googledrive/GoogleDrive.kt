@@ -28,7 +28,6 @@ class GoogleDrive(
         return when (response.statusCode) {
             206 -> listOf(
                 Video(
-                    quality = DEFAULT,
                     url = url
                 )
             )
@@ -57,7 +56,6 @@ class GoogleDrive(
 
                 listOf(
                     Video(
-                        quality = DEFAULT,
                         url = generateDownloadUrl(
                             id = id ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND),
                             export = export ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND),

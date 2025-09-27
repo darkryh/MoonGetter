@@ -1,8 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="moongetter-jsunpacker-jvm">
     <output-path>$PROJECT_DIR$/kotlin-src/moongetter-jsunpacker/build/libs</output-path>
-    <root id="archive" name="moongetter-jsunpacker-jvm.jar">
-      <element id="module-output" name="MoonGetter.moongetter-jsunpacker.jvmMain" />
-    </root>
+    <root id="archive" name="moongetter-jsunpacker-jvm.jar" />
   </artifact>
 </component>

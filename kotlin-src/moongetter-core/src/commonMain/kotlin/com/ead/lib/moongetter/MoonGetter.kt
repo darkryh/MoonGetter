@@ -1,6 +1,5 @@
 package com.ead.lib.moongetter
 
-
 import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.models.Server
@@ -89,6 +88,7 @@ object MoonGetter {
      *
      * @throws InvalidServerException If the factory has not been initialized via [start],
      *                                or if no valid server can be created for the given URL.
+     * @throws CancellationException If the resolution process is cancelled.
      * @throws RuntimeException For any unexpected runtime errors during resolution.
      */
     @Throws(InvalidServerException::class, CancellationException::class, RuntimeException::class)
@@ -107,6 +107,7 @@ object MoonGetter {
      * @throws InvalidServerException If the factory has not been initialized via [start].
      *                                Unlike other cases, this exception is re-thrown
      *                                to signal improper usage of the API.
+     * @throws CancellationException If the resolution process is cancelled.
      */
     @Throws(InvalidServerException::class, CancellationException::class)
     suspend fun getOrNull(url: String): Server? {
@@ -129,6 +130,7 @@ object MoonGetter {
      *
      * @throws InvalidServerException If the factory has not been initialized via [start],
      *                                or if no valid server can be created for the given URL.
+     * @throws CancellationException If the resolution process is cancelled.
      * @throws RuntimeException For any unexpected runtime errors during resolution.
      */
     @Throws(InvalidServerException::class, CancellationException::class, RuntimeException::class)
@@ -147,6 +149,7 @@ object MoonGetter {
      *
      * @throws InvalidServerException If the factory has not been initialized via [start],
      *                                or if no valid server can be found among the provided URLs.
+     * @throws CancellationException If the resolution process is cancelled.
      * @throws RuntimeException For any unexpected runtime errors during resolution.
      */
     @Throws(InvalidServerException::class, CancellationException::class,  RuntimeException::class)
@@ -165,6 +168,7 @@ object MoonGetter {
      * @throws InvalidServerException If the factory has not been initialized via [start].
      *                                This exception is re-thrown to signal improper usage
      *                                of the API configuration.
+     * @throws CancellationException If the resolution process is cancelled.
      */
     @Throws(InvalidServerException::class, CancellationException::class)
     suspend fun getUntilFindResourceOrNull(urls: List<String>): Server? {

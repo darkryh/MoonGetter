@@ -43,7 +43,6 @@ class Voe(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = Base64.decode(
                     PatternManager.singleMatch(
                         string = response.body.asString().ifEmpty {

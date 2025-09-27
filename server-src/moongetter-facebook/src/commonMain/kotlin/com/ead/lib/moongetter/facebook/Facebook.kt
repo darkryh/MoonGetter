@@ -39,7 +39,6 @@ class Facebook(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = (PatternManager.singleMatch(
                     string = body,
                     regex = "id=\"sdlink\".*?href=\"(.*?)\""

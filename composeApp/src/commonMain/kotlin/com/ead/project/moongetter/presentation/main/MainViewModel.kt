@@ -10,7 +10,6 @@ import com.ead.lib.moongetter.client.ktor.KtorMoonClient
 import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.builder.Engine
-import com.ead.lib.moongetter.models.builder.Factory
 import com.ead.project.moongetter.app.lib.cookieManagement
 import com.ead.project.moongetter.app.lib.httpClientEngineFactory
 import com.ead.project.moongetter.app.lib.trustManager
@@ -21,13 +20,14 @@ import com.ead.project.moongetter.app.system.extensions.onGetResult
 import com.ead.project.moongetter.app.system.extensions.onGetResults
 import com.ead.project.moongetter.app.system.extensions.onGetUntilFindResult
 import com.ead.project.moongetter.presentation.main.event.MainEvent
-import com.ead.project.moongetter.presentation.main.event.MainEvent.*
+import com.ead.project.moongetter.presentation.main.event.MainEvent.Notify
 import com.ead.project.moongetter.presentation.main.intent.MainIntent
 import com.ead.project.moongetter.presentation.main.intent.NetworkIntent
 import com.ead.project.moongetter.presentation.main.intent.SelectionIntent
 import com.ead.project.moongetter.presentation.main.intent.TextIntent
+import com.ead.project.moongetter.presentation.main.model.MainModelState
 import com.ead.project.moongetter.presentation.main.state.MainState
-import com.ead.project.moongetter.presentation.util.Message.*
+import com.ead.project.moongetter.presentation.util.Message.Error
 import com.ead.project.moongetter.presentation.util.TextFieldState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -99,14 +99,15 @@ class MainViewModel(
                     .onGetResult<Server>(intent.url ?: return@launch)
                     .onSuccess {
                         _state.value = state.value.copy(
+                            streamServerName = it.name,
                             streamPlaylist = it.videos,
                             selectedStream = it.videos.firstOrNull()?.request ?: return@onSuccess,
-                            isLoading = false
+                            mainModelState = MainModelState.PLAYING
                         )
                     }
                     .onError { moonGetterError ->
                         handleError(moonGetterError)
-                        loadingState(false)
+                        loadingState(mainModelState = MainModelState.ERROR_SEARCHING)
                     }
             }
 
@@ -117,14 +118,15 @@ class MainViewModel(
                     .onGetResults<List<Server>>(intent.urls)
                     .onSuccess {
                         _state.value = state.value.copy(
+                            streamServerName = "Various",
                             streamPlaylist = it.flatMap { it.videos },
                             selectedStream = it.firstOrNull()?.videos?.firstOrNull()?.request ?: return@onSuccess,
-                            isLoading = false
+                            mainModelState = MainModelState.PLAYING
                         )
                     }
                     .onError { moonGetterError ->
                         handleError(moonGetterError)
-                        loadingState(false)
+                        loadingState(mainModelState = MainModelState.ERROR_SEARCHING)
                     }
             }
             is NetworkIntent.OnGetUntilFindNewResult -> viewModelScope.launch(Dispatchers.IO) {
@@ -134,19 +136,40 @@ class MainViewModel(
                     .onGetUntilFindResult<Server>(intent.urls)
                     .onSuccess {
                         _state.value = state.value.copy(
+                            streamServerName = it.name,
                             streamPlaylist = it.videos,
                             selectedStream = it.videos.firstOrNull()?.request ?: return@onSuccess,
-                            isLoading = false
+                            mainModelState = MainModelState.PLAYING
                         )
                     }
                     .onError { moonGetterError ->
                         handleError(moonGetterError)
-                        loadingState(false)
+                        loadingState(mainModelState = MainModelState.ERROR_SEARCHING)
                     }
             }
             is SelectionIntent.OnSelectedUrl -> {
                 _state.value = state.value.copy(
                     selectedStream = intent.request
+                )
+            }
+            is SelectionIntent.Searching -> {
+                _state.value = state.value.copy(
+                    shouldShowSearchingServer = state.value.shouldShowSearchingServer.not()
+                )
+            }
+            is SelectionIntent.MoreServerInfo -> {
+                _state.value = state.value.copy(
+                    shouldShowMoreInfoAboutSupportedServer = state.value.shouldShowMoreInfoAboutSupportedServer.not()
+                )
+            }
+            is SelectionIntent.MoreVideoInfo -> {
+                _state.value = state.value.copy(
+                    shouldShowMoreInfoAboutVideo = state.value.shouldShowMoreInfoAboutVideo.not()
+                )
+            }
+            is SelectionIntent.InfoDetailActivated -> {
+                _state.value = state.value.copy(
+                    isInfoDetailActivated = state.value.isInfoDetailActivated.not()
                 )
             }
         }
@@ -197,9 +220,15 @@ class MainViewModel(
         }
     }
 
-    private fun loadingState(value: Boolean = true) {
+    private fun loadingState(mainModelState: MainModelState = MainModelState.SEARCHING) {
         _state.value = state.value.copy(
-            isLoading = value
+            mainModelState = mainModelState
         )
+
+        if (mainModelState == MainModelState.SEARCHING) {
+            _state.value = state.value.copy(
+                shouldShowSearchingServer = false
+            )
+        }
     }
 }

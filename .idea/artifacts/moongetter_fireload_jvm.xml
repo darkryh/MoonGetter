@@ -1,8 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="moongetter-fireload-jvm">
     <output-path>$PROJECT_DIR$/server-robot-src/moongetter-fireload/build/libs</output-path>
-    <root id="archive" name="moongetter-fireload-jvm.jar">
-      <element id="module-output" name="MoonGetter.moongetter-fireload.jvmMain" />
-    </root>
+    <root id="archive" name="moongetter-fireload-jvm.jar" />
   </artifact>
 </component>

@@ -72,7 +72,6 @@ class Doodstream(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = (body + getRandomBuilderString() + token + (Clock.System.now().toEpochMilliseconds() / 1000L)),
                 headers = response
                     .headers

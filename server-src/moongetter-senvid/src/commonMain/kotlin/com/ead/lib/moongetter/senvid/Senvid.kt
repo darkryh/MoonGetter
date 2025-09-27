@@ -29,7 +29,6 @@ class Senvid(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = PatternManager.singleMatch(
                     string =  response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
                     regex =  "<source src=\"(.*?)\""

@@ -36,7 +36,6 @@ class SenvidModified(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = PatternManager.singleMatch(
                     string = response.body.asString(),
                     regex = "<source src=\"(.*?)\""

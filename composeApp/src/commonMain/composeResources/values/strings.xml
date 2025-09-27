@@ -1,4 +1,22 @@
 <resources>
     <string name="app_name">MoonGetter</string>
-    <string name="play_text_field_hint">Provide url from filemoon, vidguard, streamwish, mxdrop, lulustream, mp4upload etc</string>
+    <string name="play_text_field_hint">Provide url to search.</string>
+    <string name="unknown_quality">Unknown Quality</string>
+    <string name="copy_url_to_clipboard">Copied Video Url</string>
+    <string name="copy_headers_to_clipboard">Copied Video Headers</string>
+    <string name="headers">Headers</string>
+    <string name="method_variable">Method : %1$s</string>
+    <string name="video_info">Video Info</string>
+    <string name="video_qualities">Video Qualities</string>
+    <string name="server_placeholder">- %1$s</string>
+    <string name="supported_servers">Supported Servers</string>
+    <string name="more_info">More Info</string>
+    <string name="search_from_url_option">Search from url filemoon, mp4upload, uqload, streamwish, lulustream, streamtape, facebook, x / twitter, etc.</string>
+    <string name="there_is_nothing_playing_at_the_moment">There is nothing playing at the moment</string>
+    <string name="github">Github</string>
+    <string name="x_twitter">X / Twitter</string>
+    <string name="video_type">Video Type - </string>
+    <string name="quantity_options">Quantity options : </string>
+    <string name="quality">Quality : </string>
+    <string name="known">Known</string>
 </resources>

@@ -2,14 +2,13 @@
 
 package com.ead.lib.moongetter.models.builder
 
-import com.ead.lib.moongetter.MoonGetter
 import com.ead.lib.moongetter.client.MoonClient
-import com.ead.lib.moongetter.core.Resources
+import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.ExperimentalFeature
 import com.ead.lib.moongetter.core.MoonCoreFactory
-import com.ead.lib.moongetter.client.models.Configuration
-import com.ead.lib.moongetter.models.error.Error
+import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.utils.UserAgent
 
@@ -109,7 +108,7 @@ class Factory(
          * Searches the provided URLs and returns the first valid [Server].
          * If none work, it returns null.
          */
-        internal suspend fun getUntilFindResource(urls: List<String>): Server = MoonCoreFactory.createUntilFindResource(
+        suspend fun getUntilFindResource(urls: List<String>): Server = MoonCoreFactory.createUntilFindResource(
             urls = urls.ifEmpty {
                 throw InvalidServerException(Resources.NO_PARAMETERS_TO_WORK, Error.NO_PARAMETERS_TO_WORK)
             },

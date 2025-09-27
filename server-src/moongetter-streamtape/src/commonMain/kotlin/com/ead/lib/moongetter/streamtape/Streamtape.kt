@@ -26,7 +26,6 @@ class Streamtape(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = "https:" +
                         (PatternManager.singleMatch(
                             string = body,

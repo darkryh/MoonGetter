@@ -5,7 +5,7 @@ data class Video(
     val request: Request
 ) {
     constructor(
-        quality: String?,
+        quality: String? = null,
         url: String,
         method: String = "GET",
         headers : Map<String, String> ?= null

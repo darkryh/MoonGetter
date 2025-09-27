@@ -38,7 +38,6 @@ class Fireload(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = url
             )
         )

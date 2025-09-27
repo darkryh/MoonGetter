@@ -119,8 +119,8 @@ android {
         applicationId = "com.ead.project.moongetter"
         minSdk = libSdkMinVersion.toInt()
         targetSdk = compileLibSdkVersion.toInt()
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.03"
     }
     packaging {
         resources {

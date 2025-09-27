@@ -36,7 +36,6 @@ class OneCloudFile(
 
         return listOf(
             Video(
-                quality = DEFAULT,
                 url = url
             )
         )
