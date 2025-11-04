@@ -93,6 +93,8 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.kotlinxCoroutinesCore.get()}")
+                implementation(project(":moongetter-core"))
             }
         }
     }
