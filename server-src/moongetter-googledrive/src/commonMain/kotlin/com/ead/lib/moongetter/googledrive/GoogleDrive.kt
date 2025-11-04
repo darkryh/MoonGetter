@@ -5,12 +5,12 @@ package com.ead.lib.moongetter.googledrive
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.Resources
+import com.ead.lib.moongetter.core.system.extensions.extractFirst
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import com.ead.lib.moongetter.utils.PatternManager
-import com.ead.lib.moongetter.utils.Values.targetUrl
+import com.ead.lib.moongetter.utils.ExtractionStrategy
 
 class GoogleDrive(
     url : String,
@@ -19,11 +19,13 @@ class GoogleDrive(
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
 
-    override var url: String = targetUrl ?: "https://drive.usercontent.google.com/download?id=${getFileId(url)}&export=download"
+    override var url: String = com.ead.lib.moongetter.utils.Values.targetUrl
+        ?: "https://drive.usercontent.google.com/download?id=${getFileId(url)}&export=download"
 
     override suspend fun onExtract(): List<Video> {
-        val response = client
-            .GET()
+        val response = ExtractionStrategy.withRetry {
+            client.GET()
+        }
 
         return when (response.statusCode) {
             206 -> listOf(
@@ -32,35 +34,29 @@ class GoogleDrive(
                 )
             )
             200 -> {
-                val body = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+                val body = response.body.asString().ifEmpty {
+                    throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE)
+                }
 
-                val id = PatternManager.singleMatch(
-                    string = body,
-                    regex = getRegexProperty("id")
-                )
+                val id = body.extractFirst(getRegexProperty("id"))
+                    ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
-                val export = PatternManager.singleMatch(
-                    string = body,
-                    regex = getRegexProperty("export")
-                )
+                val export = body.extractFirst(getRegexProperty("export"))
+                    ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
-                val confirm = PatternManager.singleMatch(
-                    string = body,
-                    regex = getRegexProperty("confirm")
-                )
+                val confirm = body.extractFirst(getRegexProperty("confirm"))
+                    ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
-                val uuid = PatternManager.singleMatch(
-                    string = body,
-                    regex = getRegexProperty("uuid")
-                )
+                val uuid = body.extractFirst(getRegexProperty("uuid"))
+                    ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
                 listOf(
                     Video(
                         url = generateDownloadUrl(
-                            id = id ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND),
-                            export = export ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND),
-                            confirm = confirm ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND),
-                            uuid = uuid ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+                            id = id,
+                            export = export,
+                            confirm = confirm,
+                            uuid = uuid
                         )
                     )
                 )
@@ -79,10 +75,8 @@ class GoogleDrive(
     }
 
     private fun getFileId(string: String) : String {
-        return PatternManager.singleMatch(
-            string = string,
-            regex = """\/file\/d\/([^\/?&]+)"""
-        ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+        return string.extractFirst("""\/file\/d\/([^\/?&]+)""")
+            ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
     }
 
     private fun getRegexProperty(name : String) : String {
