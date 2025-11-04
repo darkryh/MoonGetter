@@ -3,13 +3,14 @@ package com.ead.lib.moongetter.okru
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.Resources
+import com.ead.lib.moongetter.core.system.extensions.extractFirst
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
 import com.ead.lib.moongetter.okru.util.userAgent
+import com.ead.lib.moongetter.utils.ExtractionStrategy
 import com.ead.lib.moongetter.utils.JsonObject
-import com.ead.lib.moongetter.utils.PatternManager
 
 class Okru(
     url : String,
@@ -21,17 +22,16 @@ class Okru(
     override val headers: HashMap<String, String> = headers.also { values -> values["User-Agent"] = userAgent }
 
     override suspend fun onExtract(): List<Video> {
-        val response = client
-            .GET()
+        val html = ExtractionStrategy.withRetry {
+            val response = client.GET()
+            if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
+            response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+        }
 
-        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
+        val dataOptions = html.extractFirst("""data-options="(.*?)"""")
+            ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
 
-        url = PatternManager.singleMatch(
-            string = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
-            regex = "data-options=\"(.*?)\""
-        ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
-
-        url = StringEscapeUtils.unescapeHtml4(url)
+        url = StringEscapeUtils.unescapeHtml4(dataOptions)
 
         val metadata = JsonObject.fromJson(url)
             .getJSONObject("flashvars")

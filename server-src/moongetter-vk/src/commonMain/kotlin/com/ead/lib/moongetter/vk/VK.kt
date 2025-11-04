@@ -7,6 +7,7 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.Video
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.utils.ExtractionStrategy
 import com.ead.lib.moongetter.utils.PatternManager
 
 class VK(
@@ -26,19 +27,18 @@ class VK(
     }
 
     override suspend fun onExtract(): List<Video> {
-        val response = client
-            .GET(
+        val html = ExtractionStrategy.withRetry {
+            val response = client.GET(
                 overrideHeaders = mapOf(
                     "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
                 )
             )
-
-        if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
-
-        val responseBody = response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+            if (!response.isSuccess) throw InvalidServerException(Resources.unsuccessfulResponse(name), Error.UNSUCCESSFUL_RESPONSE, response.statusCode)
+            response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) }
+        }
 
         return PatternManager.findMultipleMatchesAsPairs(
-            string = responseBody,
+            string = html,
             regex = """"url(\d+)":"(.*?)"""".trimIndent(),
         ).ifEmpty { throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND) }
             .map {
