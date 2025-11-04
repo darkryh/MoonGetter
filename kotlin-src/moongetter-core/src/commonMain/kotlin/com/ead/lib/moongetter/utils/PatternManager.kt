@@ -6,6 +6,13 @@ package com.ead.lib.moongetter.utils
 object PatternManager {
 
     /**
+     * Compiled regex patterns for performance optimization
+     */
+    private object CompiledPatterns {
+        val BASE_URL_PATTERN = Regex("""^(https?://[^/]+)""")
+    }
+
+    /**
      * Finds the first match of the given [regex] pattern in the input [string]
      * and returns the value of the capture group at the specified [groupIndex].
      *
@@ -206,9 +213,8 @@ object PatternManager {
         
         // If base URL provided and URL is relative, resolve it
         if (baseUrl != null && !url.startsWith("http")) {
-            // Extract protocol and domain from baseUrl
-            val baseUrlPattern = """^(https?://[^/]+)"""
-            val baseDomain = Regex(baseUrlPattern).find(baseUrl)?.value
+            // Extract protocol and domain from baseUrl using compiled pattern
+            val baseDomain = CompiledPatterns.BASE_URL_PATTERN.find(baseUrl)?.value
                 ?: baseUrl.takeIf { it.startsWith("http") }
                 ?: "https://$baseUrl"
             
@@ -226,5 +232,6 @@ object PatternManager {
         }
         
         return url
+    }
     }
 }
