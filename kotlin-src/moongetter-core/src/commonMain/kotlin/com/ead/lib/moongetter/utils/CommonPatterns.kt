@@ -10,11 +10,17 @@ object CommonPatterns {
      * Patterns for extracting video URLs
      */
     object Video {
-        /** Matches MP4 video URLs */
-        const val MP4_URL = """(https?://[^\s"'<>]+\.mp4(?:\?[^\s"'<>]*)?)"""
+        /** 
+         * Matches MP4 video URLs with full query parameter support.
+         * Includes all URL-safe characters including &, =, and other query param characters.
+         */
+        const val MP4_URL = """(https?://[^\s"'<>]+\.mp4[^\s"'<>]*)"""
         
-        /** Matches M3U8 playlist URLs */
-        const val M3U8_URL = """(https?://[^\s"'<>]+\.m3u8(?:\?[^\s"'<>]*)?)"""
+        /** 
+         * Matches M3U8 playlist URLs with full query parameter support.
+         * Includes all URL-safe characters including &, =, and other query param characters.
+         */
+        const val M3U8_URL = """(https?://[^\s"'<>]+\.m3u8[^\s"'<>]*)"""
         
         /** Matches video source tags */
         const val SOURCE_TAG = """<source[^>]*src=["']([^"']+)["'][^>]*>"""

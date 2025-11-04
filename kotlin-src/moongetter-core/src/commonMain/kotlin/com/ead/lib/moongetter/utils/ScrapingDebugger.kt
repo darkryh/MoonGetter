@@ -13,16 +13,19 @@ object ScrapingDebugger {
      * @return Debug information about the content.
      */
     fun analyzeContent(content: String): ContentAnalysis {
+        // Cache lowercase content for efficient case-insensitive checks
+        val lowerContent = content.lowercase()
+        
         return ContentAnalysis(
             length = content.length,
             lineCount = content.lines().size,
-            hasScriptTags = content.contains("<script", ignoreCase = true),
-            hasIframeTags = content.contains("<iframe", ignoreCase = true),
-            hasVideoTags = content.contains("<video", ignoreCase = true),
-            hasSourceTags = content.contains("<source", ignoreCase = true),
-            hasM3u8References = content.contains(".m3u8", ignoreCase = true),
-            hasMp4References = content.contains(".mp4", ignoreCase = true),
-            containsPackedJs = content.contains("eval(function(p,a,c,k,e,d)", ignoreCase = true)
+            hasScriptTags = lowerContent.contains("<script"),
+            hasIframeTags = lowerContent.contains("<iframe"),
+            hasVideoTags = lowerContent.contains("<video"),
+            hasSourceTags = lowerContent.contains("<source"),
+            hasM3u8References = lowerContent.contains(".m3u8"),
+            hasMp4References = lowerContent.contains(".mp4"),
+            containsPackedJs = lowerContent.contains("eval(function(p,a,c,k,e,d)")
         )
     }
 

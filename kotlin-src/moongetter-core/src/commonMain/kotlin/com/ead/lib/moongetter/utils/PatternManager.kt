@@ -206,9 +206,23 @@ object PatternManager {
         
         // If base URL provided and URL is relative, resolve it
         if (baseUrl != null && !url.startsWith("http")) {
-            val base = baseUrl.trimEnd('/')
-            val path = url.trimStart('/')
-            return "$base/$path"
+            // Extract protocol and domain from baseUrl
+            val baseUrlPattern = """^(https?://[^/]+)"""
+            val baseDomain = Regex(baseUrlPattern).find(baseUrl)?.value
+                ?: baseUrl.takeIf { it.startsWith("http") }
+                ?: "https://$baseUrl"
+            
+            return when {
+                // Absolute path (starts with /)
+                url.startsWith("/") -> {
+                    "$baseDomain$url"
+                }
+                // Relative path
+                else -> {
+                    val base = baseDomain.trimEnd('/')
+                    "$base/$url"
+                }
+            }
         }
         
         return url
