@@ -1,433 +1,136 @@
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.darkryh.moongetter/moongetter-core?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.darkryh.moongetter/moongetter-core/2.0.0-alpha01)
-# MoonGetter for Kotlin
+# MoonGetter
 
-[![App Icon](assets/images/moon-getter.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
-[![Play Store Icon](assets/images/play-store.png)](https://play.google.com/store/apps/details?id=com.ead.project.moongetter)
+MoonGetter is a Kotlin Multiplatform library that resolves video-hosting links into playback requests: a URL, HTTP method, and any required headers. The checkout includes Android, desktop JVM, and iOS samples. Provider availability depends on the host, resource, network, and any access restrictions.
 
-**MoonGetter** MoonGetter is a robust, Kotlin-first library engineered for seamless stream extraction and video hosting download logic. It offers comprehensive support for Android and is now fully Kotlin Multiplatform (KMP) ready, featuring flexible custom server integration.
+## Run the samples
 
----
+The sample is separated into platform applications and shared Compose code:
 
-## ✅ Features
-
--   **Custom Server Integration** — Easily build and integrate your own streaming providers.
--   **Coroutine-based Architecture** — Async-first design for highly scalable extraction logic.
--   **Transparent HTTP Client Injection** — Works seamlessly with both OkHttp and Ktor.
--   **Custom Error Types** — Intuitive error handling via `InvalidServerException` and descriptive `Error` enums.
--   **Flexible Cookie Management** — Automatic for OkHttp, configurable for Ktor.
-
----
-
-## 🔄 Compatibility Table
-
-| Feature                | Android |    JVM     | Kotlin Multiplatform |
-| :--------------------- | :-----: |:----------:| :------------------: |
-| Core Library           |   ✅    |     ✅      |          ✅          |
-| Robot Servers API      |   ✅    | ⏳(desktop) |    ⏳ (Planned)      |
-| Server Implementations |   ✅    |     ✅      |          ✅          |
-
-> ✅ = Supported / ⏳ = In development / JVM refers to non-Android Kotlin projects.
-
----
-
-## 🌐 Supported Servers (Core)
-
-> ✅ Actively maintained / 💥 Deprecated
-
--   ✅ Google Drive
--   ✅ Mediafire
--   ✅ Streamtape
--   ✅ PixelDrain
--   ✅ Okru
--   ✅ StreamWish
--   💥 Voe *(Deprecated)*
--   ✅ Senvid
--   ✅ Vihide
--   ✅ Hexload
--   ✅ YourUpload
--   ✅ Facebook
--   ✅ XTwitter
--   ✅ LuluStream
--   ✅ Mp4Upload
--   ✅ Uqload
--   ✅ Mixdrop
--   ✅ Doodstream
--   ✅ Vidguard
--   ✅ Filemoon
--   ✅ VK
-
----
-
-## 🤖 Robot Servers *(Optional)*
-
-> These require the `moongetter-core-robot` module and a platform-specific Robot API.
-
--   💥 Fireload *(Deprecated)*
--   ✅ 1CloudFile
-
-**Coming Soon:** GoodStream, Gofile, Abyss
-
----
-
-## ☕ Installation (Gradle)
-
-```kotlin
-// For stable releases, use Maven Central
-repositories {
-    mavenCentral()
-}
-```
-## Kotlin Multiplatform Project Dependencies
-
-This section outlines the `dependencies` block specifically for integrating **MoonGetter modules** within a **Kotlin Multiplatform (KMP)** project structure. It focuses solely on MoonGetter-related dependencies, showing their placement for common shared code, Android-specific configurations, and iOS (Darwin) targets.
-
-```kotlin
-val moonGetterVersion = "2.0.0-alpha02"
-
-dependencies {
-  // --- Common Main (Shared KMP Logic) ---
-  commonMain.dependencies {
-    implementation("io.github.darkryh.moongetter:moongetter-core:$moonGetterVersion")
-    implementation("io.github.darkryh.moongetter:moongetter-client-ktor:$moonGetterVersion")
-    implementation("io.github.darkryh.moongetter:moongetter-server-bundle:$moonGetterVersion")
-    implementation("io.github.darkryh.moongetter:moongetter-core-robot:$moonGetterVersion")
-    implementation("io.github.darkryh.moongetter:moongetter-server-robot-bundle:$moonGetterVersion")
-    // Optional: Individual server modules (instead of bundles)
-    // implementation("io.github.darkryh.moongetter:moongetter-mp4upload:$moonGetterVersion")
-  }
-
-  // --- Android Specific ---
-  androidMain.dependencies {
-    // Choose ONE HTTP client:
-    implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:$moonGetterVersion") // Option 1: MoonGetter OkHttp Client
-    // OR
-    // implementation("io.ktor:ktor-client-okhttp:2.3.12") // Option 2: Ktor with OkHttp engine
-
-    implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:$moonGetterVersion") // Cookie management
-    implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:$moonGetterVersion") // Trust management
-    implementation("io.github.darkryh.moongetter:moongetter-android-robot:$moonGetterVersion") // Android Robot APIs
-  }
-
-  // --- iOS Specific ---
-  iosMain.dependencies {
-    // REQUIRED: Ktor's Darwin engine for network requests on iOS.
-    implementation("io.ktor:ktor-client-darwin:2.3.12")
-  }
-
-  // --- Desktop (JVM) Specific ---
-  desktopMain.dependencies {
-    // Choose ONE HTTP client:
-    implementation("io.ktor:ktor-client-cio:2.3.12") // Option 1: Ktor with CIO engine
-    // OR
-    // implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:$moonGetterVersion") // Option 2: MoonGetter OkHttp Client
-
-    implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:$moonGetterVersion") // Cookie management
-    implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:$moonGetterVersion") // Trust management
-  }
-}
+```text
+sample/
+├── shared/       # UI, extraction configuration, platform services
+├── androidApp/   # Android application
+├── desktopApp/   # JVM application and packaging
+└── iosApp/       # Xcode project and Swift application
 ```
 
-## Java/Kotlin JVM Project Dependencies
+From the repository root:
 
-This section outlines the `dependencies` block for integrating **MoonGetter modules** into a standard **Java or Kotlin JVM project**. This includes typical Android applications or standalone desktop JVM applications that **do not use Kotlin Multiplatform**.
-
-```kotlin
-val moonGetterVersion = "2.0.0-alpha02"
-
-dependencies {
-  // --- Core & Server Support ---
-  implementation("io.github.darkryh.moongetter:moongetter-core:$moonGetterVersion")
-  implementation("io.github.darkryh.moongetter:moongetter-server-bundle:$moonGetterVersion")
-  implementation("io.github.darkryh.moongetter:moongetter-core-robot:$moonGetterVersion")
-  implementation("io.github.darkryh.moongetter:moongetter-server-robot-bundle:$moonGetterVersion")
-  // Optional: Individual server modules
-  // implementation("io.github.darkryh.moongetter:moongetter-mp4upload:$moonGetterVersion")
-
-  // --- HTTP Client & Utilities ---
-  // Choose your client:
-  implementation("io.github.darkryh.moongetter:moongetter-client-okhttp:$moonGetterVersion") // Option 1: OkHttp (recommended)
-  // OR
-  // implementation("io.github.darkryh.moongetter:moongetter-client-ktor:$moonGetterVersion") // Option 2: Ktor
-  // + Ktor engine (e.g., "io.ktor:ktor-client-okhttp:2.3.12" or "io.ktor:ktor-client-cio:2.3.12")
-
-  implementation("io.github.darkryh.moongetter:moongetter-client-cookie-java-net:$moonGetterVersion") // Cookie management
-  implementation("io.github.darkryh.moongetter:moongetter-client-trustmanager-java-net:$moonGetterVersion") // Trust management
-
-  // Android-specific Robot (only for Android projects)
-  implementation("io.github.darkryh.moongetter:moongetter-android-robot:$moonGetterVersion")
-}
+```shell
+./gradlew :sample:androidApp:installDebug
+./gradlew :sample:desktopApp:run
+open sample/iosApp/iosApp.xcodeproj
 ```
 
----
+Android installation requires a connected device or emulator. Desktop playback requires native [VLC](https://www.videolan.org/vlc/) matching your platform; the sample displays an error if it is unavailable. In Xcode, select the **iosApp** scheme and your device or an Apple Silicon simulator. Configure your own signing team for a physical device. Android Studio run configurations are in `.run/`; the iOS project location is registered in `.idea/xcode.xml`. See [sample setup](sample/README.md).
 
-## 🧐 Client & Cookie Management Integration
+The old standalone Android application and Media3Player module have been removed. `sample/androidApp` now runs the shared Compose UI.
 
-| Client Library     | Module                                       | Cookie Management                 | KMP Support        |
-|-------------------|----------------------------------------------|-----------------------------------|--------------------|
-| **OkHttp**         | `moongetter-client-okhttp`                   | ✅ Built-in                        | ⏳ Not Supported    |
-| **Ktor**           | `moongetter-client-ktor`                     | ⚠️ Manual setup required           | ✅ Experimental     |
-| **JavaNetCookieManager** | `moongetter-client-cookie-java-net`    | ✅ (Only for Ktor, optional)       | ⏳ Not Supported    |
+## Configure extraction
 
-> ✅ = Supported / ⚠️ = Manual setup / ⏳ = Coming soon
+Change the initial URL and timeout in [SampleConfiguration](sample/shared/src/commonMain/kotlin/com/ead/project/moongetter/app/SampleConfiguration.kt). Configure provider factories in [AppModule](sample/shared/src/commonMain/kotlin/com/ead/project/moongetter/app/AppModule.kt). The sample uses a persistent client rather than constructing one for each URL.
 
-**Note**:
-- **OkHttp** has **built-in cookie support**, no setup needed.
-- **Ktor** requires you to explicitly inject cookie management (e.g., `JavaNetCookieManagement`).
+This JVM example uses the same builder contract as the sample:
 
-  Example Initialization:
 ```kotlin
-MoonGetter.start(
-    MoonFactory
-        .Builder()
-        .setClient(
-            client = KtorMoonClient(
-                engineFactory = httpClientEngineFactory,
-                cookieManagement = cookieManagement,
-                trustManager = trustManager
-            )
-        )
-        .setTimeout(timeoutMillis = 12000)
-        .setEngine(engine = engine)
-)
-```
+import com.ead.lib.moongetter.MoonFactory
+import com.ead.lib.moongetter.MoonGetter
+import com.ead.lib.moongetter.client.cookie.java.net.JavaNetCookieManagement
+import com.ead.lib.moongetter.client.ktor.KtorMoonClient
+import com.ead.lib.moongetter.client.trust.manager.java.net.JavaMoonTrustManager
+import com.ead.lib.moongetter.models.Request
+import com.ead.lib.moongetter.models.builder.Engine
+import com.ead.lib.moongetter.server.bundle.serverBundle
+import io.ktor.client.engine.okhttp.OkHttp
 
-Example with Ktor:
-```kotlin
-MoonFactory.Builder()
-    .setClient(
-        KtorMoonClient(
-            engineFactory = CIO, //on iOS Darwin
-            cookieManagement = JavaNetCookieManagement(), //on iOS MoonCookie.Management.newEmptyFactory()
-            trustManager = JavaMoonTrustManager // on iOS MoonTrust.Manager.newEmptyFactory()
-        )
-    )
-```
-
-Example with OkHttp:
-```kotlin
-MoonFactory.Builder()
-    .setClient(
-        OkHttpClient
-    )
-```
-
----
-
-## 🚀 Example Usage
-
-### ViewModel with coroutine logic:
-```kotlin
-class MyViewModel : ViewModel() {
-
-    private val engine = Engine.Builder()
-        .onCore(
-            engines = arrayOf(
-                Mp4UploadFactory,
-                FilemoonFactory,
-                StreamtapeFactory,
-                StreamwishFactory,
-                // CustomServerFactory (recommended to use `object`)
-            )
-        )
-        .build()
-
-    fun getMediaStreams(url: String) = viewModelScope.launch(Dispatchers.IO) {
-        try {
-            MoonGetter.start(
-                MoonFactory
-                    .Builder()
-                    .setClient(
-                        KtorMoonClient(
-                            engineFactory = CIO,//jvm other option Okhttp //on iOS Darwin
-                            cookieManagement = JavaNetCookieManagement(), //on iOS MoonCookie.Management.newEmptyFactory()
-                            trustManager = JavaMoonTrustManager // on iOS MoonTrust.Manager.newEmptyFactory()
-                        )
-                    )
-                    .setTimeout(8000)
-                    .setEngine(engine)
-            )
-                
-                
-            val server : Server = MoonGetter.get(url) // returns server
-            val serverNullable : Server? = MoonGetter.getOrNull(url) // returns server or null, in this case there's no need wrap in try catch
-
-            val streams = server?.videos
-        } catch (e: InvalidServerException) {
-            Log.e("MoonGetter", "Invalid: ${e.message}", e)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-}
-```
-
----
-
-## 🛠 Add Your Own Custom Server
-
-### Custom Server Class
-```kotlin
-class CustomServer(
-    url: String,
-    client: MoonClient,
-    headers: HashMap<String, String>,
-    configData: Configuration.Data
-) : Server(url, client, headers, configData) {
-
-    private val urlRegex =  """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""".toRegex()
-
-    override var url: String = urlRegex.find(url)?.groupValues?.get(1)
-        ?: throw InvalidServerException(
-            Resources.invalidProcessInExpectedUrlEntry(name),
-            Error.INVALID_PROCESS_IN_EXPECTED_URL_ENTRY
-        )
-
-    override suspend fun onExtract(): List<Video> {
-        val response = client.GET()
-
-        if (!response.isSuccess) throw InvalidServerException(
-            Resources.unsuccessfulResponse(name),
-            Error.UNSUCCESSFUL_RESPONSE,
-            response.statusCode
-        )
-
-        return listOf(
-            Video(
-                quality = DEFAULT,
-                url = PatternManager.singleMatch(
-                    string = response.body.asString(),
-                    regex = "<source src=\"(.*?)\""
-                ) ?: throw InvalidServerException(
-                    Resources.expectedResponseNotFound(name),
-                    Error.EXPECTED_RESPONSE_NOT_FOUND
-                )
-            )
-        )
-    }
-}
-```
-
-### Custom Server Factory
-```kotlin
-object CustomServerFactory : Server.Factory {
-    override val serverName: String = "MyCustomServer" // Must match the serverName in CustomServer
-    override val pattern: String = """https://custom\.domain\.com/aqua/sv\?url=([^&]+)""" // Your regex pattern for URLs this server handles
-    
-    //instance function since kmp doesnt support reflection
-    override fun create(
-        url: String,
-        headers: HashMap<String, String>,
-        configData: Configuration.Data,
-        client: MoonClient
-    ): Server = CustomServer(
-        url = url,
-        client = client,
-        headers = headers,
-        configData = configData
+fun initializeMoonGetter() {
+    MoonGetter.start(
+        MoonFactory.Builder()
+            .setClient(KtorMoonClient(
+                engineFactory = OkHttp,
+                cookieManagement = JavaNetCookieManagement(),
+                trustManager = JavaMoonTrustManager,
+            ))
+            .setTimeout(60_000L)
+            .setEngine(Engine.Builder().onCore(serverBundle).build())
     )
 }
+
+suspend fun resolve(url: String): List<Request> =
+    MoonGetter.get(url).videos.map { it.request }
 ```
 
----
+Call initialization once before resolving links. Preserve the returned headers when handing a request to a player. Android and iOS use their respective platform implementations in `sample/shared`. `getOrNull` provides a nullable result; `getUntilFindResource` tries candidate links in order. Do not use a nullable result to diagnose a provider failure: use `get` and inspect the exception instead.
 
-### 🧪 MoonGetter – Server Retrieval API
+The next Maven release is **`2.0.0-beta01`**, advancing from `2.0.0-alpha02`. This beta contains breaking changes; see [the changelog](CHANGELOG.md) before upgrading. The version bump does not publish artifacts to Maven Central. The sample's Gradle project dependencies are the reproducible way to test the current implementation. Published artifacts use the group `io.github.darkryh.moongetter`; choose matching artifact versions when consuming a published release.
 
-The `MoonGetter` object provides several methods to resolve [Server] instances from URLs.  
-Before using any of these functions, you **must initialize** the library with [`start(factory: Factory.Builder)`](#).  
-If it is not initialized, the methods will throw [InvalidServerException] with error [Error.CONFIG_NOT_INITIALIZED].
+## Providers
 
----
+The [server bundle](moongetter-server-bundle/src/commonMain/kotlin/com/ead/lib/moongetter/server/bundle/BundleFile.kt) registers **33 factories**: 29 enabled, two experimental, and two deprecated. Status below describes this checkout as of **2026-10-10**. An enabled implementation can still fail for a removed file, provider verification, expiring signatures, or network restrictions. Live checks cover the linked samples, rather than every file or platform.
 
-#### 🔹 `suspend fun get(url: String): Server`
-Resolves a single [Server] for the given URL.  
-Unlike the `getOrNull` variant, this method **throws an exception** if resolution fails.
+**New** means added to the regular bundle since `2.0.0-alpha02`. **Updated** means the existing extractor changed. Fireload and 1CloudFile move from the removed Robot bundle into the regular bundle.
 
-- **Parameters**
-    - `url: String` → Candidate URL to resolve into a server.
+| Provider | Status | Beta change | Validation / limits |
+| --- | --- | --- | --- |
+| Abyss | Enabled | New | HTTP metadata and local MP4 proxy; JVM decode/seek passed, iPhone sample confirmed working after the HEAD fix; [guide](server-src/moongetter-abyss/README.md) |
+| Doodstream | Enabled; live access blocked | Updated | Canonical redirect and request fixes; tested Dsvplay link failed TLS, fallback required verification; [details](server-src/moongetter-doodstream/VALIDATION.md) |
+| Facebook | Enabled | Existing | Included; no fresh live validation in this beta |
+| FileMoon / Byse | Enabled | Updated | HTTP verification and authenticated payload decryption; [validation](server-src/moongetter-filemoon/VALIDATION.md) |
+| Fireload | Enabled | Migrated to HTTP | JVM source/decode passed; Darwin simulator certificate failure remains; [details](docs/validation/fireload.md) |
+| GoFile | Experimental | New | Guest workflow implemented; live source retrieval blocked by rate limiting/access restrictions; [details](docs/validation/gofile.md) |
+| GoodStream | Deprecated | Existing deprecation | Implementation and factory retained; excluded from active support |
+| Google Drive | Enabled | Existing | Included; no fresh live validation in this beta |
+| Hexload | Enabled | Existing | Included; no fresh live validation in this beta |
+| LaMovie | Enabled | Existing | Included; no fresh live validation in this beta |
+| Lulustream | Enabled | Existing | Included; no fresh live validation in this beta |
+| Mail.ru | Enabled | New | MP4 sources and bounded media requests passed; [validation](server-src/moongetter-mailru/VALIDATION.md) |
+| MediaFire | Enabled | Updated | Download-page/source parsing updated; portable regression coverage |
+| MEGA | Enabled | New | Local decryption/range proxy; public files and selected/single-video folders; JVM decode/seek and Android device checks passed; [details](docs/validation/mega.md) |
+| Mixdrop | Enabled | Existing | Included; no fresh live validation in this beta |
+| Mp4Upload | Enabled | Existing | Included; no fresh live validation in this beta |
+| OK.ru | Enabled | Existing | Included; no fresh live validation in this beta |
+| 1CloudFile | Enabled | Migrated to HTTP | Source bytes and JVM decode/seek passed; [validation](docs/validation/onecloudfile.md) |
+| 1fichier | Experimental | New | Free-download form flow; guest slots prevented a live source/seek check; [details](server-src/moongetter-onefichier/README.md) |
+| Pixeldrain | Enabled | Existing | Included; no fresh live validation in this beta |
+| RPMStream | Enabled | New | Native HLS extraction, JVM decode and Android playback/seek passed; [validation](docs/validation/rpmstream.md) |
+| Savefiles | Enabled | New | Form-based HTTP extraction and HLS/media access passed; [guide](server-src/moongetter-savefiles/README.md) |
+| Sendvid | Enabled | Existing | Included; no fresh live validation in this beta |
+| Streamtape | Enabled | Existing | Included; no fresh live validation in this beta |
+| Streamwish | Enabled | Existing | Included; no fresh live validation in this beta |
+| Uqload | Enabled | Updated | Redirect identity, source and HLS checks updated; JVM media/decode passed; [validation](docs/validation/uqload.md) |
+| Vidguard | Deprecated | Newly deprecated | Implementation retained for a possible return; no working public sample established |
+| Vihide | Enabled | Updated | Domain matching updated; no fresh live validation in this beta |
+| Vimeos | Enabled | New | Packed player/HLS extraction and fresh media requests passed; [guide](server-src/moongetter-vimeos/README.md) |
+| VK | Enabled | Existing | Included; no fresh live validation in this beta |
+| VOE | Enabled | Updated | Portable metadata/source decoding; earlier HLS check passed, supplied sample later returned 404; [validation](docs/validation/dependencies.md) |
+| X/Twitter | Enabled | Existing | Included; no fresh live validation in this beta |
+| YourUpload | Enabled | Existing | Included; no fresh live validation in this beta |
 
-- **Returns**
-    - [Server] → A non-null instance corresponding to the provided URL.
+VOE remains enabled. The Robot/WebView extraction modules and their API are **removed**, with no compatibility layer. A verification response is an extraction/access failure, rather than proof that a video was taken down.
 
-- **Throws**
-    - [InvalidServerException] if the factory is not initialized.
-    - [RuntimeException] for unexpected runtime errors.
+MEGA and Abyss return device-local playback URLs backed by decryption proxies. Keep their sessions alive while the playlist is in use, then call `MegaProxy.release(url)` or `AbyssProxy.release(url)` for each local URL. Call the corresponding `closeAll()` when shutting down the runtime. The sample manages this lifecycle; see the [MEGA](server-src/moongetter-mega/README.md) and [Abyss](server-src/moongetter-abyss/README.md) guides for direct integrations.
 
----
+## Toolchain and dependencies
 
-#### 🔹 `suspend fun getOrNull(url: String): Server?`
-Safe variant of [`get(url)`](#suspend-fun-geturl-string-server).  
-Instead of throwing when no server can be resolved, it returns `null`.  
-⚠️ **Special case**: if the library has not been initialized, [InvalidServerException] is re-thrown to signal improper API usage.
+The project uses Kotlin **2.4.21**, Gradle **9.7.0**, AGP **9.3.1**, Compose Multiplatform **1.12.1**, Ktor **3.6.0**, and Java **21** toolchains. The selected Gradle/AGP pair stays inside [Kotlin's supported compatibility range](https://kotlinlang.org/docs/gradle-configure-project.html); it is intentionally below the newest standalone releases. Dependency versions are centralized in [the catalog](gradle/libs.versions.toml).
 
-- **Parameters**
-    - `url: String`
+Android requires API **26** and compiles against API **37**. The minimum was raised for the upgraded Rhino runtime's JVM method-handle requirements. The Compose sample supports `iosArm64` and `iosSimulatorArm64`; Intel simulator support is not available for the latest sample dependencies. Desktop packaging uses an Amazon Corretto Java 21 toolchain, resolved through Foojay, and aligned JOGL/GlueGen versions.
 
-- **Returns**
-    - [Server]? → A resolved instance if successful, or `null` if none could be found.
+## Validate changes
 
-- **Throws**
-    - [InvalidServerException] when the factory has not been initialized.
+```shell
+./gradlew :sample:androidApp:assembleDebug :sample:androidApp:assembleDebugAndroidTest
+./gradlew :sample:desktopApp:classes :sample:desktopApp:createDistributable
+./gradlew :sample:shared:compileKotlinIosArm64 :sample:shared:compileKotlinIosSimulatorArm64
+./gradlew jvmTest iosSimulatorArm64Test test
+```
 
----
+Live tests are opt-in and require their provider-specific environment variables. A test that skips without its variable does not prove live extraction. Keep live requests infrequent to avoid triggering provider rate limits. See [upgrade validation](docs/validation/dependencies.md) for the checks performed and remaining limitations.
 
-#### 🔹 `suspend fun get(urls: List<String>): List<Server>`
-Resolves multiple [Server] instances in one call, keeping the same order as the input URLs.  
-All returned elements are **non-null**.
+The Android/desktop cookie adapter now retains valid session cookies and renders proper HTTP cookie headers. A cold/warm Fireload extraction test returned a source in 2.30 seconds and 1.57 seconds respectively. The sample logs per-request and total extraction timing.
 
-- **Parameters**
-    - `urls: List<String>` → List of candidate URLs.
+The sample limits the complete extraction operation to 60 seconds and clears its loading state on failure. That deadline is separate from individual HTTP request timeouts. DNS, TLS, redirects, provider waits, and player buffering can still add latency; a slow first request alone does not identify which stage is responsible.
 
-- **Returns**
-    - `List<Server>` → A list of resolved server instances, one for each input URL.
+## License
 
-- **Throws**
-    - [InvalidServerException] if the factory is not initialized.
-    - [RuntimeException] for unexpected runtime errors.
-
----
-
-#### 🔹 `suspend fun getUntilFindResource(urls: List<String>): Server`
-Sequentially checks a list of URLs until the **first valid [Server]** is found.  
-If no valid server is found, it throws an exception.
-
-- **Parameters**
-    - `urls: List<String>`
-
-- **Returns**
-    - [Server] → The first successfully resolved server.
-
-- **Throws**
-    - [InvalidServerException] if the factory is not initialized or no valid server is found.
-    - [RuntimeException] for unexpected runtime errors.
-
----
-
-#### 🔹 `suspend fun getUntilFindResourceOrNull(urls: List<String>): Server?`
-Safe variant of [`getUntilFindResource(urls)`](#suspend-fun-getuntilfindresourceurls-liststring-server).  
-Instead of throwing when no valid server is found, it returns `null`.  
-⚠️ As with `getOrNull`, [InvalidServerException] is still thrown if the factory has not been initialized.
-
-- **Parameters**
-    - `urls: List<String>`
-
-- **Returns**
-    - [Server]? → The first valid server found, or `null` if none could be resolved.
-
-- **Throws**
-    - [InvalidServerException] if the factory has not been initialized.
-
----
-
-📌 **Key Notes**:
-- `get` variants always return **non-null** and assume successful resolution.
-- `getOrNull` variants return **nullable** for resolution failures, but still throw if the factory was not initialized.
-- `get(urls: List<String>)` always returns a **non-null list with non-null elements**.
-
----
-
-## 🤝 Want to Collaborate?
-If you'd like to contribute or propose a new feature, feel free to reach out via [X / Twitter](https://x.com/Darkryh) @Darkryh or open a PR/request.
-
----
-
-MoonGetter is in active development to expand KMP support. Swift/iOS support is **coming soon**.
+[MIT](LICENSE).
