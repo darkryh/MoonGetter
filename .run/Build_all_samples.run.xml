@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build all samples" type="GradleRunConfiguration" factoryName="Gradle">
+    <ExternalSystemSettings>
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="taskNames"><list><option value=":sample:androidApp:assembleDebug" /><option value=":sample:desktopApp:classes" /><option value=":sample:shared:compileKotlinIosArm64" /></list></option>
+      <option name="scriptParameters" value="" />
+    </ExternalSystemSettings>
+    <method v="2" />
+  </configuration>
+</component>

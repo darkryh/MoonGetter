@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Android sample" type="AndroidRunConfigurationType" factoryName="Android App">
+    <module name="MoonGetter.sample.androidApp" />
+    <option name="DEPLOY" value="true" />
+    <option name="MODE" value="default_activity" />
+    <method v="2"><option name="Android.Gradle.BeforeRunTask" enabled="true" /></method>
+  </configuration>
+</component>

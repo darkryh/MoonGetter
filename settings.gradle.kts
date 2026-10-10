@@ -24,13 +24,10 @@ plugins {
 
 
 rootProject.name = "MoonGetter"
-include(":composeApp")
-include(":androidApp")
-include(":Media3Player")
+include(":sample:shared", ":sample:androidApp", ":sample:desktopApp")
 
 // bundles
 include(":moongetter-server-bundle")
-include(":moongetter-server-robot-bundle")
 
 
 // java sources
@@ -45,14 +42,11 @@ project(":moongetter-client-cookie-java-net").projectDir = file("java-src/moonge
 project(":moongetter-client-trustmanager-java-net").projectDir = file("java-src/moongetter-client-trustmanager-java-net")
 
 // android sources
-include(":moongetter-android-robot")
-project(":moongetter-android-robot").projectDir = file("android-src/moongetter-android-robot")
 
 
 // moon sources
 include(
     ":moongetter-core",
-    ":moongetter-core-robot",
     ":moongetter-client",
     ":moongetter-jsunpacker",
     ":moongetter-client-ktor",
@@ -61,7 +55,6 @@ include(
 )
 
 project(":moongetter-core").projectDir = file("kotlin-src/moongetter-core")
-project(":moongetter-core-robot").projectDir = file("kotlin-src/moongetter-core-robot")
 project(":moongetter-client").projectDir = file("kotlin-src/moongetter-client")
 project(":moongetter-jsunpacker").projectDir = file("kotlin-src/moongetter-jsunpacker")
 project(":moongetter-client-ktor").projectDir = file("kotlin-src/moongetter-client-ktor")
@@ -119,9 +112,32 @@ project(":moongetter-xtwitter").projectDir = file("server-src/moongetter-xtwitte
 project(":moongetter-yourupload").projectDir = file("server-src/moongetter-yourupload")
 
 
-// server robot impl
+// HTTP file-host extractors
 include(":moongetter-fireload")
 include(":moongetter-onecloudfile")
 
-project(":moongetter-fireload").projectDir = file("server-robot-src/moongetter-fireload")
-project(":moongetter-onecloudfile").projectDir = file("server-robot-src/moongetter-onecloudfile")
+project(":moongetter-fireload").projectDir = file("server-src/moongetter-fireload")
+project(":moongetter-onecloudfile").projectDir = file("server-src/moongetter-onecloudfile")
+
+include(":moongetter-vimeos")
+project(":moongetter-vimeos").projectDir = file("server-src/moongetter-vimeos")
+
+include(":moongetter-savefiles")
+project(":moongetter-savefiles").projectDir = file("server-src/moongetter-savefiles")
+
+include(":moongetter-gofile")
+project(":moongetter-gofile").projectDir = file("server-src/moongetter-gofile")
+
+include(":moongetter-mailru")
+project(":moongetter-mailru").projectDir = file("server-src/moongetter-mailru")
+
+include(":moongetter-mega")
+include(":moongetter-rpmstream")
+project(":moongetter-rpmstream").projectDir = file("server-src/moongetter-rpmstream")
+project(":moongetter-mega").projectDir = file("server-src/moongetter-mega")
+
+include(":moongetter-onefichier")
+project(":moongetter-onefichier").projectDir = file("server-src/moongetter-onefichier")
+
+include(":moongetter-abyss")
+project(":moongetter-abyss").projectDir = file("server-src/moongetter-abyss")
