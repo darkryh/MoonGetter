@@ -57,13 +57,6 @@ kotlin {
     // https://developer.android.com/kotlin/multiplatform/migrate
     val xcfName = "MoonGetter-Vidguard-MultiplatformKit"
 
-    iosX64 {
-        binaries.framework {
-            baseName = xcfName
-            freeCompilerArgs += listOf("-Xnative-threads")
-        }
-    }
-
     iosArm64 {
         binaries.framework {
             baseName = xcfName

@@ -86,7 +86,7 @@ The separate live Darwin simulator probe failed with certificate-trust error
 -1202 before retrieving the Abyss embed; the supplied physical-device log
 retrieved that same embed with HTTP 200. TLS validation remains enabled.
 
-The final beta check generated and inspected all 203 Maven publication POMs:
+The earlier beta check generated and inspected 203 Maven publication POMs:
 publication and internal dependency versions are `2.0.0-beta01`, with no sample
 application publications. POM license declarations now match the MIT license
 in the repository. JVM/iOS regression suites, Android application and test
@@ -96,5 +96,28 @@ This validates coordinates and build output, not Central upload/signing.
 To regenerate the release POMs without uploading artifacts:
 
 ```shell
-./gradlew generatePomFileForKotlinMultiplatformPublication generatePomFileForJvmPublication generatePomFileForIosArm64Publication generatePomFileForIosSimulatorArm64Publication generatePomFileForIosX64Publication generatePomFileForReleasePublication
+./gradlew generatePomFileForKotlinMultiplatformPublication generatePomFileForJvmPublication generatePomFileForIosArm64Publication generatePomFileForIosSimulatorArm64Publication generatePomFileForReleasePublication
 ```
+
+## ARM64-only iOS publication
+
+All 40 multiplatform library modules now declare `iosArm64` and
+`iosSimulatorArm64`, matching the Compose sample. `iosX64` is removed rather
+than hiding its disabled-test warning. The warning in the interrupted Central
+command meant Intel simulator tests cannot run on an ARM64 host; it did not
+indicate a failed upload.
+
+The active publication model now contains 163 Maven publications (160 across
+the multiplatform libraries and three JVM adapters). Removed Intel simulator
+artifacts are excluded from the publication graph. Consumers using Intel
+simulators must move to an Apple Silicon simulator or physical ARM64 device.
+
+The ARM64-only validation passed the publication-target audit, all regression
+suites, Android assembly, desktop classes, and shared iPhone/simulator
+compilation. A `publishToMavenCentral --dry-run` completed without an
+`iosX64Test` warning and contains no Intel simulator task. No upload was run.
+
+The restored README's six runtime snippets were compiled from the Markdown
+on JVM and both ARM64 iOS targets. Its local links, all 33 provider entries,
+artifact coordinates and Maven badge were checked. The badge links to the
+current Central artifact page rather than a fixed historical version.

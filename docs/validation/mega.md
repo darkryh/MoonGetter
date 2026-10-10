@@ -31,7 +31,7 @@ Keep the fragment key local; send only the public handle to the metadata API. Do
 
 The module binds only to `127.0.0.1` using port zero, reads the actual assigned port, and verifies HEAD plus a decrypted media-header range through the local session URL before returning it. It uses cryptographically random session paths, fixed 1 MiB upstream blocks, and at most two cached plaintext blocks per session. It supports GET/HEAD, unaligned/open-ended/suffix ranges, HTTP 416, ticket refresh, quota mapping, cancellation, key clearing, expiry, and explicit shutdown. No shared filesystem directory is needed.
 
-JVM and iOS simulator tests include the actual local server, along with independent crypto vectors and synthetic upstream failures. Both Android samples compile, and iOS Arm64/X64 targets compile. Paste the supplied public MEGA link into a platform sample. The sample releases local sessions when replacing a playlist or clearing its ViewModel.
+JVM and iOS simulator tests include the actual local server, along with independent crypto vectors and synthetic upstream failures. Both Android samples compile, and iOS ARM64 device and Apple Silicon simulator targets compile. Paste the supplied public MEGA link into a platform sample. The sample releases local sessions when replacing a playlist or clearing its ViewModel.
 
 An earlier desktop live run validated real decrypted ranges, suffix/unaligned seeks, release, and beginning/ten-minute-seek FFmpeg decoding. It took about 117 seconds using the initial smaller block implementation; this is an aggregate test time, not a first-frame measurement. Subsequent buffering uses 1 MiB blocks after bounded range measurements of approximately 1.55 seconds for 256 KiB and 2.39 seconds for 1 MiB.
 

@@ -26,8 +26,8 @@ validation limits are listed in the [README](README.md#providers).
   selected versions and compatibility constraints are in
   [dependency validation](docs/validation/dependencies.md).
 - Raise the Android sample minimum to API 26 and use Java 21 toolchains for
-  JVM compilation. The Compose iOS sample targets physical ARM64 devices
-  and Apple Silicon simulators.
+  JVM compilation. All iOS modules target physical ARM64 devices
+  and Apple Silicon simulators. Intel simulator (`iosX64`) artifacts are removed.
 - Use a 60-second default request timeout and a separate 60-second deadline
   for the sample’s complete extraction operation.
 
@@ -73,7 +73,8 @@ server constructors that used the removed Robot parameter.
 Update sample task paths from `:composeApp` and `:androidApp` to `:sample:shared`
 and `:sample:androidApp`; launch desktop with `:sample:desktopApp:run`. Open
 `sample/iosApp/iosApp.xcodeproj` and select the `iosApp` scheme. Configure your
-own signing team and use an Apple Silicon simulator or physical iPhone.
+own signing team and use an Apple Silicon simulator or physical iPhone. Replace
+`iosX64` with `iosSimulatorArm64` in consumer modules that target simulators.
 
 Preserve each returned playback request’s headers. MEGA and Abyss return
 URLs on the current device’s loopback listener; retain those sessions while
