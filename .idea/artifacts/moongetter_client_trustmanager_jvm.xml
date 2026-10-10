@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="moongetter-client-trustmanager-jvm">
-    <output-path>$PROJECT_DIR$/kotlin-src/moongetter-client-trustmanager/build/libs</output-path>
-    <root id="archive" name="moongetter-client-trustmanager-jvm.jar" />
-  </artifact>
-</component>

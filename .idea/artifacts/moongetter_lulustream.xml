@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="moongetter-lulustream">
-    <output-path>$PROJECT_DIR$/server-src/moongetter-lulustream/build/libs</output-path>
-    <root id="archive" name="moongetter-lulustream.jar">
-      <element id="module-output" name="moongetter-lulustream.MoonGetter.moongetter-lulustream.androidMain" />
-    </root>
-  </artifact>
-</component>

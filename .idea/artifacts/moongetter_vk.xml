@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="moongetter-vk">
-    <output-path>$PROJECT_DIR$/server-src/moongetter-vk/build/libs</output-path>
-    <root id="archive" name="moongetter-vk.jar">
-      <element id="module-output" name="moongetter-vk.MoonGetter.moongetter-vk.androidMain" />
-    </root>
-  </artifact>
-</component>

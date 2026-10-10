@@ -1,15 +1,30 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Gradle, Kotlin and native build output
+.gradle/
+.kotlin/
+.konan/
+build/
+.externalNativeBuild/
+.cxx/
 local.properties
+
+# IDE state; retain the shared Xcode project locator and .run configurations
+*.iml
+/.idea/*
+!/.idea/xcode.xml
+
+# Xcode/Swift generated and per-user state
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.build/
+*.xcresult/
+*.xcarchive/
+
+# Local captures, logs and JVM crash/heap dumps
+/captures/
+*.log
+*.hprof
+
+# macOS filesystem metadata
+.DS_Store
+._*
