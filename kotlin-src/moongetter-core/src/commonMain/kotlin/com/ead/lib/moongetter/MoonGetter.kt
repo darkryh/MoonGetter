@@ -117,6 +117,8 @@ object MoonGetter {
             if (e.error == Error.CONFIG_NOT_INITIALIZED)
                 throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED)
             else null
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
             null
         }
@@ -178,6 +180,8 @@ object MoonGetter {
             if (e.error == Error.CONFIG_NOT_INITIALIZED)
                 throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED)
             else null
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
             null
         }

@@ -81,7 +81,6 @@ class Factory(
             serversFactory = engine.servers.ifEmpty {
                 throw InvalidServerException(Resources.ENGINES_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
             },
-            robot = engine.robot,
             headers = headers,
             configData = configData,
             client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
@@ -98,7 +97,6 @@ class Factory(
             serversFactory = engine.servers.ifEmpty {
                 throw InvalidServerException(Resources.ENGINES_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
             },
-            robot = engine.robot,
             headers = headers,
             configData = configData,
             client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
@@ -115,7 +113,6 @@ class Factory(
             serversFactory = engine.servers.ifEmpty {
                 throw InvalidServerException(Resources.ENGINES_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
             },
-            robot = engine.robot,
             headers = headers,
             configData = configData,
             client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)

@@ -1,6 +1,8 @@
 package com.ead.lib.moongetter.client.cookie.java.net
 
 import com.ead.lib.moongetter.client.cookie.managment.MoonCookie
+import io.ktor.http.renderSetCookieHeader
+import io.ktor.http.CookieEncoding
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +15,7 @@ import java.net.URI
 
 class JavaNetCookieManagement(
     private val cookieHandler: CookieHandler = CookieManager().apply {
-        setCookiePolicy(CookiePolicy.ACCEPT_NONE)
+        setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
     }
 ) : MoonCookie.Management {
 
@@ -39,7 +41,7 @@ class JavaNetCookieManagement(
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
         val uri = URI(requestUrl.toString())
-        val setCookie = cookie.toString()
+        val setCookie = renderSetCookieHeader(cookie)
         val multimap = mapOf("Set-Cookie" to listOf(setCookie))
         try {
             withContext(Dispatchers.IO) {
@@ -65,9 +67,14 @@ class JavaNetCookieManagement(
                 value = value.substring(1, value.length - 1)
             }
 
+            if (name.startsWith("$")) {
+                pos = pairEnd + 1
+                continue
+            }
             cookies += Cookie(
                 name = name,
                 value = value,
+                encoding = CookieEncoding.RAW,
                 domain = requestUrl.host,
                 path = requestUrl.encodedPath
             )

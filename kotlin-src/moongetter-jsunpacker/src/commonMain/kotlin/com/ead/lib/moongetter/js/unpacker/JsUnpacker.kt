@@ -146,10 +146,9 @@ object JsUnpacker {
             } else {
                 payload?.replace(unpackReplaceRegex) { match ->
                     val word = match.value
-                    val unbased = symtab[unbaser.unbase(word)]
-                    unbased.ifEmpty {
-                        word
-                    }
+                    // Packer replaces only dictionary tokens, not arbitrary words in URLs.
+                    val index = if (radix in 2..36) word.toIntOrNull(radix) else unbaser.unbase(word)
+                    symtab.getOrNull(index ?: -1)?.takeIf { it.isNotEmpty() } ?: word
                 }
             }
         }

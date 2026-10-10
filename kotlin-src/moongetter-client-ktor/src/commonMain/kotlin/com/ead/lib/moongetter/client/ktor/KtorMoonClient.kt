@@ -15,6 +15,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngineConfig
 import io.ktor.client.engine.HttpClientEngineFactory
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.timeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
@@ -40,6 +41,8 @@ class KtorMoonClient<out T : HttpClientEngineConfig>(
     private val engineConfigBuilder: (T.() -> Unit)? = null
 ) : MoonClient {
 
+    private var timeoutMillis = Configuration.Data().timeout
+
     private val serializer = Json { encodeDefaults = true }
 
     private val httpClient by lazy {
@@ -47,6 +50,8 @@ class KtorMoonClient<out T : HttpClientEngineConfig>(
             engineConfigBuilder?.let { builder ->
                 engine(builder)
             }
+
+            install(HttpTimeout)
 
             install(HttpCookies) {
                 storage = object : CookiesStorage {
@@ -70,13 +75,7 @@ class KtorMoonClient<out T : HttpClientEngineConfig>(
     }
 
     override fun initConfigurationData(configData: Configuration.Data) {
-        httpClient.config {
-            install(HttpTimeout) {
-                requestTimeoutMillis = configData.timeout
-                connectTimeoutMillis = configData.timeout
-                socketTimeoutMillis = configData.timeout
-            }
-        }
+        timeoutMillis = configData.timeout
 
         if (configData.disableSSLValidation) {
             trustManager.disableCertificationConnections()
@@ -92,7 +91,13 @@ class KtorMoonClient<out T : HttpClientEngineConfig>(
 
 
     override suspend fun <T> request(request: Request<T>): Response {
+        val requestTimeout = timeoutMillis
         val response = httpClient.request {
+            timeout {
+                requestTimeoutMillis = requestTimeout
+                connectTimeoutMillis = requestTimeout
+                socketTimeoutMillis = requestTimeout
+            }
             headers {
                 request.headers
                     .filterKeys { it !in forbiddenHeaders }

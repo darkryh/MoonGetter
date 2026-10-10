@@ -2,6 +2,7 @@
 
 package com.ead.lib.moongetter.models
 
+import kotlin.coroutines.cancellation.CancellationException
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.client.request.HttpMethod
@@ -35,10 +36,6 @@ open class Server(
     protected open val configData : Configuration.Data
 ) {
 
-    /**
-     * @return the robot
-     */
-    var _robot : Robot? = null
 
 
     /**
@@ -170,6 +167,9 @@ open class Server(
         catch (e : HttpRequestTimeoutException) {
             e.printStackTrace()
             throw InvalidServerException("error", Error.TIMEOUT_ERROR)
+        }
+        catch (cancelled: CancellationException) {
+            throw cancelled
         }
         catch (e : Exception) {
             e.printStackTrace()

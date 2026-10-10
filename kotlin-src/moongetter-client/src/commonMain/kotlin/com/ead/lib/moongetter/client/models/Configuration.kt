@@ -7,7 +7,7 @@ class Configuration {
     @OptIn(ExperimentalObjCName::class)
     @ObjCName("ClientConfigurationData", exact = true)
     data class Data(
-        val timeout : Long = 8000,
+        val timeout : Long = 60_000,
         val isUsingRandomUserAgents : Boolean = true,
         val disableSSLValidation : Boolean = true
     )

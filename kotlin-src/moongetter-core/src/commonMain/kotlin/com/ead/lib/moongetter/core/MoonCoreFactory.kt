@@ -1,10 +1,10 @@
 package com.ead.lib.moongetter.core
 
+import kotlin.coroutines.cancellation.CancellationException
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.MoonCoreFactory.create
 import com.ead.lib.moongetter.core.MoonCoreFactory.identifier
-import com.ead.lib.moongetter.models.Robot
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
@@ -118,7 +118,6 @@ internal object MoonCoreFactory {
          * @param serversFactory that's provided in the MoonGetter Builder
          */
         serversFactory : Array<Server.Factory>,
-        robot: Robot?,
         /**
          * @param headers that's provided in the MoonGetter Builder
          */
@@ -148,7 +147,6 @@ internal object MoonCoreFactory {
             headers = headers,
             configData = configData,
             client = getSingleton(client),
-            robot = robot
         )
 
 
@@ -201,10 +199,6 @@ internal object MoonCoreFactory {
          */
         serversFactory : Array<Server.Factory>,
         /**
-         * @param robot that's provided in the MoonGetter Builder
-         */
-        robot: Robot?,
-        /**
          * @param headers that's provided in the MoonGetter Builder
          */
         headers : HashMap<String, String>,
@@ -237,7 +231,7 @@ internal object MoonCoreFactory {
                     /**
                      * create the server using [create]
                      */
-                    val server = create(url, serversFactory, robot, headers, configData, getSingleton(client))
+                    val server = create(url, serversFactory, headers, configData, getSingleton(client))
 
                     /**
                      * In case of null return to next cycle
@@ -252,6 +246,9 @@ internal object MoonCoreFactory {
                 catch (e : InvalidServerException) {
                     e.printStackTrace()
                     println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
+                }
+                catch (cancelled: CancellationException) {
+                    throw cancelled
                 }
                 catch (e : RuntimeException) {
                     e.printStackTrace()
@@ -281,10 +278,6 @@ internal object MoonCoreFactory {
 
         serversFactory : Array<Server.Factory>,
         /**
-         * @param robot that's provided in the MoonGetter Builder
-         */
-        robot: Robot?,
-        /**
          * @param headers that's provided in the MoonGetter Builder
          */
         headers : HashMap<String, String>,
@@ -311,7 +304,7 @@ internal object MoonCoreFactory {
                 /**
                  * create the server using [create]
                  */
-                val server = create(url, serversFactory, robot, headers, configData, getSingleton(client))
+                val server = create(url, serversFactory, headers, configData, getSingleton(client))
                 /**
                  * if resource is founded return the server
                  */
@@ -326,7 +319,10 @@ internal object MoonCoreFactory {
                 e.printStackTrace()
                 println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
-            catch (e : RuntimeException) {
+            catch (cancelled: CancellationException) {
+                    throw cancelled
+                }
+                catch (e : RuntimeException) {
                 e.printStackTrace()
                 println("$DEBUG_ERROR ${e.message ?: Resources.UNKNOWN_ERROR}")
             }
