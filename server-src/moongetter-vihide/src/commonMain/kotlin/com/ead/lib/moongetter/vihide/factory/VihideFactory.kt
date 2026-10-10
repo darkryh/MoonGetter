@@ -28,8 +28,7 @@ object VihideFactory : Server.Factory {
      * - https://filelions.net/abc123/xyz456
      * - https://niikaplayerr.com/embed/abc123
      */
-    override val pattern: String = """(https?://(?:www\.)?(vidhide|filelions)[a-zA-Z]*\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?/[a-zA-Z0-9]+/[a-zA-Z0-9]+|https?://(?:www\.)?niikaplayerr\.com/embed/[a-zA-Z0-9]+)"""
-
+    override val pattern: String = """(https?://(?:www\.)?(vidhide|filelions|callistanise)[a-zA-Z]*\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?/[a-zA-Z0-9]+/[a-zA-Z0-9]+|https?://(?:www\.)?niikaplayerr\.com/embed/[a-zA-Z0-9]+)"""
     /**
      * Creates a new [Vihide] server instance configured for the specified URL.
      *

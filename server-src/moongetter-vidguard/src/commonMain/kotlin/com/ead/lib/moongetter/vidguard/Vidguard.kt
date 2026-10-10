@@ -21,6 +21,9 @@ class Vidguard(
     headers : HashMap<String,String>,
     configData: Configuration.Data
 ) : Server(url, client, headers, configData) {
+    // Public domains are unavailable; retain the implementation for a possible return.
+    override val isDeprecated: Boolean = true
+
     private val playlistUtils by lazy { PlaylistUtils(client, headers) }
 
     override val headers: HashMap<String, String> = headers.also {
@@ -46,7 +49,7 @@ class Vidguard(
         val data = runWithStackSize(1 * 1024 * 1024) {
             PatternManager.singleMatch(
                 string =  response.body.asString().ifEmpty { throw InvalidServerException(Resources.emptyOrNullResponse(name), Error.EMPTY_OR_NULL_RESPONSE) },
-                regex = """<script\b[^>]*>((?:(?!<\/script>).)*?eval(?:(?!<\/script>).)*)<\/script>""",
+                regex = """<script\b[^>]*>((?:(?!</script>)[\s\S])*?eval(?:(?!</script>)[\s\S])*)</script>""",
                 patternFlag = RegexOption.MULTILINE
             ) ?: throw InvalidServerException(Resources.expectedResponseNotFound(name), Error.EXPECTED_RESPONSE_NOT_FOUND)
         }

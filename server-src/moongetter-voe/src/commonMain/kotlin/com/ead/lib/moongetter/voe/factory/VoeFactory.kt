@@ -26,7 +26,7 @@ object VoeFactory : Server.Factory {
      * - https://cindyeyefinal.sx/e/def789
      */
     override val pattern: String =
-        "https?://(?:voe|markstyleall|shannonpersonalcost|cindyeyefinal)\\.(?:com|sx)/(?:e|d)/\\w+"
+        "https?://(?:voe|markstyleall|shannonpersonalcost|cindyeyefinal|teresapoliticallearn)\\.(?:com|sx)/(?:e|d)/\\w+"
 
     /**
      * Creates a [Voe] server instance ready to extract video content from the matched URL.

@@ -24,13 +24,12 @@ import platform.JavaScriptCore.JSStringRef
 import platform.JavaScriptCore.JSStringRelease
 import platform.JavaScriptCore.JSValueRefVar
 import platform.JavaScriptCore.JSValueToStringCopy
-import platform.darwin.dispatch_async
-import platform.darwin.dispatch_get_main_queue
 import platform.posix.pthread_attr_destroy
 import platform.posix.pthread_attr_init
 import platform.posix.pthread_attr_setstacksize
 import platform.posix.pthread_attr_t
 import platform.posix.pthread_create
+import platform.posix.pthread_detach
 import platform.posix.pthread_tVar
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -61,6 +60,7 @@ actual suspend fun executeRunnableScript(scriptCode: String): String = suspendCo
 
         pthread_attr_destroy(attr.ptr)
 
+        if (result == 0) pthread_detach(thread.value)
         if (result != 0) {
             stableRef.dispose()
             cont.resumeWithException(RuntimeException("Failed to create pthread: $result"))
@@ -89,7 +89,7 @@ fun jsThreadEntry(rawData: COpaquePointer?): COpaquePointer? {
     try {
         val context = JSGlobalContextCreate(null)
 
-        val scriptRef = JSStringCreateWithUTF8CString(script)
+        val scriptRef = JSStringCreateWithUTF8CString("var window = this;\n" + script + "\n;JSON.stringify(svg);")
         val sourceURLRef = JSStringCreateWithUTF8CString("script.js")
 
         val exception = nativeHeap.alloc<JSValueRefVar>()
@@ -103,26 +103,19 @@ fun jsThreadEntry(rawData: COpaquePointer?): COpaquePointer? {
         if (exception.value != null) {
             val errorStrRef = JSValueToStringCopy(context, exception.value, null)
             val error = jsStringToKString(errorStrRef)
-            JSStringRelease(errorStrRef)
 
-            dispatch_async(dispatch_get_main_queue()) {
-                continuation.resumeWithException(RuntimeException(error))
-            }
+            continuation.resumeWithException(RuntimeException(error))
         } else {
             val resultStrRef = JSValueToStringCopy(context, result, null)
             val output = jsStringToKString(resultStrRef)
-            JSStringRelease(resultStrRef)
 
-            dispatch_async(dispatch_get_main_queue()) {
-                continuation.resume(output)
-            }
+            continuation.resume(output)
         }
 
+        nativeHeap.free(exception.ptr)
         JSGlobalContextRelease(context)
     } catch (e: Throwable) {
-        dispatch_async(dispatch_get_main_queue()) {
-            continuation.resumeWithException(e)
-        }
+        continuation.resumeWithException(e)
     } finally {
         ref.dispose()
     }

@@ -4,6 +4,7 @@ package com.ead.lib.moongetter.uqload.factory
 
 import com.ead.lib.moongetter.core.ExperimentalServer
 import com.ead.lib.moongetter.uqload.Uqload
+import com.ead.lib.moongetter.uqload.UqloadPayload
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
@@ -27,7 +28,7 @@ object UqloadFactory : Server.Factory {
      * - https://uqload.com/embed-abc123.html
      * - https://uqload.net/embed-xyz456.html
      */
-    override val pattern: String = """https://uqload\.[a-z]+/embed-[\w\d]+\.html\d*"""
+    override val pattern: String = UqloadPayload.PATTERN
 
     /**
      * Creates a new [Uqload] server instance configured for the given URL.

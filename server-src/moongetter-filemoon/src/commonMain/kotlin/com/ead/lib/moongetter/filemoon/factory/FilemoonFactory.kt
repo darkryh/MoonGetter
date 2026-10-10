@@ -26,8 +26,11 @@ object FilemoonFactory : Server.Factory {
      *
      * Matches URLs like:
      * - https://filemoon.sx/abcd1234
+     * - https://filemoon.sx/e/abcd1234
+     * - https://bysekoze.com/e/y6kmotbkxiha/
      */
-    override val pattern: String = "https?://filemoon\\.sx/[^/]+"
+    override val pattern: String =
+        """^https?://(?:www\.)?(?:filemoon\.sx/(?:e/)?\w+|bysekoze\.com/e/\w+)/?(?:[?#][^\s]*)?$"""
 
     /**
      * Creates a new [Filemoon] server instance configured with the given parameters.

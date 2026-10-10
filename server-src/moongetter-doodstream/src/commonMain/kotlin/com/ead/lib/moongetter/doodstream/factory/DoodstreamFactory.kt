@@ -23,10 +23,11 @@ object DoodstreamFactory : Server.Factory {
      * Regular expression pattern used to match URLs handled by the Doodstream server.
      *
      * Matches URLs like:
-     * - https://do123abc.xyz/e/abcdef1234
-     * - https://do9xyz.io/e/abcd1234
+     * - https://doodstream.com/e/abcdef1234
+     * - https://d-s.io/e/abcd1234
+     * - https://dsvplay.com/e/j0jlmfjfalnj
      */
-    override val pattern: String = """https://(?:do[a-zA-Z0-9]*stream?[a-zA-Z0-9]*\.[a-z]{2,}|d-s\.io)/e/([a-zA-Z0-9]+)"""
+    override val pattern: String = """^https://(?:www\.)?(?:do[a-zA-Z0-9]*stream?[a-zA-Z0-9]*\.[a-z]{2,}|d-s\.io|dsvplay\.com|playmogo\.com)/e/([a-zA-Z0-9]+)/?(?:[?#][^\s]*)?$"""
 
     /**
      * Creates a new [Doodstream] server instance configured to handle the given URL.
