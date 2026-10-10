@@ -1,10 +1,10 @@
-val moonGetterVersion: String by project
+val moonGetterVersion: String = providers.gradleProperty("moonGetterVersion").get()
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     `maven-publish`
     signing
-    id("com.vanniktech.maven.publish") version "0.34.0"
+    alias(libs.plugins.maven.publish)
 }
 
 mavenPublishing {
@@ -24,8 +24,8 @@ mavenPublishing {
 
         licenses {
             license {
-                name.set("Apache License 2.0")
-                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                name.set("MIT License")
+                url.set("https://opensource.org/license/mit")
             }
         }
 

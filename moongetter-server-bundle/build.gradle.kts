@@ -1,11 +1,11 @@
-val moonGetterVersion: String by project
+val moonGetterVersion: String = providers.gradleProperty("moonGetterVersion").get()
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     `maven-publish`
     signing
-    id("com.vanniktech.maven.publish") version "0.34.0"
+    alias(libs.plugins.maven.publish)
 }
 
 mavenPublishing {
@@ -25,8 +25,8 @@ mavenPublishing {
 
         licenses {
             license {
-                name.set("Apache License 2.0")
-                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                name.set("MIT License")
+                url.set("https://opensource.org/license/mit")
             }
         }
 
@@ -87,13 +87,14 @@ kotlin {
                 // Add KMP dependencies here
 
                 val modules = arrayOf(
-                    ":moongetter-doodstream", ":moongetter-facebook",
+                    ":moongetter-abyss",
+                    ":moongetter-fireload", ":moongetter-onecloudfile", ":moongetter-doodstream", ":moongetter-facebook",
                     ":moongetter-filemoon",":moongetter-goodstream", ":moongetter-googledrive",
                     ":moongetter-hexload",":moongetter-lulustream", ":moongetter-lamovie",
                     ":moongetter-mediafire", ":moongetter-mixdrop", ":moongetter-mp4upload",
                     ":moongetter-okru", ":moongetter-pixeldrain", ":moongetter-senvid",
                     ":moongetter-streamtape", ":moongetter-streamwish", ":moongetter-uqload",
-                    ":moongetter-vihide", ":moongetter-voe", ":moongetter-xtwitter",
+                    ":moongetter-mega", ":moongetter-rpmstream", ":moongetter-mailru", ":moongetter-gofile", ":moongetter-savefiles", ":moongetter-onefichier", ":moongetter-vimeos", ":moongetter-vihide", ":moongetter-voe", ":moongetter-xtwitter",
                     ":moongetter-yourupload", ":moongetter-vidguard", ":moongetter-vk"
                 )
 
