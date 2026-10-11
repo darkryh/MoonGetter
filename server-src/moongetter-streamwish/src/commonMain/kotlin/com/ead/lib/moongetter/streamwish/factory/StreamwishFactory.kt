@@ -4,6 +4,10 @@ import com.ead.lib.moongetter.streamwish.Streamwish
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.resolution.PathRule
+import com.ead.lib.moongetter.resolution.ServerDescriptor
+import com.ead.lib.moongetter.resolution.ServerFamily
+import com.ead.lib.moongetter.streamwish.StreamwishHosts
 
 /**
  * Factory responsible for creating instances of the [Streamwish] server.
@@ -19,11 +23,25 @@ object StreamwishFactory : Server.Factory {
     override val serverName: String = "Streamwish"
 
     /**
-     * Regex pattern matching Streamwish URLs such as:
-     * - https://[subdomain]wish[subdomain].com/e/abc123
+     * Routing data for Streamwish and its mirrors. Matches URLs like:
+     * - https://streamwish.to/e/abc123
      * - https://swhoi.com/e/abc123
+     *
+     * Streamwish pages carry no marker that Vidhide or Lulustream pages lack, so it has no fingerprint of
+     * its own: on an unknown host it can only be reached through [ServerFamily.XFileSharing] probing.
+     * Hosts come from tools/domain-registry/registry.json.
      */
-    override val pattern: String = "https?://(?:(?:[\\w-]*wish[\\w-]*)|(?:swhoi))\\.(?:com|to)/e/\\w+"
+    override val descriptor: ServerDescriptor = ServerDescriptor(
+        hosts = StreamwishHosts.hostSet,
+        paths = listOf(PathRule("""/e/(\w+)/?(?:[?#]\S*)?""")),
+        family = ServerFamily.XFileSharing,
+        allowHttp = true,
+    )
+
+    /**
+     * Regular expression equivalent of [descriptor], kept for code that still reads [pattern].
+     */
+    override val pattern: String get() = descriptor.pattern
 
     /**
      * Creates a new [Streamwish] server instance configured for the specified URL.

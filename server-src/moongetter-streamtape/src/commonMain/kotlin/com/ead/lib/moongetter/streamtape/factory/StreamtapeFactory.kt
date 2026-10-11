@@ -4,6 +4,13 @@ import com.ead.lib.moongetter.streamtape.Streamtape
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.resolution.Fingerprint
+import com.ead.lib.moongetter.resolution.PathRule
+import com.ead.lib.moongetter.resolution.ServerDescriptor
+import com.ead.lib.moongetter.resolution.Signal
+import com.ead.lib.moongetter.resolution.SignalKind
+import com.ead.lib.moongetter.resolution.SignalScope
+import com.ead.lib.moongetter.streamtape.StreamtapeHosts
 
 /**
  * Factory responsible for creating instances of the [Streamtape] server.
@@ -19,11 +26,26 @@ object StreamtapeFactory : Server.Factory {
     override val serverName: String = "Streamtape"
 
     /**
-     * Regex pattern matching Streamtape URLs of the form:
+     * Routing data for Streamtape and its mirrors. Matches URLs like:
      * - https://streamtape.com/e/abc123
      * - https://gettapeads.com/e/abc123
+     *
+     * Hosts come from tools/domain-registry/registry.json.
      */
-    override val pattern: String = "https?://(?:streamtape|gettapeads)\\.com/e/\\w+"
+    override val descriptor: ServerDescriptor = ServerDescriptor(
+        hosts = StreamtapeHosts.hostSet,
+        paths = listOf(PathRule("""/e/(\w+)/?(?:[?#]\S*)?""")),
+        fingerprint = Fingerprint(
+            Signal.pattern("streamtape.robotlink", SignalKind.UNIQUE, SignalScope.BODY, """getElementById\(\s*['"]robotlink['"]\s*\)|\bid=["']robotlink["']"""),
+            Signal.pattern("streamtape.plyr-brand", SignalKind.UNIQUE, SignalScope.BODY, """#plyr-streamtape\b|data-plyr=["']streamtape["']"""),
+        ),
+        allowHttp = true,
+    )
+
+    /**
+     * Regular expression equivalent of [descriptor], kept for code that still reads [pattern].
+     */
+    override val pattern: String get() = descriptor.pattern
 
     /**
      * Creates a new [Streamtape] server instance configured for the specified URL.

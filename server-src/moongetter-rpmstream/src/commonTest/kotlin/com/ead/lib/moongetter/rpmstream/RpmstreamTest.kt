@@ -19,6 +19,9 @@ class RpmstreamTest {
 
     @Test fun portableFactoryAndFragmentParsing() {
         assertTrue(Regex(RpmstreamFactory.pattern).matches(embed))
+        assertTrue(Regex(RpmstreamFactory.pattern).matches("https://cubeembed.rpmvid.com/#fm8vz"))
+        assertEquals(RpmLink("https://cubeembed.rpmvid.com", "fm8vz"), RpmLink.parse("https://cubeembed.rpmvid.com/#fm8vz"))
+        assertFalse(Regex(RpmstreamFactory.pattern).matches("https://rpmvid.com.evil/#fm8vz"))
         assertTrue(Regex(RpmstreamFactory.pattern).matches("https://rpmstream.live/#abc123&poster=a"))
         assertEquals("abc123", RpmLink.parse("$embed&poster=a").id)
         for (bad in listOf("https://rpmstream.live.evil/#abc123", "https://evil/rpmstream.live/#abc123", "http://rpmstream.live/#abc123", "https://rpmstream.live/#", "https://rpmstream.live/#abc/123")) {

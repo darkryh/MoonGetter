@@ -14,7 +14,8 @@ class DoodstreamFactoryTest {
             "https://playmogo.com/e/j0jlmfjfalnj",
             "https://www.dsvplay.com/e/j0jlmfjfalnj/?autoplay=1#play",
             "https://doodstream.com/e/abcdef1234",
-            "https://do9streamxyz.io/e/abcd1234",
+            "https://dood.wf/e/abcd1234",
+            "https://myvidplay.com/e/abcd1234",
             "https://d-s.io/e/abcd1234"
         ).forEach { assertTrue(pattern.matches(it), it) }
     }
@@ -26,7 +27,9 @@ class DoodstreamFactoryTest {
             "https://dsvplayXcom/e/j0jlmfjfalnj",
             "https://dsvplay.com/e/",
             "https://dsvplay.com/e/j0jlmfjfalnj/extra",
-            "https://other.com/e/j0jlmfjfalnj"
+            "https://other.com/e/j0jlmfjfalnj",
+            // Unlisted look-alike names are no longer guessed; the opt-in fallback identifies them instead.
+            "https://do9streamxyz.io/e/abcd1234"
         ).forEach { assertFalse(pattern.containsMatchIn(it), it) }
     }
 }

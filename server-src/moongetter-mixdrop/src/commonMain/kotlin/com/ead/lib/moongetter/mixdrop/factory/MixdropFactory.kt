@@ -7,6 +7,13 @@ import com.ead.lib.moongetter.mixdrop.Mixdrop
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.resolution.Fingerprint
+import com.ead.lib.moongetter.resolution.PathRule
+import com.ead.lib.moongetter.resolution.ServerDescriptor
+import com.ead.lib.moongetter.resolution.Signal
+import com.ead.lib.moongetter.resolution.SignalKind
+import com.ead.lib.moongetter.resolution.SignalScope
+import com.ead.lib.moongetter.mixdrop.MixdropHosts
 
 /**
  * Factory responsible for creating instances of the [Mixdrop] server.
@@ -22,11 +29,25 @@ object MixdropFactory : Server.Factory {
     override val serverName: String = "Mixdrop"
 
     /**
-     * Regex pattern matching Mixdrop URLs of the form:
-     * - https://mixdrop.xx/e/abcdef1234
-     * - https://mxdrop.xx/e/abcdef1234
+     * Routing data for Mixdrop and its mirrors. Matches URLs like:
+     * - https://mixdrop.ag/e/abcdef1234
+     * - https://mxdrop.top/e/abcdef1234
+     *
+     * Hosts come from tools/domain-registry/registry.json.
      */
-    override val pattern: String = """https://m(i)?xdrop\.[a-z]{2,}/e/([a-zA-Z0-9]+)"""
+    override val descriptor: ServerDescriptor = ServerDescriptor(
+        hosts = MixdropHosts.hostSet,
+        paths = listOf(PathRule("""/e/([a-zA-Z0-9]+)/?(?:[?#]\S*)?""")),
+        fingerprint = Fingerprint(
+            Signal.pattern("mixdrop.mdcore", SignalKind.UNIQUE, SignalScope.BODY, """\bMDCore\.(?:ref|sublangs|wurl|vsrc)\b"""),
+            Signal.pattern("mixdrop.videoplayer", SignalKind.SUPPORTING, SignalScope.SCRIPT_SRC, """/player/videoplayer[.0-9]*\.min\.js"""),
+        ),
+    )
+
+    /**
+     * Regular expression equivalent of [descriptor], kept for code that still reads [pattern].
+     */
+    override val pattern: String get() = descriptor.pattern
 
     /**
      * Creates a new [Mixdrop] server instance configured for the provided URL.

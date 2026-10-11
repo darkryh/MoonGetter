@@ -7,6 +7,14 @@ import com.ead.lib.moongetter.lulustream.Lulustream
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.resolution.Fingerprint
+import com.ead.lib.moongetter.resolution.PathRule
+import com.ead.lib.moongetter.resolution.ServerDescriptor
+import com.ead.lib.moongetter.resolution.ServerFamily
+import com.ead.lib.moongetter.resolution.Signal
+import com.ead.lib.moongetter.resolution.SignalKind
+import com.ead.lib.moongetter.resolution.SignalScope
+import com.ead.lib.moongetter.lulustream.LulustreamHosts
 
 /**
  * Factory responsible for creating instances of the [Lulustream] server.
@@ -22,10 +30,26 @@ object LulustreamFactory : Server.Factory {
     override val serverName: String = "Lulustream"
 
     /**
-     * Regex pattern that detects Lulustream URLs in the form:
-     * - https://luluXYZ.domain/e/anything
+     * Routing data for Lulustream. Matches URLs like:
+     * - https://luluvdo.com/e/75n0j12zgsl3
+     *
+     * Lulustream runs XFileSharing, so its page shares most markup with Streamwish and Vidhide; the
+     * branded title suffix is what tells it apart. Hosts come from tools/domain-registry/registry.json.
      */
-    override val pattern: String = """https://lulu\w*\.\w+/e/[^\s"]+"""
+    override val descriptor: ServerDescriptor = ServerDescriptor(
+        hosts = LulustreamHosts.hostSet,
+        paths = listOf(PathRule("""/e/([A-Za-z0-9_-]+)/?(?:[?#]\S*)?""")),
+        fingerprint = Fingerprint(
+            Signal.pattern("lulustream.title-suffix", SignalKind.UNIQUE, SignalScope.TITLE, """(?i)\s-\s*LuluStream\s*$"""),
+            Signal.pattern("lulustream.cdn", SignalKind.SUPPORTING, SignalScope.BODY, """//img\.lulucdn\.com/"""),
+        ),
+        family = ServerFamily.XFileSharing,
+    )
+
+    /**
+     * Regular expression equivalent of [descriptor], kept for code that still reads [pattern].
+     */
+    override val pattern: String get() = descriptor.pattern
 
     /**
      * Creates a new [Lulustream] server instance configured for the given URL.

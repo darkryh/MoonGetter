@@ -1,6 +1,7 @@
 @file:Suppress("RestrictedApi", "VisibleForTests")
 package com.ead.lib.moongetter.rpmstream
 
+import com.ead.lib.moongetter.rpmstream.factory.RpmstreamFactory
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
@@ -21,7 +22,8 @@ class Rpmstream(url: String, client: MoonClient, headers: HashMap<String, String
     Server(url, client, headers, configData) {
     override suspend fun onExtract(): List<Video> {
         try {
-            val link = RpmLink.parse(url)
+            // The resolver already chose this server, possibly for a host identified by the fallback.
+            val link = RpmLink.parse(url, requireKnownHost = false)
             val playbackHeaders = headers.filterKeys {
                 !it.equals("Referer", true) && !it.equals("Origin", true)
             } + mapOf("Referer" to "${link.origin}/", "Origin" to link.origin)
@@ -54,12 +56,12 @@ class Rpmstream(url: String, client: MoonClient, headers: HashMap<String, String
 
 internal data class RpmLink(val origin: String, val id: String) {
     companion object {
-        const val PATTERN = """^https://(?:[A-Za-z0-9-]+\.)*rpmstream\.live/?#([A-Za-z0-9_-]{2,64})(?:&[^\s]*)?$"""
-
-        fun parse(value: String): RpmLink {
-            val match = Regex(PATTERN).matchEntire(value) ?: error("Invalid RPMStream embed URL")
-            val parsed = Url(value)
-            return RpmLink("https://${parsed.host}", match.groupValues[1])
+        /** Parses an embed URL; with [requireKnownHost] false any host with the fragment-ID shape is accepted. */
+        fun parse(value: String, requireKnownHost: Boolean = true): RpmLink {
+            val descriptor = RpmstreamFactory.descriptor
+            val match = (if (requireKnownHost) descriptor.match(value) else descriptor.matchPath(value))
+                ?: error("Invalid RPMStream embed URL")
+            return RpmLink("https://${match.url.host}", match.id)
         }
     }
 }

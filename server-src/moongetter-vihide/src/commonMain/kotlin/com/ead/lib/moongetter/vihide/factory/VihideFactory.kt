@@ -7,6 +7,14 @@ import com.ead.lib.moongetter.vihide.Vihide
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
+import com.ead.lib.moongetter.resolution.Fingerprint
+import com.ead.lib.moongetter.resolution.PathRule
+import com.ead.lib.moongetter.resolution.ServerDescriptor
+import com.ead.lib.moongetter.resolution.ServerFamily
+import com.ead.lib.moongetter.resolution.Signal
+import com.ead.lib.moongetter.resolution.SignalKind
+import com.ead.lib.moongetter.resolution.SignalScope
+import com.ead.lib.moongetter.vihide.VihideHosts
 
 /**
  * Factory responsible for creating instances of the [Vihide] server.
@@ -23,12 +31,29 @@ object VihideFactory : Server.Factory {
     override val serverName: String = "Vihide"
 
     /**
-     * Regex pattern matching URLs from Vihide, Filelions, and Niikaplayerr embed URLs, for example:
-     * - https://vidhide.com/abc123/xyz456
-     * - https://filelions.net/abc123/xyz456
+     * Routing data for Vidhide, FileLions and their mirrors. Matches URLs like:
+     * - https://vidhide.com/v/xyz456
+     * - https://callistanise.com/v/jehmieb1epa5
      * - https://niikaplayerr.com/embed/abc123
+     *
+     * Vidhide runs XFileSharing; its self-hosted /vidhide/ asset path is what tells it apart from
+     * Streamwish and Lulustream. Hosts come from tools/domain-registry/registry.json.
      */
-    override val pattern: String = """(https?://(?:www\.)?(vidhide|filelions|callistanise)[a-zA-Z]*\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?/[a-zA-Z0-9]+/[a-zA-Z0-9]+|https?://(?:www\.)?niikaplayerr\.com/embed/[a-zA-Z0-9]+)"""
+    override val descriptor: ServerDescriptor = ServerDescriptor(
+        hosts = VihideHosts.hostSet,
+        paths = listOf(PathRule("""/[a-zA-Z0-9]+/([a-zA-Z0-9]+)/?(?:[?#]\S*)?""")),
+        fingerprint = Fingerprint(
+            Signal.pattern("vidhide.asset-path", SignalKind.UNIQUE, SignalScope.BODY, """["']/vidhide/images/"""),
+            Signal.pattern("vidhide.ev-player", SignalKind.SUPPORTING, SignalScope.SCRIPT_SRC, """/assets/jquery/ev-player\.js"""),
+        ),
+        family = ServerFamily.XFileSharing,
+        allowHttp = true,
+    )
+
+    /**
+     * Regular expression equivalent of [descriptor], kept for code that still reads [pattern].
+     */
+    override val pattern: String get() = descriptor.pattern
     /**
      * Creates a new [Vihide] server instance configured for the specified URL.
      *

@@ -4,6 +4,13 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.voe.Voe
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
+import com.ead.lib.moongetter.resolution.Fingerprint
+import com.ead.lib.moongetter.resolution.PathRule
+import com.ead.lib.moongetter.resolution.ServerDescriptor
+import com.ead.lib.moongetter.resolution.Signal
+import com.ead.lib.moongetter.resolution.SignalKind
+import com.ead.lib.moongetter.resolution.SignalScope
+import com.ead.lib.moongetter.voe.VoeHosts
 
 /**
  * Factory responsible for creating instances of the [Voe] server.
@@ -19,14 +26,28 @@ object VoeFactory : Server.Factory {
     override val serverName: String = "Voe"
 
     /**
-     * Regex pattern used to identify URLs belonging to Voe or its alternative domains.
-     * Examples of matching URLs:
+     * Routing data for Voe and its rotating mirrors. Matches URLs like:
      * - https://voe.sx/e/abc123
-     * - https://markstyleall.com/d/xyz456
-     * - https://cindyeyefinal.sx/e/def789
+     * - https://teresapoliticallearn.com/d/xyz456
+     *
+     * Hosts come from tools/domain-registry/registry.json. The fingerprint lets the optional fallback
+     * recognize a Voe player served from a mirror that is not listed yet.
      */
-    override val pattern: String =
-        "https?://(?:voe|markstyleall|shannonpersonalcost|cindyeyefinal|teresapoliticallearn)\\.(?:com|sx)/(?:e|d)/\\w+"
+    override val descriptor: ServerDescriptor = ServerDescriptor(
+        hosts = VoeHosts.hostSet,
+        paths = listOf(PathRule("""/(?:e|d)/(\w+)/?(?:[?#]\S*)?""")),
+        fingerprint = Fingerprint(
+            Signal.pattern("voe.title-brand", SignalKind.UNIQUE, SignalScope.TITLE, """\bVOE\s*\|\s*Content Delivery Network"""),
+            Signal.pattern("voe.loader-script", SignalKind.SUPPORTING, SignalScope.SCRIPT_SRC, """(?:^|/)js/loader\.[0-9a-f]{6,}\.js(?:[?#]|$)"""),
+            Signal.pattern("voe.encoded-config", SignalKind.SUPPORTING, SignalScope.BODY, """<script type=["']application/json["']>\s*\[\s*"[A-Za-z0-9+/=^$@~%?*!#&_-]{40,}"""),
+        ),
+        allowHttp = true,
+    )
+
+    /**
+     * Regular expression equivalent of [descriptor], kept for code that still reads [pattern].
+     */
+    override val pattern: String get() = descriptor.pattern
 
     /**
      * Creates a [Voe] server instance ready to extract video content from the matched URL.

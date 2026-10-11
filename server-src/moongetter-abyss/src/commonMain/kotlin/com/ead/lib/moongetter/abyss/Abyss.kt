@@ -1,5 +1,6 @@
 package com.ead.lib.moongetter.abyss
 
+import com.ead.lib.moongetter.abyss.factory.AbyssFactory
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.models.Server
@@ -17,7 +18,8 @@ import kotlin.io.encoding.Base64
 
 class Abyss(url: String, client: MoonClient, headers: HashMap<String,String>, configData: Configuration.Data) : Server(url,client,headers,configData) {
     override suspend fun onExtract(): List<Video> {
-        val slug = AbyssPayload.slug(url) ?: fail("Invalid Abyss embed URL")
+        // The resolver already chose this server, possibly for a customer domain identified by the fallback.
+        val slug = AbyssPayload.slug(url, requireKnownHost = false) ?: fail("Invalid Abyss embed URL")
         val page = client.GET()
         if (!page.isSuccess) fail("Abyss embed HTTP ${page.statusCode}", page.statusCode)
         val data = AbyssPayload.data(page.body.asString(), slug) ?: fail("No matching Abyss player metadata")
@@ -42,11 +44,10 @@ class Abyss(url: String, client: MoonClient, headers: HashMap<String,String>, co
 }
 
 internal object AbyssPayload {
-    const val PATTERN = """^https://(?:[A-Za-z0-9-]+\.)*(?:abyss\.to|argtesa\.top)/(?:\?(?:[^#\s]*&)?v=[A-Za-z0-9_-]{7,17}(?:&[^#\s]*)?|[A-Za-z0-9_-]{7,17}/?(?:\?[^#\s]*)?)$"""
-    fun slug(value: String): String? {
-        if (!Regex(PATTERN).matches(value)) return null
-        val u = Url(value)
-        return u.parameters["v"] ?: u.encodedPath.trim('/')
+    /** The video slug; with [requireKnownHost] false any host with an Abyss path shape is accepted. */
+    fun slug(value: String, requireKnownHost: Boolean = true): String? {
+        val descriptor = AbyssFactory.descriptor
+        return (if (requireKnownHost) descriptor.match(value) else descriptor.matchPath(value))?.id
     }
     fun data(html: String, expected: String): JsonObject? {
         val payload = Regex("""\bconst\s+datas\s*=\s*["']([A-Za-z0-9+/=]+)["']""").find(html)?.groupValues?.get(1) ?: return null

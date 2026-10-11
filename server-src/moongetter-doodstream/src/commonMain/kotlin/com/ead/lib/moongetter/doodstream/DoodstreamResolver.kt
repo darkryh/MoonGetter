@@ -11,7 +11,8 @@ import kotlinx.io.IOException
 /** Resolves legacy aliases through the provider's canonical entry, without pinning its rotating mirror. */
 internal object DoodstreamResolver {
     suspend fun resolve(target: String, headers: Map<String, String>, fetch: suspend (String, Map<String, String>) -> Response): Response {
-        require(Regex(DoodstreamFactory.pattern).matches(target)) { "Unsupported Doodstream URL" }
+        // Path shape only: the resolver may have identified this host through the fallback.
+        requireNotNull(DoodstreamFactory.descriptor.matchPath(target)) { "Unsupported Doodstream URL" }
         val input = Url(target)
         val code = input.segments.last()
         val canonical = "https://doodstream.com/e/$code" + input.encodedQuery.takeIf { it.isNotEmpty() }?.let { "?$it" }.orEmpty()

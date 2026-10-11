@@ -1,5 +1,6 @@
 package com.ead.lib.moongetter.mixdrop
 
+import com.ead.lib.moongetter.resolution.EmbedUrl
 import com.ead.lib.moongetter.client.MoonClient
 import com.ead.lib.moongetter.client.models.Configuration
 import com.ead.lib.moongetter.core.ExperimentalServer
@@ -20,9 +21,11 @@ class Mixdrop(
     configData : Configuration.Data,
 ) : Server(url, client, headers, configData) {
 
+    // The mirror's own origin: Mixdrop rotates domains, so a fixed referer goes stale.
     override val headers: HashMap<String, String> = headers.also {
-        it["Referer"] = DEFAULT_REFERER
-        it["Origin"] = DEFAULT_REFERER
+        val origin = EmbedUrl.parse(url)?.origin ?: DEFAULT_ORIGIN
+        it["Referer"] = "$origin/"
+        it["Origin"] = origin
     }
 
     override suspend fun onExtract(): List<Video> {
@@ -59,6 +62,6 @@ class Mixdrop(
     }
 
     companion object {
-        private const val DEFAULT_REFERER = "https://mixdrop.co/"
+        private const val DEFAULT_ORIGIN = "https://mixdrop.ag"
     }
 }
