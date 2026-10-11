@@ -1,18 +1,18 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-beta02 - 2026-10-11
 
 ### Added
 
 - Route the Abyss, Doodstream, Filemoon, Lulustream, Mixdrop, RPMStream,
   Streamtape, Streamwish, Vidhide and Voe servers by a `ServerDescriptor`:
   exact hostnames from a researched registry (`tools/domain-registry`), path
-  shapes and HTML fingerprints. The registry lists about 230 more mirror
-  domains than the previous patterns named explicitly.
+  shapes and HTML fingerprints. Expand the known mirror host lists.
 - Add a network fallback, on by default (`ResolutionConfig(fallbackEnabled = false)`
   disables it), that identifies URLs on unlisted hosts through redirects, embedded frames,
   page fingerprints and, for servers sharing XFileSharing pages, extractor
-  probing. Confirmed hosts are remembered and reported through a listener.
+  probing. Eligible confirmed hosts are remembered; confirmations are reported
+  through a listener.
 - Add `MoonGetter.resolve(url)` to inspect how a URL would be resolved, and
   `Error.AMBIGUOUS_URL_ENTRY` for URLs that several servers claim.
 - Add `checkHostRegistry`/`generateHostRegistry` Gradle tasks.
@@ -40,7 +40,7 @@
 
 This is the first beta of 2.0.0. The release is prepared for Maven publication;
 changing the repository version does not publish it. Provider status and
-validation limits are listed in the [README](README.md#providers).
+validation limits are listed in the [README](README.md#-supported-servers).
 
 ### Added
 

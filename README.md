@@ -84,14 +84,14 @@ repositories {
 }
 ```
 
-The badge shows the latest published Maven version. This checkout prepares **`2.0.0-beta01`**; use that version after it is published. Keep all MoonGetter artifacts on the same version. See the [beta migration notes](CHANGELOG.md) for breaking changes.
+The badge shows the latest published Maven version. This checkout prepares **`2.0.0-beta02`**; use that version after it is published. Keep all MoonGetter artifacts on the same version. See the [beta migration notes](CHANGELOG.md) for breaking changes.
 
 ### Kotlin Multiplatform dependencies
 
 Add these dependencies to your existing Kotlin Multiplatform module. Configure `iosArm64()` and `iosSimulatorArm64()` for iOS; use `jvmMain` for your JVM target.
 
 ```kotlin
-val moonGetterVersion = "2.0.0-beta01"
+val moonGetterVersion = "2.0.0-beta02"
 val ktorVersion = "3.6.0"
 
 kotlin {
@@ -123,7 +123,7 @@ To register only selected providers, replace `moongetter-server-bundle` with the
 For a project without multiplatform source sets:
 
 ```kotlin
-val moonGetterVersion = "2.0.0-beta01"
+val moonGetterVersion = "2.0.0-beta02"
 
 dependencies {
     implementation("io.github.darkryh.moongetter:moongetter-core:$moonGetterVersion")
@@ -232,7 +232,7 @@ The batch `get(urls)` overload requires opting in to `ExperimentalFeature`; it c
 
 ### Unknown mirrors and the resolution fallback
 
-Video hosts rotate domains often. Each built-in server lists its known hosts in a researched registry ([tools/domain-registry](tools/domain-registry/README.md)), and a URL is routed only when its exact hostname and path shape belong to one server. A URL on a known host is extracted directly, without extra requests.
+Video hosts rotate domains often. Servers with structured descriptors list their known hosts in a researched registry ([tools/domain-registry](tools/domain-registry/README.md)), and a URL is routed only when its exact hostname and path shape belong to one server. A URL on a known host is extracted directly, without extra requests.
 
 When no server lists the host, a network fallback (on by default) identifies the server. Configure or disable it with `setResolution`:
 
@@ -257,7 +257,7 @@ MoonGetter.start(
 )
 ```
 
-The unknown URL is fetched once (HTTPS, public hostnames only). MoonGetter then checks, in order: whether it redirects to a known host, whether it wraps a known host in an iframe, and finally the page's HTML fingerprint. Bot-protection challenges, parked domains and deleted files stop the process with a specific reason. A fingerprint only decides when it is unique to one server; pages several servers share (for example Streamwish, Vidhide and Lulustream) are tried with each candidate's extractor until one returns videos. A fallback answer is accepted only after extraction succeeds, and the host is then remembered for the next request. When the evidence is ambiguous, MoonGetter fails with `Error.AMBIGUOUS_URL_ENTRY` instead of guessing. Use `MoonGetter.resolve(url)` to see the decision and its evidence. Server deployments that resolve untrusted URLs should restrict outbound network access or disable the fallback.
+The fallback fetches the unknown URL (HTTPS, public-looking hostnames only) and follows up to three navigation pages by default. MoonGetter then checks, in order: whether it redirects to a known host, whether it wraps a known host in an iframe, and finally the page's HTML fingerprint. Bot-protection challenges, parked domains and deleted files stop the process with a specific reason. A fingerprint only decides when it is unique to one server; pages several servers share (for example Streamwish, Vidhide and Lulustream) are tried with each candidate's extractor until one returns videos. A fallback answer is accepted only after extraction succeeds, and eligible hosts are then remembered for the next request; iframe and script wrappers are resolved again. When the evidence is ambiguous, MoonGetter fails with `Error.AMBIGUOUS_URL_ENTRY` instead of guessing. Use `MoonGetter.resolve(url)` to see the decision and its evidence. Server deployments that resolve untrusted URLs should restrict outbound network access or disable the fallback.
 
 ## 🛠 Add your own server
 
