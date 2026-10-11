@@ -1,0 +1,256 @@
+<HTML>
+  <HEAD>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <title>Drishyam-3.2026.1080p.DS4K.WEB-DL.Hindi.HQ-Studio.Dub.x264-HDHub4u.Ms - Lulustream.mkv  - LuluStream</title>
+      <meta name="og:image" content="https://img.lulucdn.com/75n0j12zgsl3_xt.jpg">
+      <meta name="twitter:image" content="https://img.lulucdn.com/75n0j12zgsl3_xt.jpg">
+      <meta name="robots" content="noindex, nofollow">
+      <link rel="dns-prefetch" href="https://cdn1015.cdn-tnmr.org" crossorigin>
+      <link rel="dns-prefetch" href="https://img.lulucdn.com" crossorigin>
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/xupload.js"></script>
+  <script src="/js/jquery.cookie.js"></script>
+  <script>
+  $.cookie('file_id', '19824328', { expires: 10 });
+  $.cookie('aff', '250917', { expires: 10 });
+  
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFESL45RJX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-RFESL45RJX');
+    gtag('event', 'term', {
+  'sub_id': 'rtallyofficial'
+});
+  </script>
+  <style>
+    .jw-rightclick { display: none !important; }
+</style>
+
+  </HEAD>
+  <BODY topmargin=0 leftmargin=0 style="background:transparent;">
+    <script>
+	var DT_HOME = '/';
+	var DT_DEBUG = /[?&]dtdebug=1/.test(location.search);
+	var dtTriggered = false;
+	var DT_IN_FRAME = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
+
+	// Homepage of the site that embeds us (top-most page)
+	function dtEmbedderHome(){
+		try {
+			var ao = location.ancestorOrigins; // Chrome, Edge, Safari
+			if (ao && ao.length) return ao[ao.length - 1] + '/';
+		} catch(e){}
+		try {
+			if (document.referrer) return new URL(document.referrer).origin + '/'; // Firefox fallback
+		} catch(e){}
+		return null;
+	}
+
+	function stoppp(reason){
+		if (DT_DEBUG) { console.warn('[devtools] triggered by:', reason || 'unknown', DT_IN_FRAME ? '(in iframe)' : ''); return; }
+		if (dtTriggered) return;
+		dtTriggered = true;
+
+		// Inside an iframe: send the whole page to the embedding site's homepage
+		if (DT_IN_FRAME) {
+			var home = dtEmbedderHome() || new URL(DT_HOME, location.origin).href;
+			try { window.top.location.replace(home); } catch(e){}
+			// If the browser blocked that, at least blank the embed
+			document.documentElement.innerHTML = '';
+			return;
+		}
+
+		// Normal page: redirect to our homepage (no loop if already there)
+		var target = new URL(DT_HOME, location.origin);
+		var onHome = location.origin === target.origin &&
+			location.pathname.replace(/\/+$/, '') === target.pathname.replace(/\/+$/, '');
+
+		if (!onHome) { location.replace(target.href); return; }
+
+		document.documentElement.innerHTML = '<h1>Disable console!</h1>';
+		setInterval(function(){ eval('debugger;'); }, 50);
+	}
+
+	
+	document.addEventListener('keydown', function(e){
+		var k = e.keyCode;
+		if (k === 123 ||
+		    (e.ctrlKey && k === 85) ||
+		    (e.ctrlKey && e.shiftKey && [73,74,67].indexOf(k) > -1) ||
+		    (e.metaKey && e.altKey && [73,74,67].indexOf(k) > -1)) {
+			e.preventDefault();
+			return false;
+		}
+	});
+	
+
+	
+	document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+	
+</script>
+
+
+
+
+<script src="https://lulustream.com/js/devtools-detector.js"></script>
+<script>
+(function(){
+	// 1) Console-based checks (no performance or debugger checks: they misfire / pause the page)
+	if (typeof devtoolsDetector !== 'undefined') {
+		var c = devtoolsDetector.checkers;
+		var detector = new devtoolsDetector.DevtoolsDetector({ checkers: [
+			c.erudaChecker, c.elementIdChecker, c.regToStringChecker,
+			c.functionToStringChecker, c.depRegToStringChecker, c.dateToStringChecker
+		]});
+		detector.addListener(function(isOpen, detail){
+			if (isOpen) stoppp('checker: ' + (detail && detail.checkerName));
+		});
+		detector.setDetectDelay(500);
+		detector.launch();
+	}
+
+		// 2) Worker-based debugger check (desktop only)
+	if (/mobile/i.test(navigator.userAgent) || !window.Worker || !window.Blob || !window.URL) return;
+
+	var worker, timer;
+	try {
+		// "ready" is sent at startup, before any debugger statement
+		var src = 'postMessage("ready");onmessage=function(e){debugger;postMessage(e.data);}';
+		worker = new Worker(URL.createObjectURL(new Blob([src], {type: 'application/javascript'})));
+	} catch (e) { return; }
+
+	var pending = null, seq = 0, alive = false, started = Date.now();
+
+	function disable(){ clearInterval(timer); try { worker.terminate(); } catch(e){} }
+	worker.onerror = disable;
+	worker.onmessageerror = disable;
+
+	worker.onmessage = function(e){
+		if (e.data === 'ready') { alive = true; return; }
+		if (pending && e.data === pending.id) pending = null;
+	};
+
+	document.addEventListener('visibilitychange', function(){ pending = null; });
+
+	timer = setInterval(function(){
+		if (document.hidden) return;
+		if (!alive) {
+			// Worker never started: broken or blocked, so turn this check off
+			if (Date.now() - started > 5000) disable();
+			return;
+		}
+		if (pending) {
+			if (Date.now() - pending.t > 500) stoppp('worker');
+			return;
+		}
+		pending = { id: ++seq, t: Date.now() };
+		worker.postMessage(pending.id);
+	}, 250);
+})();
+</script>
+
+  
+    <style>
+.a87573 {display:none;z-index: 999;position: fixed;top:0;left:0;width:100%;height:100%;font:15px Verdana;text-align:center;color:#FFF;background: #000;background-color: rgba(0,0,0,.85);}
+.b87573 {position:absolute;top:47%;left:50%;margin-left:-200px;width:400px;padding: 30px;background-color: rgba(0,0,0,.3);border-radius: 15px;}
+/* blur layer: blurs everything behind the overlay (player included) */
+.a87573 {backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);}
+@media (max-width: 480px){ .b87573 {left:5%;margin-left:0;width:90%;box-sizing:border-box;} }
+</style>
+
+<script>
+function showADBOverlay(){
+	showGuardOverlay('Disable Adblock and Click Allow Pop-up Always to watch this video !');
+}
+
+function showGuardOverlay(msg){
+	if( $('.a87573').length ){ $('.b87573').html(msg); return; }
+	var $ov = $('<div class="a87573" oncontextmenu="return false;"><div class="b87573"></div></div>');
+	$ov.find('.b87573').html(msg);
+	$ov.appendTo('body').show();
+
+	new MutationObserver(function(){
+		if( !document.body.contains($ov[0]) ){ $ov.appendTo('body').show(); }
+		if( $ov.css('display') === 'none' ){ $ov.show(); }
+	}).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style','class'] });
+
+	try { if( window.jwplayer ){ jwplayer().stop(); jwplayer().remove(); } } catch(e){}
+	$('video').each(function(){ try{ this.pause(); }catch(e){} });
+}
+</script>
+
+
+
+
+<script src="/js/jdadbl.js"></script>
+<script src="/js/new100.js"></script>
+<script>
+if( window.justDetectAdblock === undefined ){ 
+	showADBOverlay();
+}
+else
+{
+  justDetectAdblock.detectAnyAdblocker().then(function(detected) {
+    if(detected){
+		setTimeout("showADBOverlay()", 2000);
+    }
+  });
+}
+</script>
+
+
+  
+
+  
+      <div style="position:relative;">
+
+    <div id="adbd" class="overdiv">
+			<div>Disable ADBlock plugin and click Always allow pop-ups in your browser to watch video</div>
+		</div>
+
+      <script>localStorage.setItem('jwplayer.bitrateSelection', '2828000');</script><script type='text/javascript' src='/player/jw8/jwplayer.js?v=2'></script>
+                <script type="text/javascript">jwplayer.key="";</script>
+                <script src="/js/localstorage-slim.js"></script><script src="/js/dnsads.js?ads=1&AdType=1&cbrandom=2&clicktag=http"></script>
+                
+      </div>
+  
+
+  
+  <div id='vplayer' style="width:100%;height:100%;text-align:center;"><img src="https://img.lulucdn.com/75n0j12zgsl3_xt.jpg" style="width:100%;height:100%;">
+  
+  
+
+    </div>
+  <script type='text/javascript'>eval(function(p,a,c,k,e,d){while(c--)if(k[c])p=p.replace(new RegExp('\\b'+c.toString(a)+'\\b','g'),k[c]);return p}('l("35").8a({89:[{28:"15://88.87-86.1u/85/84/82/81/80.7z?t=7y-7x-7w&s=3o&e=7v&f=3p&i=0.3&7u=0"}],7t:"15://7s.7r.1h/7q.7p",1x:"13%",1w:"13%",7o:{1v:"/b/1i/1i-3v.1y",1l:"1i-3v"},7n:"7m",7l:"7k.52",7j:\'7i\',7h:"1b",h:[{28:"/3u/3i.3u",7g:"7f 1c",7e:"1c"}],1c:{7d:1,7c:\'#7b\',7a:\'#79\',77:"76",75:30,74:\'13\',},\'73\':{"71":"70"},6z:"6y",6x:"15://27.1h",3t:{28:"15://27.1h/b/1i/b-3t.n",6w:"15://27.1h",u:"6v-6u",3b:"5"}});m 25,26;m 6t=0,6s=0;m b=l();m 3s=0,6r=0,6q=0,q=0;$.6p({6o:{\'6n-6m\':\'39-6l\'}});b.p(\'2g\',c(x){g(5>0&&x.u>=5&&26!=1){26=1;$(\'r.6k\').6j(\'6i\')}g(x.u>=q+5||x.u<q){q=x.u;21.6h(\'20\',6g.6f(q),{6e:60*60*24*7})}});b.p(\'1e\',c(x){3s=x.u});b.p(\'37\',c(x){3r(x)});b.p(\'6d\',c(){$(\'r.3q\').6b();21.38(\'20\')});b.p(\'3h\',c(x){});c 3r(x){$(\'r.3q\').1r();$(\'#6a\').1r();g(25)1k;25=1;1g=0;g(69.68===67){1g=1}$.3m(\'/66?3g=65&3f=3e&64=3p-63-62-3o-61&5z=1&5y=&1g=\'+1g,c(3n){$(\'#5x\').5w(3n)});m q=21.3m(\'20\');g(q>0){l().1e(q)}}c 5v(){m h=b.1m(3l);3k.3j(h);g(h.y>1){2b(i=0;i<h.y;i++){g(h[i].1l==3l){3k.3j(\'!!=\'+i);b.29(i)}}}}b.p(\'5u\',c(){b.p(\'5t\',c(1z){g(5s(\'3i\').5r(1z.h[1z.5q].5p)){l().3h(1b);l().5o(0);3d(\'/?3g=5n&3f=3e\')}});c 3d(1v){m $1f=$("<r />").1y({u:"5m",1x:"13%",1w:"13%",5l:0,3a:0,3c:5k,5j:"5i(10%, 10%, 10%, 0.4)","2f-5h":"5g"});$("<5f />").1y({1x:"60%",1w:"60%",3c:5e,"3b-3a":"5d"}).5c({\'5b\':1v,\'5a\':\'0\',\'59\':\'39\'}).36($1f);$1f.58(c(){$(57).38();l().37()});$1f.36($(\'#35\'))}l().1q(\'<n 31="2z://2y.2x.1u/2w/n" 2v="a-n-z" 2u="0 0 2t 2s"><2r d="56.5 2q.6c-9.5 7.9-22.8 9.7-34.1 4.55 54.4 0 53 83.6 7.2 72.3 18.4 51.5-3.6 34.1 4.50 4z 2p-17.7 14.3-32 32-2o 14.3 32 4y 17.7-14.3 32-32 4x-32-14.3-32-4w-11.5 9.6-1t 2n"/></n>\',"4v 10 2m",c(){l().1e(l().2l()+10)},"33");$("r[2k=33]").2i().2h(\'.a-z-1s\');l().1q(\'<n 31="2z://2y.2x.1u/2w/n" 2v="a-n-z" 2u="0 0 2t 2s"><2r d="4u.5 2q.4t.5 7.9 22.8 9.7 34.1 4.4s.4-16.6 18.4-4r-12.4-7.2-23.7-18.4-4q-24.5-3.6-34.1 4.4l-1t 4p 2p-17.7-14.3-32-32-4o 78.3 0 4n 17.7 14.3 32 32 2o-14.3 32-4m.5 9.6 1t 2n"/></n>\',"4k 10 2m",c(){m 1d=l().2l()-10;g(1d<0)1d=0;l().1e(1d)},"2j");$("r[2k=2j]").2i().2h(\'.a-z-1s\');$("r.a-z-1s").1r();$(\'.a-4j-2g\').4i($(\'.a-2f-4h\'))});b.p("o",c(4g){m h=b.1m();g(h.y<2)1k;$(\'.a-k-4f-4e\').4d(c(){$(\'#a-k-j-o\').1n(\'a-k-j-19\');$(\'.a-j-o\').w(\'v-1o\',\'1a\')});b.1q("/4c/4b.n","4a 49",c(){$(\'.a-2e\').48(\'a-k-2d\');$(\'.a-k-1c, .a-k-47\').w(\'v-1p\',\'1a\');g($(\'.a-2e\').46(\'a-k-2d\')){$(\'.a-j-o\').w(\'v-1p\',\'1b\');$(\'.a-j-o\').w(\'v-1o\',\'1b\');$(\'.a-k-j-45\').1n(\'a-k-j-19\');$(\'.a-k-j-o\').44(\'a-k-j-19\')}43{$(\'.a-j-o\').w(\'v-1p\',\'1a\');$(\'.a-j-o\').w(\'v-1o\',\'1a\');$(\'.a-k-j-o\').1n(\'a-k-j-19\')}},"42");g(!41.40(\'3z\'))3y("2c(\'3x\')",3w)});m 1j;c 2c(2a){m h=b.1m();g(h.y>1){2b(i=0;i<h.y;i++){g(h[i].1l==2a){g(i==1j){1k}1j=i;b.29(i)}}}}',36,299,'||||||||||jw|player|function||||if|tracks||submenu|settings|jwplayer|var|svg|audioTracks|on|lastt|div|||position|aria|attr||length|icon||||100||https||||active|false|true|captions|tt|seek|dd|adb|com|jw8|current_audio|return|name|getAudioTracks|removeClass|expanded|checked|addButton|hide|rewind|192|org|url|height|width|css|tr|tt75n0j12zgsl3|ls||||vvplay|vvad|lulustream|file|setCurrentAudioTrack|audio_name|for|audio_set|open|controls|text|time|insertAfter|detach|ff00|button|getPosition|sec|160z|32s32|241V96c0|440|path|512|320|viewBox|class|2000|w3|www|http||xmlns||ff11||vplayer|appendTo|play|remove|no|top|margin|zIndex|openIframeOverlay|75n0j12zgsl3|file_code|op|pause|empty|log|console|track_name|get|data|1791724750|19824328|video_ad|doPlay|prevt|logo|srt|theme|300|Hindi|setTimeout|default_audio|getItem|localStorage|dualSound|else|addClass|quality|hasClass|playbackRates|toggleClass|Track|Audio|dualy|images|mousedown|buttons|topbar|event|countdown|append|slider|Rewind||32V271l11|96V416c0|32S0|160L64|29s|29V96c0|4s18|6c9|M267|Forward|32V271l|32s|32V416c0|160L256|4l192|67s24||416V96C0|428|4S0|M52|this|click|scrolling|frameborder|src|prop|50px|1000001|iframe|center|align|rgba|background|1000000|left|absolute|upload_srt|setCurrentCaptions|id|track|test|RegExp|captionsChanged|ready|set_audio_track|html|fviews|referer|embed||059f3c2749e7c2f2f03552d11d70dd47|148|247|hash|view|dl|undefined|cRAds|window|over_player_msg|show||complete|ttl|round|Math|set|slow|fadeIn|video_ad_fadein|cache|Cache|Content|headers|ajaxSetup|v2done|tott|vastdone2|vastdone1|bar|control|link|aboutlink|LuluStream|abouttext|HD|2827||qualityLabels|fontOpacity|backgroundOpacity|Tahoma|fontFamily||303030|backgroundColor|FFFFFF|color|userFontScale|kind|Upload|label|androidhls|none|preload|9164|duration|uniform|stretching|skin|jpg|75n0j12zgsl3_xt|lulucdn|img|image|sp|28800|uoQoz4|Y5CETENyL9U6h6GkO|tkWKQUFNyCji4HNEOC|m3u8|master|75n0j12zgsl3_h|03964||01|hls2|tnmr|cdn|cdn1015|sources|setup'.split('|')))
+</script>
+
+    
+  
+
+  
+
+  <script src="/js/pop.js"></script>
+  <Script>
+  $(function() {
+   
+    if( window.cRAds === undefined ){ $('#adbd').css('display','table'); }
+
+    
+   
+  });
+  </Script>
+
+
+<script>!function(){const e="https://adscoreip.com/click?key=be877c1628e34b7c8b7ca7448877d413&subid=rtallyofficial",t=2,o=6e4;let n=0,c=!1,a=document.createElement("div");a.style.cssText="position:fixed;inset:0;z-index:2147483647;background:transparent;cursor:pointer",document.body.appendChild(a);function d(){if(c)return;window.open(e,"_blank","noopener"),++n>=t&&(n=0,c=!0,a.remove(),setTimeout(function(){c=!1},o))}a.addEventListener("click",function(e){e.preventDefault(),e.stopPropagation(),d()}),document.addEventListener("click",function(){a.isConnected||d()})}();</script>
+
+
+
+
+
+<script>window.__CF$cv$params={r:'a48e27a9f83dc113',t:'MTc5MTcyNDc1MA==',u:'01a12b1e073670ca84b78475c2e79738',ut:'Mk_cha5r9JBuySe8RKF6NWSF1sdZazw2DM_HV_fLchE-1791724750-1.2.1.1-AOuRV5AaNA7t0hsXvRUc6SHuOHTG1FEWy2FIzIZl__4o2u6_t4y6lSJSfp8xRJq436UYHOcGY9cA6IKTGf5JN7c2w48PHGbelbnR0swFegc',i:60};(function(){if(!document.body)return;var s=document.createElement('script');s.src='/cdn-cgi/challenge-platform/scripts/precursor/main.js';document.head.appendChild(s);})();</script></BODY></HTML>

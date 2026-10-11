@@ -104,5 +104,19 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
+
+        jvmTest {
+            dependencies {
+                implementation(libs.kotlinx.serialization.json)
+            }
+        }
     }
+}
+
+// Cross-server tests read tools/domain-registry/registry.json from the repository root.
+tasks.withType<Test>().configureEach {
+    systemProperty("moongetter.root", rootDir.absolutePath)
+    inputs.file(rootProject.file("tools/domain-registry/registry.json"))
+    // The live domain drift check only runs when explicitly requested.
+    providers.environmentVariable("MOONGETTER_DOMAIN_DRIFT").orNull?.let { environment("MOONGETTER_DOMAIN_DRIFT", it) }
 }
