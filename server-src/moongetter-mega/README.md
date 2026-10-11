@@ -66,7 +66,7 @@ An Android device test is available in the Compose sample:
   '-Pandroid.testInstrumentationRunnerArguments.megaUrl=<public MEGA file link>'
 ```
 
-It checks a rendered first frame, seeks to ten minutes, near the end, and back to zero, then releases the player and local session. Results and measured timings are in [the validation report](../../docs/validation/mega.md). It mutes playback; this is not a listening test.
+It checks a rendered first frame, seeks to ten minutes, near the end, and back to zero, then releases the player and local session. It mutes playback; this is not a listening test.
 
 ## Limits
 

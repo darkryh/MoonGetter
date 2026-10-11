@@ -220,7 +220,8 @@ Initialize MoonGetter before calling these methods.
 
 | API | Result |
 | --- | --- |
-| `identifier(url)` | Matching provider name, without extraction |
+| `identifier(url)` | Matching provider name, without extraction or network requests |
+| `resolve(url)` | Which server would handle the URL, the stage that decided it and the evidence, without extraction |
 | `get(url)` | Resolved `Server`, or an exception |
 | `getOrNull(url)` | Resolved `Server`, or `null` |
 | `get(urls)` | Successfully resolved servers; experimental API |
@@ -228,6 +229,35 @@ Initialize MoonGetter before calling these methods.
 | `getUntilFindResourceOrNull(urls)` | First successfully resolved server, or `null` |
 
 The batch `get(urls)` overload requires opting in to `ExperimentalFeature`; it can skip failed URLs. Use the single-URL API when each failure needs to be reported.
+
+### Unknown mirrors and the resolution fallback
+
+Video hosts rotate domains often. Each built-in server lists its known hosts in a researched registry ([tools/domain-registry](tools/domain-registry/README.md)), and a URL is routed only when its exact hostname and path shape belong to one server. A URL on a known host is extracted directly, without extra requests.
+
+When no server lists the host, a network fallback (on by default) identifies the server. Configure or disable it with `setResolution`:
+
+```kotlin
+import com.ead.lib.moongetter.resolution.ResolutionConfig
+import com.ead.lib.moongetter.resolution.ResolutionEvent
+
+MoonGetter.start(
+    MoonFactory.Builder()
+        .setClient(client)
+        .setEngine(Engine.Builder().onCore(serverBundle).build())
+        .setResolution(
+            ResolutionConfig(
+                fallbackEnabled = true, // default; false fails unknown hosts with Error.UNKNOWN_URL_ENTRY
+                listener = { event ->
+                    if (event is ResolutionEvent.UnknownHostConfirmed) {
+                        // Report event.host / event.serverName so the registry can be updated.
+                    }
+                },
+            )
+        )
+)
+```
+
+The unknown URL is fetched once (HTTPS, public hostnames only). MoonGetter then checks, in order: whether it redirects to a known host, whether it wraps a known host in an iframe, and finally the page's HTML fingerprint. Bot-protection challenges, parked domains and deleted files stop the process with a specific reason. A fingerprint only decides when it is unique to one server; pages several servers share (for example Streamwish, Vidhide and Lulustream) are tried with each candidate's extractor until one returns videos. A fallback answer is accepted only after extraction succeeds, and the host is then remembered for the next request. When the evidence is ambiguous, MoonGetter fails with `Error.AMBIGUOUS_URL_ENTRY` instead of guessing. Use `MoonGetter.resolve(url)` to see the decision and its evidence. Server deployments that resolve untrusted URLs should restrict outbound network access or disable the fallback.
 
 ## 🛠 Add your own server
 
@@ -295,6 +325,8 @@ fun customEngine(): Engine = Engine.Builder()
 
 Pass this engine to `.setEngine(...)` during initialization. Match only the URLs your provider handles; factories are instantiated through `create`, without reflection.
 
+Instead of `pattern`, a factory can override `descriptor` with a `ServerDescriptor`: its hosts, path shapes and, optionally, HTML fingerprint signals. Descriptor routing matches whole hostnames only, and the fingerprint lets the fallback identify your server on hosts you have not listed. Set `pattern` to `descriptor.pattern` so code that reads `pattern` stays consistent.
+
 ## 🧪 Run the samples
 
 ```shell
@@ -303,7 +335,7 @@ Pass this engine to `.setEngine(...)` during initialization. Match only the URLs
 open sample/iosApp/iosApp.xcodeproj
 ```
 
-The shared UI lives in `sample/shared`. Select the `iosApp` scheme in Xcode and configure your signing team for a physical device. Desktop sample playback requires native VLC. See [sample setup](sample/README.md) for configuration and [validation notes](docs/validation/dependencies.md) for build checks.
+The shared UI lives in `sample/shared`. Select the `iosApp` scheme in Xcode and configure your signing team for a physical device. Desktop sample playback requires native VLC. See [sample setup](sample/README.md) for configuration.
 
 ## 🤝 Contributing
 

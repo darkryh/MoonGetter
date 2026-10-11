@@ -1,5 +1,41 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Route the Abyss, Doodstream, Filemoon, Lulustream, Mixdrop, RPMStream,
+  Streamtape, Streamwish, Vidhide and Voe servers by a `ServerDescriptor`:
+  exact hostnames from a researched registry (`tools/domain-registry`), path
+  shapes and HTML fingerprints. The registry lists about 230 more mirror
+  domains than the previous patterns named explicitly.
+- Add a network fallback, on by default (`ResolutionConfig(fallbackEnabled = false)`
+  disables it), that identifies URLs on unlisted hosts through redirects, embedded frames,
+  page fingerprints and, for servers sharing XFileSharing pages, extractor
+  probing. Confirmed hosts are remembered and reported through a listener.
+- Add `MoonGetter.resolve(url)` to inspect how a URL would be resolved, and
+  `Error.AMBIGUOUS_URL_ENTRY` for URLs that several servers claim.
+- Add `checkHostRegistry`/`generateHostRegistry` Gradle tasks.
+
+### Changed
+
+- URLs for the servers above are now matched on the whole hostname and
+  anchored. Unlisted look-alike names that the previous loose patterns
+  accepted (for example `do9streamxyz.io`) are no longer routed without the
+  fallback.
+- A URL claimed by two servers now fails with `AMBIGUOUS_URL_ENTRY` instead of
+  `UNKNOWN_URL_ENTRY`. Exhaustive `when` expressions over `Error` need the new
+  branch.
+- Mixdrop sends the mirror's own origin as `Referer`/`Origin` instead of a
+  fixed `mixdrop.co`.
+
+### Fixed
+
+- A client passed to a later `MoonGetter.start` replaces the previous client
+  instead of being ignored.
+- Each server instance receives its own copy of the configured headers, so one
+  server's `Referer`/`Origin` changes no longer leak into later requests.
+
 ## 2.0.0-beta01 - 2026-10-10
 
 This is the first beta of 2.0.0. The release is prepared for Maven publication;
@@ -23,8 +59,7 @@ validation limits are listed in the [README](README.md#providers).
 - Organize samples under `sample/`: shared Compose code, Android and desktop
   entry points, and the iOS Xcode application.
 - Update the Kotlin, Gradle, Compose, Ktor, and supporting dependencies. The
-  selected versions and compatibility constraints are in
-  [dependency validation](docs/validation/dependencies.md).
+  selected versions are in `gradle/libs.versions.toml`.
 - Raise the Android sample minimum to API 26 and use Java 21 toolchains for
   JVM compilation. All iOS modules target physical ARM64 devices
   and Apple Silicon simulators. Intel simulator (`iosX64`) artifacts are removed.

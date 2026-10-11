@@ -7,5 +7,3 @@ The current site embeds its signed download URL as hex bytes XOR-encoded with `0
 Use `OneCloudFileFactory` directly or the regular `serverBundle`. The module coordinate and factory package are unchanged.
 
 Do not cache signed URLs indefinitely. Extract a fresh URL and pass the returned request headers to the player. HTTP-only extraction does not make an unavailable file accessible.
-
-See [validation](../../docs/validation/onecloudfile.md) for the sample and checks.

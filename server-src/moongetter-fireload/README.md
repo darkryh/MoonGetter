@@ -11,5 +11,3 @@ Use cookie storage with KtorMoonClient. Ktor's HttpCookies plugin removes suppli
 Download page tickets can be single-use. Resolve a fresh ticket for each extraction, and give the player the returned final source and headers. Do not give the player the original `pt` ticket or reuse it as a cached stream URL. No premium account is used in this workflow.
 
 Use the regular server bundle or register `FireloadFactory` directly. The module coordinate and factory package are unchanged.
-
-See [validation notes](../../docs/validation/fireload.md).

@@ -18,4 +18,4 @@ MOONGETTER_RPMSTREAM_FFMPEG=1 \
 
 The optional live test requires FFmpeg and checks the real extractor, master, variant and a short video/audio decode. FFmpeg needs `-allowed_extensions ALL -extension_picky 0` for this provider's `.woff`/`.woff2` media paths. These are MP4 media resources despite their names; this option is only part of the decoder test, not a TLS workaround.
 
-See [validation results and Android testing](../../docs/validation/rpmstream.md). Full-length playback, iOS AVPlayer playback and behavior after token expiry are not established by the short live test.
+Full-length playback, iOS AVPlayer playback and behavior after token expiry are not established by the short live test.

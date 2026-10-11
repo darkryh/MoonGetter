@@ -37,7 +37,7 @@ Edit [SampleConfiguration](shared/src/commonMain/kotlin/com/ead/project/moongett
 
 If extraction fails, the UI must leave its loading state. The sample cancels a previous extraction when another starts, rejects empty playback results, and handles unexpected exceptions. A provider's request timeout is not evidence that its resource was taken down.
 
-For first-load diagnostics, see [cold/warm validation](../docs/validation/dependencies.md). The sample logs each HTTP request's host, response status and duration, plus the complete extraction duration. Android/desktop session cookies are now retained with domain, path and secure matching. Compare the extraction completion timestamp with player startup to distinguish networking from buffering.
+The sample logs each HTTP request's host, response status and duration, plus the complete extraction duration. Android/desktop session cookies are now retained with domain, path and secure matching. Compare the extraction completion timestamp with player startup to distinguish networking from buffering.
 
 The initial URL for the upcoming release is now the [Abyss sample](https://argtesa.top/?v=vu9jynYrzV). Its playback URLs use a validated local range proxy, as documented in [the provider guide](../server-src/moongetter-abyss/README.md). Android/JVM use OkHttp for platform TLS; iOS uses Darwin. Playlist sessions stay open when switching qualities and are released when replacing the playlist or clearing the ViewModel.
 
