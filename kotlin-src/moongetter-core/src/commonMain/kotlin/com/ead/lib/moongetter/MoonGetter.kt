@@ -6,6 +6,7 @@ import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.builder.Factory
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.resolution.Resolution
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -78,6 +79,21 @@ object MoonGetter {
     fun identifier(urls: List<String>): List<String> {
         return (instance ?: throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED))
             .identifier(urls = urls)
+    }
+
+    /**
+     * Explains which server would handle [url] and how it was identified, without extracting videos.
+     *
+     * The answer lists the resolution stage, the candidate servers and the evidence used. When the network
+     * fallback is enabled (see [Factory.Builder.setResolution]) the page may be fetched; a fallback answer
+     * is only confirmed by an actual extraction through [get].
+     *
+     * @throws InvalidServerException If the factory has not been initialized via [start].
+     */
+    @Throws(InvalidServerException::class, CancellationException::class)
+    suspend fun resolve(url: String): Resolution {
+        return (instance ?: throw InvalidServerException(Resources.MOON_GETTER_NOT_INITIALIZED, Error.CONFIG_NOT_INITIALIZED))
+            .resolve(url = url)
     }
 
     /**

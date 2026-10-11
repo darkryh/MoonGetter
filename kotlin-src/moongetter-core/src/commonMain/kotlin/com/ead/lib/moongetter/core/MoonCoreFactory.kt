@@ -8,7 +8,13 @@ import com.ead.lib.moongetter.core.MoonCoreFactory.identifier
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
-import com.ead.lib.moongetter.utils.PatternManager
+import com.ead.lib.moongetter.resolution.ReplayingMoonClient
+import com.ead.lib.moongetter.resolution.Resolution
+import com.ead.lib.moongetter.resolution.ResolutionConfig
+import com.ead.lib.moongetter.resolution.ResolutionEvent
+import com.ead.lib.moongetter.resolution.ResolutionStage
+import com.ead.lib.moongetter.resolution.ServerResolver
+import com.ead.lib.moongetter.resolution.UnresolvedReason
 import com.ead.lib.moongetter.utils.Values.DEBUG_ERROR
 import com.ead.lib.moongetter.utils.Values.restoreValues
 
@@ -34,25 +40,18 @@ internal object MoonCoreFactory {
          */
         serversFactory : Array<Server.Factory>,
         /**
+         * @param resolution learned hosts are consulted, the network fallback never runs here
+         */
+        resolution: ResolutionConfig = ResolutionConfig(),
+        /**
          * return a nullable string name of the server
          */
     ) : String? {
         /**
-         * from the servers injected in the builder
-         * and passed in the function
+         * known hosts and learned hosts only, without network requests
          */
-        return serversFactory
-            /**
-             * get or null server that matches the pattern
-             */
-            .singleOrNull { serverFactory ->
-                PatternManager
-                    .match(serverFactory.pattern, url)
-            }
-            /**
-             * get the server name
-             */
-            ?.serverName
+        val resolved = ServerResolver(serversFactory.toList(), resolution).resolveStatic(url)
+        return (resolved as? Resolution.Resolved)?.primary?.factory?.serverName
     }
 
 
@@ -71,6 +70,10 @@ internal object MoonCoreFactory {
          */
         serversFactory : Array<Server.Factory>,
         /**
+         * @param resolution learned hosts are consulted, the network fallback never runs here
+         */
+        resolution: ResolutionConfig = ResolutionConfig(),
+        /**
          * return a list of servers
          */
     ) : List<String> {
@@ -87,7 +90,7 @@ internal object MoonCoreFactory {
                 /**
                  * identified the server using the [identifier] function
                  */
-                val identifiedServerName = identifier(url,serversFactory)
+                val identifiedServerName = identifier(url, serversFactory, resolution)
                 /**
                  * if servers is founded add to list
                  */
@@ -131,55 +134,146 @@ internal object MoonCoreFactory {
          */
         client: MoonClient,
         /**
+         * @param resolution how urls of unknown hosts are handled
+         */
+        resolution: ResolutionConfig = ResolutionConfig(),
+        /**
          * return a nullable server
          */
     ) : Server {
+        try {
+            val moonClient = getSingleton(client)
 
-
-
-        /**
-         * Identify the server from the url
-         * and the engines provided by
-         * the builder process
-         */
-        val serverResult = serversFactory.onFactory(
-            url = url,
-            headers = headers,
-            configData = configData,
-            client = getSingleton(client),
-        )
-
-
-
-        /**
-         * If the server is nullable return
-         * and don't to extract process
-         */
-        val server = serverResult ?: run {
-            restoreValues()
-            throw InvalidServerException(Resources.UNKNOWN_URL_ENTRY, Error.UNKNOWN_URL_ENTRY)
-        }
-
-        /**
-         * If the server is deprecated return null
-         */
-        if (!server.isDeprecated) {
+            /**
+             * Identify the server from the url: known hosts first,
+             * then the optional network fallback
+             */
+            val result = resolve(url, serversFactory, headers, moonClient, resolution)
 
 
 
             /**
-             * Extract the videos from the server
-             * and set them to the server
+             * If no server was identified don't do the extract process
              */
-            server.setVideos(server.onExtract())
+            if (result is Resolution.Unresolved) {
+                resolution.listener?.onEvent(ResolutionEvent.Unresolved(url, result.reason, result.evidence))
+                throw result.toException()
+            }
+
+
+
+            /**
+             * Extract with the identified server, a fallback answer
+             * is only accepted once its extractor returns videos
+             */
+            return extract(result as Resolution.Resolved, headers, configData, moonClient, resolution)
+        } finally {
+            restoreValues()
         }
+    }
 
 
 
-        /**
-         * Return the server
-         */
-        return serverResult.also { restoreValues() }
+    /**
+     * Resolve which server handles the url without extracting
+     */
+    suspend fun resolve(
+        url: String,
+        serversFactory: Array<Server.Factory>,
+        headers: Map<String, String>,
+        client: MoonClient,
+        resolution: ResolutionConfig = ResolutionConfig(),
+    ): Resolution = ServerResolver(serversFactory.toList(), resolution).resolve(url, getSingleton(client), headers)
+
+
+
+    /**
+     * Extract with the resolution candidates in order,
+     * the first candidate that returns videos wins
+     */
+    private suspend fun extract(
+        resolved: Resolution.Resolved,
+        headers: HashMap<String, String>,
+        configData: Configuration.Data,
+        client: MoonClient,
+        resolution: ResolutionConfig,
+    ): Server {
+        var firstFailure: Exception? = null
+        for (candidate in resolved.candidates) {
+            val candidateClient = resolved.page
+                ?.takeIf { resolution.reuseFetchedPage }
+                ?.let { ReplayingMoonClient(client, it) }
+                ?: client
+            /**
+             * every candidate receives its own headers
+             * because servers add their own Referer and Origin
+             */
+            val server = candidate.factory.create(candidate.url, HashMap(headers), configData, candidateClient)
+
+            /**
+             * If the server is deprecated return it without extracting
+             */
+            if (server.isDeprecated) return server
+
+            /**
+             * Known hosts keep the historical behaviour:
+             * extraction errors propagate unchanged
+             */
+            if (resolved.stage == ResolutionStage.KNOWN_HOST) {
+                server.setVideos(server.onExtract())
+                return server
+            }
+
+            try {
+                val videos = server.onExtract()
+                if (videos.isEmpty()) throw InvalidServerException(Resources.expectedResponseNotFound(server.name), Error.EXPECTED_RESPONSE_NOT_FOUND)
+                server.setVideos(videos)
+                confirm(resolved, candidate.factory.serverName, resolution)
+                return server
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                if (resolved.stage == ResolutionStage.LEARNED_HOST) forgetLearnedHost(resolved, candidate.factory.serverName, resolution)
+                firstFailure = firstFailure ?: error
+            }
+        }
+        throw firstFailure ?: InvalidServerException(Resources.NOT_SERVERS_FOUND, Error.NOT_SERVERS_FOUND)
+    }
+
+
+
+    /**
+     * Remember a confirmed fallback host and report it
+     */
+    private fun confirm(resolved: Resolution.Resolved, serverName: String, resolution: ResolutionConfig) {
+        if (resolved.stage == ResolutionStage.LEARNED_HOST) return
+        val host = resolved.url.toHost() ?: return
+        resolved.learnableHost?.let { resolution.learnedHosts?.remember(it, serverName) }
+        resolution.listener?.onEvent(
+            ResolutionEvent.UnknownHostConfirmed(resolved.url, host, serverName, resolved.stage, resolved.evidence)
+        )
+    }
+
+
+
+    /**
+     * A learned host that no longer extracts is forgotten,
+     * the next url on it goes through the fallback again
+     */
+    private fun forgetLearnedHost(resolved: Resolution.Resolved, serverName: String, resolution: ResolutionConfig) {
+        val host = resolved.url.toHost() ?: return
+        resolution.learnedHosts?.forget(host)
+        resolution.listener?.onEvent(ResolutionEvent.LearnedHostRejected(resolved.url, host, serverName))
+    }
+
+    private fun String.toHost(): String? = com.ead.lib.moongetter.resolution.EmbedUrl.parse(this)?.host
+
+    private fun Resolution.Unresolved.toException(): InvalidServerException = when (reason) {
+        UnresolvedReason.CONFLICTING_SERVERS, UnresolvedReason.AMBIGUOUS ->
+            InvalidServerException("${Resources.AMBIGUOUS_URL_ENTRY}: ${suspects.joinToString()}", Error.AMBIGUOUS_URL_ENTRY)
+        UnresolvedReason.NO_KNOWN_HOST, UnresolvedReason.INVALID_URL ->
+            InvalidServerException(Resources.UNKNOWN_URL_ENTRY, Error.UNKNOWN_URL_ENTRY)
+        else -> InvalidServerException("${Resources.UNKNOWN_URL_ENTRY}: ${reason.name.lowercase()}", Error.UNKNOWN_URL_ENTRY)
     }
 
 
@@ -211,6 +305,10 @@ internal object MoonCoreFactory {
          */
         client: MoonClient,
         /**
+         * @param resolution how urls of unknown hosts are handled
+         */
+        resolution: ResolutionConfig = ResolutionConfig(),
+        /**
          * return a list of servers
          */
     ) : List<Server> {
@@ -231,7 +329,7 @@ internal object MoonCoreFactory {
                     /**
                      * create the server using [create]
                      */
-                    val server = create(url, serversFactory, headers, configData, getSingleton(client))
+                    val server = create(url, serversFactory, headers, configData, getSingleton(client), resolution)
 
                     /**
                      * In case of null return to next cycle
@@ -290,6 +388,10 @@ internal object MoonCoreFactory {
          */
         client: MoonClient,
         /**
+         * @param resolution how urls of unknown hosts are handled
+         */
+        resolution: ResolutionConfig = ResolutionConfig(),
+        /**
          * return a nullable server
          */
     ) : Server {
@@ -304,7 +406,7 @@ internal object MoonCoreFactory {
                 /**
                  * create the server using [create]
                  */
-                val server = create(url, serversFactory, headers, configData, getSingleton(client))
+                val server = create(url, serversFactory, headers, configData, getSingleton(client), resolution)
                 /**
                  * if resource is founded return the server
                  */
@@ -339,7 +441,11 @@ internal object MoonCoreFactory {
     }
 
 
+    /**
+     * Keeps the configured client; a client from a later [com.ead.lib.moongetter.MoonGetter.start]
+     * replaces the previous one instead of being ignored
+     */
     private fun getSingleton(client: MoonClient) : MoonClient {
-        return _moonClientInstance ?: client.also { _moonClientInstance = it }
+        return _moonClientInstance?.takeIf { it === client } ?: client.also { _moonClientInstance = it }
     }
 }

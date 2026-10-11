@@ -10,6 +10,8 @@ import com.ead.lib.moongetter.core.Resources
 import com.ead.lib.moongetter.models.Server
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.resolution.Resolution
+import com.ead.lib.moongetter.resolution.ResolutionConfig
 import com.ead.lib.moongetter.utils.UserAgent
 
 /**
@@ -20,7 +22,8 @@ class Factory(
     val client: MoonClient?,
     val headers: Map<String, String>,
     val timeout: Configuration.Data,
-    val engine: Engine
+    val engine: Engine,
+    val resolution: ResolutionConfig = ResolutionConfig()
 ) {
 
     /**
@@ -32,6 +35,7 @@ class Factory(
         var client: MoonClient? = null
         var configData: Configuration.Data = Configuration.Data()
         var engine: Engine = Engine.Builder().build()
+        var resolution: ResolutionConfig = ResolutionConfig()
 
         /**
          * Sets custom headers for the request.
@@ -41,6 +45,16 @@ class Factory(
          */
         fun setHeaders(headers: Map<String, String>) = apply {
             this.headers = HashMap(headers)
+        }
+
+        /**
+         * Configures how URLs whose host no server lists are handled, including the network fallback (on by default).
+         *
+         * @param resolution The resolution configuration.
+         * @return Self reference for chaining.
+         */
+        fun setResolution(resolution: ResolutionConfig) = apply {
+            this.resolution = resolution
         }
 
         /**
@@ -54,7 +68,8 @@ class Factory(
             },
             serversFactory = engine.servers.ifEmpty {
                 throw InvalidServerException(Resources.ENGINES_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
-            }
+            },
+            resolution = resolution
         )
 
         /**
@@ -67,7 +82,8 @@ class Factory(
             },
             serversFactory = engine.servers.ifEmpty {
                 throw InvalidServerException(Resources.ENGINES_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
-            }
+            },
+            resolution = resolution
         )
 
         /**
@@ -83,7 +99,8 @@ class Factory(
             },
             headers = headers,
             configData = configData,
-            client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
+            client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS),
+            resolution = resolution
         )
 
         /**
@@ -99,7 +116,8 @@ class Factory(
             },
             headers = headers,
             configData = configData,
-            client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
+            client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS),
+            resolution = resolution
         )
 
         /**
@@ -115,7 +133,24 @@ class Factory(
             },
             headers = headers,
             configData = configData,
-            client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
+            client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS),
+            resolution = resolution
+        )
+
+        /**
+         * Explains which server would handle a URL, and how it was identified, without extracting.
+         * Runs the network fallback when it is enabled.
+         */
+        internal suspend fun resolve(url: String): Resolution = MoonCoreFactory.resolve(
+            url = url.ifEmpty {
+                throw InvalidServerException(Resources.NO_PARAMETERS_TO_WORK, Error.NO_PARAMETERS_TO_WORK)
+            },
+            serversFactory = engine.servers.ifEmpty {
+                throw InvalidServerException(Resources.ENGINES_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS)
+            },
+            headers = headers,
+            client = client ?: throw InvalidServerException(Resources.CLIENT_NOT_PROVIDED, Error.INVALID_BUILDER_PARAMETERS),
+            resolution = resolution
         )
 
         /**
@@ -125,6 +160,7 @@ class Factory(
             this.headers = HashMap(factory.headers)
             this.configData = factory.timeout
             this.engine = factory.engine
+            this.resolution = factory.resolution
         }
 
         /** Default constructor. */

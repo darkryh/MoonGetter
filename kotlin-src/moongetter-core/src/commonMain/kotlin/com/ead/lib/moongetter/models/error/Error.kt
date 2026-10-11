@@ -65,4 +65,10 @@ enum class Error {
      */
 
     RESOURCE_TAKEN_DOWN,
+
+    /**
+     * More than one server claims the url, or the network fallback found comparable evidence for
+     * several servers and refused to guess
+     */
+    AMBIGUOUS_URL_ENTRY,
 }

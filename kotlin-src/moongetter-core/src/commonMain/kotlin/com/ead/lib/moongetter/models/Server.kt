@@ -10,6 +10,7 @@ import com.ead.lib.moongetter.client.request.Request
 import com.ead.lib.moongetter.client.response.Response
 import com.ead.lib.moongetter.models.error.Error
 import com.ead.lib.moongetter.models.exceptions.InvalidServerException
+import com.ead.lib.moongetter.resolution.ServerDescriptor
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -225,6 +226,16 @@ open class Server(
          * process a given URL during the extraction flow.
          */
         val pattern: String
+
+        /**
+         * Structured routing data: accepted hosts, path shapes and HTML fingerprint.
+         *
+         * When present, MoonGetter routes by this descriptor instead of [pattern]: the hostname must be
+         * listed exactly and the path must have an accepted shape. It also lets the optional network
+         * fallback identify this server on hosts it does not list. Factories that return `null` keep the
+         * historical [pattern] behavior.
+         */
+        val descriptor: ServerDescriptor? get() = null
 
         /**
          * Creates an instance of the associated [Server] implementation.

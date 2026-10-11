@@ -26,6 +26,9 @@ suspend inline fun <reified T> MoonGetter.onGetResult(url : String) : Result<T,M
             Error.UNKNOWN_URL_ENTRY -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
+            Error.AMBIGUOUS_URL_ENTRY -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
             Error.NOT_SERVERS_FOUND -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
@@ -84,6 +87,9 @@ suspend inline fun <reified T> MoonGetter.onGetUntilFindResult(urls : List<Strin
                 Result.Error(MoonGetterError.UNKNOWN)
             }
             Error.UNKNOWN_URL_ENTRY -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.AMBIGUOUS_URL_ENTRY -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
             Error.NOT_SERVERS_FOUND -> {
@@ -146,6 +152,9 @@ suspend inline fun <reified T> MoonGetter.onGetResults(urls : List<String>) : Re
                 Result.Error(MoonGetterError.UNKNOWN)
             }
             Error.UNKNOWN_URL_ENTRY -> {
+                Result.Error(MoonGetterError.UNKNOWN)
+            }
+            Error.AMBIGUOUS_URL_ENTRY -> {
                 Result.Error(MoonGetterError.UNKNOWN)
             }
             Error.NOT_SERVERS_FOUND -> {
